@@ -1,0 +1,16 @@
+Augmented CNN Classification Report
+============================================================
+                        precision    recall  f1-score   support
+
+ Bacterial Leaf Blight     0.4865    0.4286    0.4557        42
+            Brown Spot     0.4462    0.5370    0.4874        54
+     Healthy Rice Leaf     0.8919    0.9429    0.9167        35
+            Leaf Blast     0.5897    0.4259    0.4946        54
+            Leaf scald     0.5600    0.3043    0.3944        46
+Narrow Brown Leaf Spot     0.1858    0.6364    0.2877        33
+            Rice Hispa     1.0000    0.7778    0.8750        45
+         Sheath Blight     0.8667    0.2281    0.3611        57
+
+              accuracy                         0.5082       366
+             macro avg     0.6283    0.5351    0.5341       366
+          weighted avg     0.6390    0.5082    0.5242       366
