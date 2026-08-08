@@ -1,0 +1,35 @@
+Rice leaf disease/
+Rice leaf disease_backup/
+quarantined_duplicates/
+
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+venv/
+.venv/
+env/
+
+.ipynb_checkpoints/
+
+.vscode/
+.idea/
+
+.DS_Store
+Thumbs.db
+
+*.egg-info/
+
+*.h5
+*.keras
+*.pth
+*.pt
+*.pkl
+
+outputs/
+generated_images/
+augmented_data/
+checkpoints/
+
+*.log
