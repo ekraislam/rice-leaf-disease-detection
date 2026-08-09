@@ -19,6 +19,17 @@ CLASS_NAMES = [
     "Sheath Blight",
 ]
 
+EXPECTED_CLASSES = [
+    "Bacterial Leaf Blight",
+    "Brown Spot",
+    "Healthy Rice Leaf",
+    "Leaf Blast",
+    "Leaf scald",
+    "Narrow Brown Leaf Spot",
+    "Rice Hispa",
+    "Sheath Blight",
+]
+
 device = torch.device("cpu")
 
 model = get_baseline_cnn(num_classes=8, pretrained=False)
@@ -41,9 +52,11 @@ transform = transforms.Compose([
 def index():
     prediction = None
     confidence = None
+    expected_class = None
     error = None
 
     if request.method == "POST":
+        expected_class = request.form.get("expected_class", "").strip()
         if "image" not in request.files:
             error = "Please select an image."
         else:
@@ -75,8 +88,10 @@ def index():
         "index.html",
         prediction=prediction,
         confidence=confidence,
+        expected_class=expected_class,
         error=error,
-        CLASS_NAMES=CLASS_NAMES
+        CLASS_NAMES=CLASS_NAMES,
+        EXPECTED_CLASSES=EXPECTED_CLASSES
     )
 
 

@@ -30,18 +30,69 @@
                 <div class="card p-4 bg-white">
                     <h1 class="text-center mb-3">Rice Leaf Disease Detection</h1>
                     <p class="text-center text-muted mb-4">Upload a rice leaf image and let the AI identify the disease.</p>
+                    
                     {% if error %}
                         <div class="alert alert-danger" role="alert">{{ error }}</div>
                     {% endif %}
+
                     {% if prediction %}
-                        <div class="alert alert-success" role="alert">
-                            <strong>{{ prediction }}</strong> detected with <strong>{{ confidence }}%</strong> confidence.
+                        <div class="card mb-4 border-0 shadow-sm bg-light">
+                            <div class="card-body p-4">
+                                <h5 class="card-title mb-3 fw-bold text-primary">Prediction Results</h5>
+                                
+                                <div class="row g-3 mb-3">
+                                    <div class="col-sm-6">
+                                        <div class="p-3 bg-white rounded border">
+                                            <small class="text-muted d-block text-uppercase fw-semibold mb-1">Model Prediction</small>
+                                            <span class="fs-5 fw-bold text-dark">{{ prediction }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="p-3 bg-white rounded border">
+                                            <small class="text-muted d-block text-uppercase fw-semibold mb-1">Confidence</small>
+                                            <span class="fs-5 fw-bold text-dark">{{ confidence }}%</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="p-3 bg-white rounded border mb-3">
+                                    <small class="text-muted d-block text-uppercase fw-semibold mb-1">Expected Class</small>
+                                    <span class="fs-6 fw-semibold text-dark">
+                                        {% if expected_class %}
+                                            {{ expected_class }}
+                                        {% else %}
+                                            Not selected
+                                        {% endif %}
+                                    </span>
+                                </div>
+
+                                {% if expected_class %}
+                                    <div class="p-3 bg-white rounded border">
+                                        <small class="text-muted d-block text-uppercase fw-semibold mb-1">Comparison</small>
+                                        {% if expected_class == prediction %}
+                                            <span class="fs-5 fw-bold text-success">✓ Correct Prediction</span>
+                                        {% else %}
+                                            <span class="fs-5 fw-bold text-danger">✗ Incorrect Prediction</span>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            </div>
                         </div>
                     {% endif %}
+
                     <form method="POST" enctype="multipart/form-data" class="mb-3">
                         <div class="mb-3">
-                            <label for="image" class="form-label">Choose an image</label>
+                            <label for="image" class="form-label fw-bold">Choose an image</label>
                             <input class="form-control" type="file" id="image" name="image" accept="image/*" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="expected_class" class="form-label fw-bold">Expected Class</label>
+                            <select class="form-select" id="expected_class" name="expected_class">
+                                <option value="" {% if not expected_class %}selected{% endif %}>Select Expected Class</option>
+                                {% for cls in EXPECTED_CLASSES %}
+                                    <option value="{{ cls }}" {% if expected_class == cls %}selected{% endif %}>{{ cls }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                         <div class="mb-3 text-center">
                             <img id="preview" class="preview-img d-none" alt="Image preview" />
@@ -50,6 +101,7 @@
                             <button type="submit" class="btn btn-primary btn-lg">Detect Disease</button>
                         </div>
                     </form>
+
                     <hr />
                     <h5 class="mt-4">Supported Classes</h5>
                     <ul class="list-group list-group-flush">
@@ -57,8 +109,6 @@
                         <li class="list-group-item">{{ cls }}</li>
                         {% endfor %}
                     </ul>
-                </div>
-            Inspected and modified successfully
                 </div>
             </div>
         </div>
