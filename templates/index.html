@@ -1035,23 +1035,30 @@
             background: var(--color-surface);
         }
         .tabs-header {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
             background: #F1F5F9;
-            padding: 6px;
-            gap: 6px;
-            overflow-x: auto;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
+            padding: 4px;
+            gap: 4px;
+            border-radius: var(--radius-md);
         }
-        .tabs-header::-webkit-scrollbar {
-            display: none;
+        @media (max-width: 720px) {
+            .tabs-header {
+                display: flex;
+                overflow-x: auto;
+                scrollbar-width: none;
+                -webkit-overflow-scrolling: touch;
+            }
+            .tabs-header::-webkit-scrollbar { display: none; }
+            .tab-btn {
+                flex: 0 0 auto;
+                padding: 0.5rem 0.85rem;
+            }
         }
         .tab-btn {
-            flex: 1 1 auto;
-            min-width: fit-content;
-            padding: 0.55rem 0.85rem;
+            padding: 0.5rem 0.35rem;
             font-family: inherit;
-            font-size: 0.8125rem;
+            font-size: 0.775rem;
             font-weight: 700;
             color: var(--color-text-muted);
             background: transparent;
@@ -1064,7 +1071,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.4rem;
+            gap: 0.25rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .tab-btn:hover {
             color: var(--color-primary);
@@ -2289,6 +2298,15 @@
                 }
             });
 
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                isSpeaking = false;
+                const btn = document.getElementById('btn-voice-read');
+                const btnText = document.getElementById('voice-btn-text');
+                if (btn) btn.classList.remove('speaking');
+                if (btnText) btnText.textContent = lang === 'bn' ? 'প্রেসক্রিপশন শুনুন' : 'Listen Audio';
+            }
+
             if (currentDiseaseData) {
                 updateResultLanguage(dict);
                 calculateDosage();
@@ -2515,6 +2533,31 @@
 
         /* ── Feature 3: Voice / Audio Prescription Speech ── */
         let isSpeaking = false;
+        let availableVoices = [];
+
+        function loadVoices() {
+            if ('speechSynthesis' in window) {
+                availableVoices = window.speechSynthesis.getVoices();
+            }
+        }
+        if ('speechSynthesis' in window) {
+            loadVoices();
+            window.speechSynthesis.onvoiceschanged = loadVoices;
+        }
+
+        function cleanSpeechText(text, isBn) {
+            if (!text) return '';
+            let cleaned = text;
+            if (isBn) {
+                cleaned = cleaned.replace(/\([A-Za-z\s\.,\-]+\)/g, '');
+                cleaned = cleaned.replace(/WP|EC|WG|SP|pv\./gi, '');
+                cleaned = cleaned.replace(/[•\-\*\/]/g, ' ');
+            } else {
+                cleaned = cleaned.replace(/[•\-\*\/]/g, ' ');
+            }
+            return cleaned.replace(/\s+/g, ' ').trim();
+        }
+
         function toggleVoiceSpeech() {
             const btn = document.getElementById('btn-voice-read');
             const btnText = document.getElementById('voice-btn-text');
@@ -2537,18 +2580,48 @@
             const isBn = currentLang === 'bn';
             const diseaseName = isBn ? (currentDiseaseData.name_bn || currentPredictionName) : (currentDiseaseData.name_en || currentPredictionName);
             const severity = isBn ? (currentDiseaseData.severity_bn || 'সতর্কতা') : (currentDiseaseData.severity_en || 'Caution');
-            const chemRx = (isBn ? currentDiseaseData.management_bn?.chemical : currentDiseaseData.management_en?.chemical) || '';
+            const rawChemRx = (isBn ? currentDiseaseData.management_bn?.chemical : currentDiseaseData.management_en?.chemical) || '';
+            const chemRx = cleanSpeechText(rawChemRx, isBn);
 
             let speechText = '';
             if (isBn) {
-                speechText = `ধানের পাতায় সনাক্তকৃত রোগ হলো ${diseaseName}। এটি একটি ${severity} মাত্রার রোগ। প্রস্তাবিত প্রতিকার: ${chemRx}। জমিতে অতিরিক্ত পানি থাকলে নিষ্কাশন করুন এবং বিকেল বেলা মিষ্টি রোদে স্প্রে করুন।`;
+                if (diseaseName.includes('সুস্থ')) {
+                    speechText = 'আপনার পরীক্ষিত ধানের পাতাটি সম্পূর্ণ সুস্থ ও রোগমুক্ত। জমিতে কোনো কীটনাশক বা বালাইনাশক স্প্রে করার প্রয়োজন নেই। সুষম সেচ বজায় রাখুন।';
+                } else {
+                    speechText = `ধানের পাতায় সনাক্তকৃত রোগ হলো ${cleanSpeechText(diseaseName, true)}। এটি একটি ${severity} মাত্রার রোগ। বালাইনাশক প্রেসক্রিপশন: ${chemRx}। জমিতে অতিরিক্ত পানি থাকলে নিষ্কাশন করুন এবং বিকেল বেলা মিষ্টি রোদে স্প্রে করুন।`;
+                }
             } else {
-                speechText = `Diagnosed condition is ${diseaseName}. Severity level is ${severity}. Recommended prescription: ${chemRx}. Maintain proper field drainage and spray during late afternoon.`;
+                if (diseaseName.toLowerCase().includes('healthy')) {
+                    speechText = 'The analyzed rice leaf is completely healthy with no detectable pathogenic lesions. No chemical pesticide is required.';
+                } else {
+                    speechText = `Diagnosed condition is ${diseaseName}. Severity level is ${severity}. Recommended prescription: ${chemRx}. Maintain proper field drainage and apply spray in late afternoon.`;
+                }
             }
+
+            window.speechSynthesis.cancel();
 
             const utterance = new SpeechSynthesisUtterance(speechText);
             utterance.lang = isBn ? 'bn-BD' : 'en-US';
-            utterance.rate = 0.95;
+            utterance.rate = isBn ? 0.9 : 0.95;
+            utterance.pitch = 1.0;
+
+            loadVoices();
+            if (isBn) {
+                const bnVoice = availableVoices.find(v => 
+                    v.lang === 'bn-BD' || v.lang === 'bn_BD' || v.lang === 'bn-IN' || v.lang === 'bn' ||
+                    (v.name && (v.name.includes('Bangla') || v.name.includes('Bengali') || v.name.includes('বাংলা')))
+                );
+                if (bnVoice) {
+                    utterance.voice = bnVoice;
+                }
+            } else {
+                const enVoice = availableVoices.find(v => 
+                    v.lang.startsWith('en') && (v.name.includes('Natural') || v.name.includes('Google') || v.default)
+                );
+                if (enVoice) {
+                    utterance.voice = enVoice;
+                }
+            }
 
             utterance.onstart = () => {
                 isSpeaking = true;
