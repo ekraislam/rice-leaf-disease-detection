@@ -5,6 +5,7 @@ import torch
 from torchvision import transforms
 from PIL import Image, UnidentifiedImageError
 from src.model import get_baseline_cnn
+from src.disease_data import DISEASE_DATABASE
 
 # Optimize PyTorch CPU inference on shared cloud environments (prevents OOM / thread lockup)
 torch.set_num_threads(1)
@@ -72,15 +73,23 @@ def request_entity_too_large(error):
         "index.html",
         prediction=None,
         confidence=None,
+        top_predictions=None,
+        disease_info=None,
         expected_class=None,
         error=msg,
         CLASS_NAMES=CLASS_NAMES,
-        EXPECTED_CLASSES=EXPECTED_CLASSES
+        EXPECTED_CLASSES=EXPECTED_CLASSES,
+        DISEASE_DATABASE=DISEASE_DATABASE
     ), 413
+
+
+from werkzeug.exceptions import HTTPException
 
 
 @app.errorhandler(Exception)
 def handle_unexpected_error(error):
+    if isinstance(error, HTTPException):
+        return error
     traceback.print_exc()
     msg = f"Inference error: {str(error)}"
     is_ajax = (
@@ -94,10 +103,13 @@ def handle_unexpected_error(error):
         "index.html",
         prediction=None,
         confidence=None,
+        top_predictions=None,
+        disease_info=None,
         expected_class=None,
         error=msg,
         CLASS_NAMES=CLASS_NAMES,
-        EXPECTED_CLASSES=EXPECTED_CLASSES
+        EXPECTED_CLASSES=EXPECTED_CLASSES,
+        DISEASE_DATABASE=DISEASE_DATABASE
     ), 500
 
 
@@ -105,6 +117,8 @@ def handle_unexpected_error(error):
 def index():
     prediction = None
     confidence = None
+    top_predictions = None
+    disease_info = None
     expected_class = None
     error = None
 
@@ -124,15 +138,26 @@ def index():
 
                     with torch.no_grad():
                         outputs = model(image_tensor)
-                        probabilities = torch.softmax(outputs, dim=1)
-                        confidence_value, predicted_class = torch.max(
-                            probabilities, dim=1
-                        )
+                        probabilities = torch.softmax(outputs, dim=1)[0]
+                        confidence_val, predicted_idx = torch.max(probabilities, dim=0)
 
-                    prediction = CLASS_NAMES[predicted_class.item()]
-                    confidence = round(
-                        confidence_value.item() * 100, 2
-                    )
+                        # Compute Top-3 predictions
+                        top_probs, top_indices = torch.topk(probabilities, k=min(3, len(CLASS_NAMES)))
+                        top_predictions = []
+                        for p, idx in zip(top_probs, top_indices):
+                            c_name = CLASS_NAMES[idx.item()]
+                            c_info = DISEASE_DATABASE.get(c_name, {})
+                            top_predictions.append({
+                                "class": c_name,
+                                "class_bn": c_info.get("name_bn", c_name),
+                                "confidence": round(p.item() * 100, 2),
+                                "severity": c_info.get("severity", ""),
+                                "severity_color": c_info.get("severity_color", "#10B981")
+                            })
+
+                    prediction = CLASS_NAMES[predicted_idx.item()]
+                    confidence = round(confidence_val.item() * 100, 2)
+                    disease_info = DISEASE_DATABASE.get(prediction, {})
 
                 except UnidentifiedImageError:
                     error = "We couldn't read this image file. Please upload a valid image (JPG, PNG, BMP, or TIFF)."
@@ -155,6 +180,8 @@ def index():
                 "success": True,
                 "prediction": prediction,
                 "confidence": confidence,
+                "top_predictions": top_predictions,
+                "disease_info": disease_info,
                 "expected_class": expected_class if expected_class else None,
                 "error": None
             })
@@ -163,11 +190,15 @@ def index():
         "index.html",
         prediction=prediction,
         confidence=confidence,
+        top_predictions=top_predictions,
+        disease_info=disease_info,
         expected_class=expected_class,
         error=error,
         CLASS_NAMES=CLASS_NAMES,
-        EXPECTED_CLASSES=EXPECTED_CLASSES
+        EXPECTED_CLASSES=EXPECTED_CLASSES,
+        DISEASE_DATABASE=DISEASE_DATABASE
     )
+
 
 
 if __name__ == "__main__":
