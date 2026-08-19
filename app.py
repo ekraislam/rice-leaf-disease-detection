@@ -14,6 +14,7 @@ app = Flask(__name__)
 
 # Enforce 10 MB maximum upload file size limit
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024
+app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, "models", "fair_augmented_cnn.pth")
