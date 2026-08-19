@@ -36,14 +36,13 @@ class GradCAM:
         Computes the Grad-CAM activation map for the given input tensor.
         input_tensor: shape (1, 3, 224, 224)
         """
-        self.model.zero_grad()
         output = self.model(input_tensor)
 
         if class_idx is None:
             class_idx = torch.argmax(output, dim=1).item()
 
         score = output[0, class_idx]
-        score.backward(retain_graph=True)
+        score.backward(retain_graph=False)
 
         if self.gradients is None or self.activations is None:
             return None
@@ -54,6 +53,9 @@ class GradCAM:
         cam = F.relu(cam)
         cam = F.interpolate(cam, size=(224, 224), mode="bilinear", align_corners=False)
         cam = cam.squeeze().detach().cpu().numpy()
+
+        self.activations = None
+        self.gradients = None
 
         # Normalize 0..1
         cam_min, cam_max = cam.min(), cam.max()

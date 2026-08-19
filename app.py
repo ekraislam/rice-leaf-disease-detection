@@ -48,6 +48,8 @@ model = get_baseline_cnn(num_classes=8, pretrained=False)
 if os.path.exists(MODEL_PATH):
     state_dict = torch.load(MODEL_PATH, map_location=device)
     model.load_state_dict(state_dict)
+for p in model.parameters():
+    p.requires_grad = False
 model.to(device)
 model.eval()
 
@@ -143,28 +145,29 @@ def index():
                     image_tensor = transform(image).unsqueeze(0).to(device)
 
                     # Compute predictions
-                    outputs = model(image_tensor)
-                    probabilities = torch.softmax(outputs, dim=1)[0]
-                    confidence_val, predicted_idx = torch.max(probabilities, dim=0)
+                    with torch.no_grad():
+                        outputs = model(image_tensor)
+                        probabilities = torch.softmax(outputs, dim=1)[0]
+                        confidence_val, predicted_idx = torch.max(probabilities, dim=0)
 
-                    # Compute Top-3 predictions
-                    top_probs, top_indices = torch.topk(probabilities, k=min(3, len(CLASS_NAMES)))
-                    top_predictions = []
-                    for p, idx in zip(top_probs, top_indices):
-                        c_name = CLASS_NAMES[idx.item()]
-                        c_info = DISEASE_DATABASE.get(c_name, {})
-                        top_predictions.append({
-                            "class": c_name,
-                            "class_bn": c_info.get("name_bn", c_name),
-                            "confidence": round(p.item() * 100, 2),
-                            "severity_en": c_info.get("severity_en", "Moderate"),
-                            "severity_bn": c_info.get("severity_bn", "মাঝারি"),
-                            "severity_color": c_info.get("severity_color", "#10B981")
-                        })
+                        # Compute Top-3 predictions
+                        top_probs, top_indices = torch.topk(probabilities, k=min(3, len(CLASS_NAMES)))
+                        top_predictions = []
+                        for p, idx in zip(top_probs, top_indices):
+                            c_name = CLASS_NAMES[idx.item()]
+                            c_info = DISEASE_DATABASE.get(c_name, {})
+                            top_predictions.append({
+                                "class": c_name,
+                                "class_bn": c_info.get("name_bn", c_name),
+                                "confidence": round(p.item() * 100, 2),
+                                "severity_en": c_info.get("severity_en", "Moderate"),
+                                "severity_bn": c_info.get("severity_bn", "মাঝারি"),
+                                "severity_color": c_info.get("severity_color", "#10B981")
+                            })
 
-                    prediction = CLASS_NAMES[predicted_idx.item()]
-                    confidence = round(confidence_val.item() * 100, 2)
-                    disease_info = DISEASE_DATABASE.get(prediction, {})
+                        prediction = CLASS_NAMES[predicted_idx.item()]
+                        confidence = round(confidence_val.item() * 100, 2)
+                        disease_info = DISEASE_DATABASE.get(prediction, {})
 
                     # Compute Grad-CAM Explainable AI Heatmap
                     try:
