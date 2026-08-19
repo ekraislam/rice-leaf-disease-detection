@@ -1,15 +1,21 @@
+import os
+import traceback
 from flask import Flask, render_template, request, jsonify
 import torch
 from torchvision import transforms
 from PIL import Image, UnidentifiedImageError
 from src.model import get_baseline_cnn
 
+# Optimize PyTorch CPU inference on shared cloud environments (prevents OOM / thread lockup)
+torch.set_num_threads(1)
+
 app = Flask(__name__)
 
 # Enforce 10 MB maximum upload file size limit
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024
 
-MODEL_PATH = "./models/fair_augmented_cnn.pth"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, "models", "fair_augmented_cnn.pth")
 
 CLASS_NAMES = [
     "Bacterial Leaf Blight",
@@ -36,8 +42,9 @@ EXPECTED_CLASSES = [
 device = torch.device("cpu")
 
 model = get_baseline_cnn(num_classes=8, pretrained=False)
-state_dict = torch.load(MODEL_PATH, map_location=device)
-model.load_state_dict(state_dict)
+if os.path.exists(MODEL_PATH):
+    state_dict = torch.load(MODEL_PATH, map_location=device)
+    model.load_state_dict(state_dict)
 model.to(device)
 model.eval()
 
@@ -70,6 +77,28 @@ def request_entity_too_large(error):
         CLASS_NAMES=CLASS_NAMES,
         EXPECTED_CLASSES=EXPECTED_CLASSES
     ), 413
+
+
+@app.errorhandler(Exception)
+def handle_unexpected_error(error):
+    traceback.print_exc()
+    msg = f"Inference error: {str(error)}"
+    is_ajax = (
+        request.headers.get("X-Requested-With") == "XMLHttpRequest"
+        or "application/json" in request.headers.get("Accept", "")
+        or request.args.get("ajax") == "1"
+    )
+    if is_ajax:
+        return jsonify({"success": False, "error": msg}), 500
+    return render_template(
+        "index.html",
+        prediction=None,
+        confidence=None,
+        expected_class=None,
+        error=msg,
+        CLASS_NAMES=CLASS_NAMES,
+        EXPECTED_CLASSES=EXPECTED_CLASSES
+    ), 500
 
 
 @app.route("/", methods=["GET", "POST"])
