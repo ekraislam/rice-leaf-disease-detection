@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>RiceGuard AI — Rice Leaf Disease Detection & Agronomic Diagnosis</title>
-    <meta name="description" content="AI-powered rice leaf disease detection and agronomic prescription platform powered by a GAN-augmented ResNet18 deep learning vision model." />
+    <title>RiceGuard AI — ধানের পাতার রোগ নির্ণয় ও আধুনিক চিকিৎসা প্রেসক্রিপশন</title>
+    <meta name="description" content="AI-powered rice leaf disease detection and agronomic prescription platform powered by a GAN-augmented ResNet18 deep learning vision model. Developed by Ohi." />
 
     <!-- Google Fonts: Plus Jakarta Sans & Noto Sans Bengali -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
     <style>
-        /* ── Botanical Clinical Precision Design System ───────── */
+        /* ── Botanical Precision Design System ────────────────── */
         :root {
             --color-primary: #0F5132;
             --color-primary-dark: #0A3622;
@@ -43,7 +43,6 @@
             --shadow-sm: 0 1px 3px rgba(15, 81, 50, 0.04);
             --shadow-md: 0 4px 16px -2px rgba(15, 81, 50, 0.08), 0 2px 6px -1px rgba(15, 81, 50, 0.03);
             --shadow-lg: 0 16px 36px -4px rgba(15, 81, 50, 0.12), 0 4px 12px -2px rgba(15, 81, 50, 0.04);
-            --shadow-glow: 0 0 25px rgba(16, 185, 129, 0.25);
 
             --radius-sm: 8px;
             --radius-md: 12px;
@@ -63,7 +62,7 @@
             font-family: var(--font-family);
             background-color: var(--color-bg);
             color: var(--color-text-primary);
-            line-height: 1.5;
+            line-height: 1.55;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -79,7 +78,7 @@
             top: -180px;
             left: 50%;
             transform: translateX(-50%);
-            width: 900px;
+            width: 920px;
             height: 520px;
             background: radial-gradient(circle, rgba(16, 185, 129, 0.09) 0%, rgba(15, 81, 50, 0.03) 55%, transparent 75%);
             pointer-events: none;
@@ -148,57 +147,33 @@
             line-height: 1.1;
         }
         .brand-text p {
-            font-size: 0.72rem;
+            font-size: 0.75rem;
             font-weight: 700;
-            color: var(--color-text-subtle);
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
+            color: var(--color-primary-light);
+            letter-spacing: 0.02em;
         }
         .nav-right {
             display: flex;
             align-items: center;
             gap: 0.65rem;
         }
-        .lang-toggle {
-            display: flex;
-            align-items: center;
-            background: var(--color-bg);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-full);
-            padding: 3px;
-            cursor: pointer;
-        }
-        .lang-btn {
-            background: transparent;
-            border: none;
-            padding: 0.25rem 0.6rem;
-            border-radius: var(--radius-full);
-            font-family: inherit;
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: var(--color-text-muted);
-            cursor: pointer;
-            transition: all var(--transition-fast);
-        }
-        .lang-btn.active {
-            background: var(--color-primary);
-            color: #FFFFFF;
-            box-shadow: var(--shadow-sm);
-        }
-        .tech-pill {
+        .creator-tag-nav {
             display: inline-flex;
             align-items: center;
             gap: 0.4rem;
-            background: var(--color-bg);
+            background: #F1F5F9;
             border: 1px solid var(--color-border);
             padding: 0.35rem 0.75rem;
             border-radius: var(--radius-full);
-            font-size: 0.78125rem;
-            font-weight: 600;
-            color: var(--color-text-muted);
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+        }
+        .creator-tag-nav strong {
+            color: var(--color-primary);
         }
         @media (max-width: 768px) {
-            .tech-pill.hide-mobile { display: none; }
+            .creator-tag-nav { display: none; }
         }
         .status-pill {
             display: flex;
@@ -233,25 +208,34 @@
             text-align: center;
         }
         .hero-eyebrow {
-            font-size: 0.78125rem;
+            font-size: 0.8125rem;
             font-weight: 800;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.08em;
             text-transform: uppercase;
             color: var(--color-accent);
             margin-bottom: 0.4rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
         }
         .hero-title {
-            font-size: clamp(1.85rem, 4vw, 2.65rem);
+            font-size: clamp(1.85rem, 4vw, 2.7rem);
             font-weight: 800;
             color: var(--color-text-primary);
             letter-spacing: -0.03em;
-            margin-bottom: 0.6rem;
-            line-height: 1.2;
+            margin-bottom: 0.5rem;
+            line-height: 1.25;
+        }
+        .hero-title-en {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--color-text-muted);
+            margin-bottom: 0.75rem;
         }
         .hero-subtitle {
             font-size: 1.02rem;
             color: var(--color-text-muted);
-            max-width: 680px;
+            max-width: 720px;
             margin: 0 auto 1.25rem;
             font-weight: 400;
         }
@@ -291,6 +275,8 @@
             align-items: center;
             justify-content: space-between;
             margin-bottom: 0.75rem;
+            flex-wrap: wrap;
+            gap: 0.4rem;
         }
         .samples-title-wrap {
             display: flex;
@@ -298,8 +284,8 @@
             gap: 0.5rem;
         }
         .samples-title {
-            font-size: 0.85rem;
-            font-weight: 700;
+            font-size: 0.875rem;
+            font-weight: 800;
             color: var(--color-primary);
         }
         .samples-hint {
@@ -318,10 +304,10 @@
             background: #FAFCFA;
             border: 1px solid var(--color-border);
             border-radius: var(--radius-sm);
-            padding: 0.5rem 0.65rem;
+            padding: 0.55rem 0.7rem;
             display: flex;
             align-items: center;
-            gap: 0.6rem;
+            gap: 0.65rem;
             cursor: pointer;
             font-family: inherit;
             text-align: left;
@@ -334,21 +320,21 @@
             box-shadow: var(--shadow-sm);
         }
         .sample-thumb {
-            width: 38px;
-            height: 38px;
+            width: 40px;
+            height: 40px;
             border-radius: 6px;
             object-fit: cover;
             flex-shrink: 0;
             border: 1px solid var(--color-border);
         }
         .sample-name {
-            font-size: 0.78125rem;
+            font-size: 0.8125rem;
             font-weight: 700;
             color: var(--color-text-primary);
             line-height: 1.2;
         }
         .sample-sub {
-            font-size: 0.7rem;
+            font-size: 0.72rem;
             color: var(--color-text-muted);
         }
 
@@ -387,8 +373,8 @@
             gap: 0.75rem;
         }
         .card-icon {
-            width: 36px;
-            height: 36px;
+            width: 38px;
+            height: 38px;
             border-radius: var(--radius-sm);
             background: var(--color-accent-subtle);
             color: var(--color-primary);
@@ -654,7 +640,7 @@
             color: #FFFFFF;
             border: none;
             border-radius: var(--radius-md);
-            padding: 0.9rem 1.5rem;
+            padding: 0.95rem 1.5rem;
             font-family: inherit;
             font-size: 0.95rem;
             font-weight: 700;
@@ -713,7 +699,7 @@
         .empty-subtitle {
             font-size: 0.8125rem;
             color: var(--color-text-muted);
-            max-width: 300px;
+            max-width: 320px;
         }
 
         .loading-state {
@@ -744,7 +730,7 @@
             100% { transform: scale(1.4); opacity: 0; }
         }
         .loading-step-text {
-            font-size: 0.92rem;
+            font-size: 0.95rem;
             font-weight: 700;
             color: var(--color-primary);
             margin-bottom: 0.2rem;
@@ -772,7 +758,7 @@
             background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
             color: #FFFFFF;
             border-radius: var(--radius-md);
-            padding: 1.25rem 1.4rem;
+            padding: 1.35rem 1.5rem;
             margin-bottom: 1.25rem;
             box-shadow: 0 4px 16px rgba(15, 81, 50, 0.2);
             position: relative;
@@ -786,7 +772,7 @@
             gap: 0.4rem;
         }
         .headline-tag {
-            font-size: 0.7rem;
+            font-size: 0.72rem;
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.08em;
@@ -796,22 +782,23 @@
             gap: 0.35rem;
         }
         .severity-badge {
-            font-size: 0.7rem;
+            font-size: 0.72rem;
             font-weight: 700;
-            padding: 0.2rem 0.6rem;
+            padding: 0.2rem 0.65rem;
             border-radius: var(--radius-full);
             background: rgba(255, 255, 255, 0.15);
             color: #FFFFFF;
             border: 1px solid rgba(255, 255, 255, 0.25);
         }
-        .disease-title-en {
-            font-size: 1.45rem;
+        .disease-title-bn {
+            font-size: 1.5rem;
             font-weight: 800;
             letter-spacing: -0.02em;
-            line-height: 1.2;
+            line-height: 1.25;
+            color: #FFFFFF;
             margin-bottom: 0.15rem;
         }
-        .disease-title-bn {
+        .disease-title-en {
             font-size: 1.05rem;
             font-weight: 600;
             color: var(--color-accent-light);
@@ -820,7 +807,7 @@
         .pathogen-name {
             font-size: 0.78125rem;
             font-style: italic;
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(255, 255, 255, 0.85);
         }
 
         /* Confidence & Top-3 Grid */
@@ -962,7 +949,7 @@
             flex: 1;
             padding: 0.65rem 0.4rem;
             font-family: inherit;
-            font-size: 0.78125rem;
+            font-size: 0.8125rem;
             font-weight: 700;
             color: var(--color-text-muted);
             background: transparent;
@@ -981,7 +968,7 @@
         .tab-pane {
             display: none;
             padding: 1.15rem;
-            font-size: 0.85rem;
+            font-size: 0.875rem;
             color: var(--color-text-muted);
             line-height: 1.6;
         }
@@ -991,16 +978,16 @@
             list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.55rem;
         }
         .bullet-item {
             display: flex;
             align-items: flex-start;
-            gap: 0.5rem;
+            gap: 0.55rem;
         }
         .bullet-item svg {
-            width: 15px;
-            height: 15px;
+            width: 16px;
+            height: 16px;
             color: var(--color-accent);
             flex-shrink: 0;
             margin-top: 3px;
@@ -1015,14 +1002,14 @@
             background: #FAFCFA;
             border: 1px solid var(--color-border);
             border-radius: var(--radius-sm);
-            padding: 0.75rem 0.9rem;
+            padding: 0.85rem 1rem;
         }
         .rx-title {
-            font-size: 0.75rem;
+            font-size: 0.78125rem;
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.04em;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.3rem;
             display: flex;
             align-items: center;
             gap: 0.4rem;
@@ -1031,8 +1018,9 @@
         .rx-cultural { color: var(--color-primary); }
         .rx-bio { color: #059669; }
         .rx-text {
-            font-size: 0.8125rem;
+            font-size: 0.85rem;
             color: var(--color-text-primary);
+            line-height: 1.5;
         }
 
         /* ── Action Footer in Diagnostic Card ───────────────── */
@@ -1087,7 +1075,7 @@
         .supported-section { margin-bottom: 4rem; }
         .section-header { margin-bottom: 1.5rem; text-align: center; }
         .section-title {
-            font-size: 1.45rem;
+            font-size: 1.5rem;
             font-weight: 800;
             color: var(--color-text-primary);
             letter-spacing: -0.02em;
@@ -1128,8 +1116,8 @@
             color: var(--color-text-subtle);
         }
         .class-card-icon {
-            width: 40px;
-            height: 40px;
+            width: 42px;
+            height: 42px;
             border-radius: var(--radius-sm);
             background: var(--color-accent-subtle);
             color: var(--color-primary);
@@ -1154,9 +1142,9 @@
             line-height: 1.2;
         }
         .class-card-bn {
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: var(--color-text-muted);
+            font-size: 0.78125rem;
+            font-weight: 600;
+            color: var(--color-primary-light);
         }
 
         /* ── Image Zoom Lightbox Modal ── */
@@ -1203,25 +1191,72 @@
             cursor: pointer;
         }
 
-        /* ── Footer ──────────────────────────────────────────── */
+        /* ── Premium Footer (Developed by Ohi) ───────────────── */
         .footer {
             margin-top: auto;
             border-top: 1px solid var(--color-border);
             background: #FFFFFF;
-            padding: 2rem 0;
+            padding: 2.75rem 0 2rem;
             text-align: center;
         }
+        .footer-creator-box {
+            background: #FAFCFA;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem 2rem;
+            max-width: 780px;
+            margin: 0 auto 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .footer-creator-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+            color: #FFFFFF;
+            padding: 0.4rem 1.1rem;
+            border-radius: var(--radius-full);
+            font-size: 0.8125rem;
+            font-weight: 700;
+            margin-bottom: 0.85rem;
+            box-shadow: 0 3px 10px rgba(15, 81, 50, 0.2);
+        }
+        .footer-creator-badge strong {
+            color: #FDE047;
+            font-weight: 800;
+            letter-spacing: 0.03em;
+        }
         .footer-brand {
-            font-size: 0.95rem;
+            font-size: 1.1rem;
             font-weight: 800;
             color: var(--color-primary);
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.4rem;
         }
-        .footer-sub {
-            font-size: 0.78125rem;
+        .footer-desc {
+            font-size: 0.85rem;
             color: var(--color-text-muted);
-            max-width: 600px;
-            margin: 0 auto;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        .footer-tech-stack {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .tech-tag {
+            background: #FFFFFF;
+            border: 1px solid var(--color-border);
+            padding: 0.25rem 0.65rem;
+            border-radius: var(--radius-full);
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--color-text-muted);
+        }
+        .footer-copyright {
+            font-size: 0.78125rem;
+            color: var(--color-text-subtle);
         }
 
         /* ── Alerts ──────────────────────────────────────────── */
@@ -1267,26 +1302,19 @@
                 </div>
                 <div class="brand-text">
                     <h1>RiceGuard AI</h1>
-                    <p data-en="Rice Leaf Intelligence" data-bn="ধানের পাতা রোগ নির্ণয়">Rice Leaf Intelligence</p>
+                    <p>ধানের পাতা রোগ নির্ণয় ও চিকিৎসা</p>
                 </div>
             </a>
 
             <div class="nav-right">
-                <!-- Language Toggle -->
-                <div class="lang-toggle" role="group" aria-label="Language Selector">
-                    <button type="button" class="lang-btn active" id="lang-en" onclick="setLanguage('en')">EN</button>
-                    <button type="button" class="lang-btn" id="lang-bn" onclick="setLanguage('bn')">বাংলা</button>
+                <div class="creator-tag-nav">
+                    <span>Developed by</span>
+                    <strong>Ohi</strong>
                 </div>
 
-                <div class="tech-pill hide-mobile">
-                    <span>ResNet18</span>
-                </div>
-                <div class="tech-pill hide-mobile">
-                    <span>8 Classes</span>
-                </div>
                 <div class="status-pill" role="status">
                     <span class="status-dot"></span>
-                    <span data-en="AI ONLINE" data-bn="এআই সচল">AI ONLINE</span>
+                    <span>এআই অনলাইন (Active)</span>
                 </div>
             </div>
         </div>
@@ -1296,15 +1324,19 @@
 
         <!-- ── Hero Section ── -->
         <section class="hero">
-            <div class="hero-eyebrow" data-en="AI-Powered Crop Diagnostics" data-bn="কৃত্রিম বুদ্ধিমত্তা চালিত ফসল রোগ নির্ণয়">AI-Powered Crop Diagnostics</div>
-            <h2 class="hero-title" data-en="Detect Rice Leaf Diseases with Computer Vision" data-bn="কম্পিউটার ভিশন দিয়ে ধানের পাতার রোগ শনাক্তকরণ">Detect Rice Leaf Diseases with Computer Vision</h2>
-            <p class="hero-subtitle" data-en="Upload a clear rice leaf photo and let the trained ResNet18 model analyze visible disease patterns with agronomic treatment guidance in seconds." data-bn="ধানের পাতার স্পষ্ট ছবি আপলোড করুন এবং এআই মডেলের মাধ্যমে তাৎক্ষণিক রোগ নির্ণয় ও সঠিক চিকিৎসা পরামর্শ পান।">
-                Upload a clear rice leaf photo and let the trained ResNet18 model analyze visible disease patterns with agronomic treatment guidance in seconds.
+            <div class="hero-eyebrow">
+                <span>🌾</span>
+                <span>কৃত্রিম বুদ্ধিমত্তা চালিত ফসল রোগ নির্ণয় ও প্রেসক্রিপশন</span>
+            </div>
+            <h2 class="hero-title">কম্পিউটার ভিশন দিয়ে ধানের পাতার রোগ শনাক্তকরণ</h2>
+            <div class="hero-title-en">AI-Powered Rice Leaf Disease Diagnostics & Agronomy Treatment</div>
+            <p class="hero-subtitle">
+                ধানের পাতার ছবি আপলোড করুন এবং রেসনেট১৮ (ResNet18 + GAN) ডিপ লার্নিং মডেলের মাধ্যমে মুহূর্তেই সঠিক রোগ নির্ণয় ও বালাইনাশক পরামর্শ পান।
             </p>
             <div class="hero-badges">
                 <span class="badge">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    <span data-en="GAN-Augmented Training" data-bn="জিএএন অগমেন্টেড ট্রেনিং">GAN-Augmented Training</span>
+                    <span>GAN-Augmented Training</span>
                 </span>
                 <span class="badge">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
@@ -1312,7 +1344,7 @@
                 </span>
                 <span class="badge">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.4 19 2c1 2 2 4.1 2 8 0 5.5-4.5 10-10 10Z"/></svg>
-                    <span data-en="8 Botanical Classes" data-bn="৮টি বোটানিক্যাল শ্রেণি">8 Botanical Classes</span>
+                    <span>৮টি বোটানিক্যাল শ্রেণি</span>
                 </span>
             </div>
         </section>
@@ -1322,37 +1354,37 @@
             <div class="samples-header">
                 <div class="samples-title-wrap">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" color="var(--color-accent)"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                    <span class="samples-title" data-en="Quick Test with Sample Leaves" data-bn="স্যাম্পল পাতা দিয়ে তাৎক্ষণিক টেস্ট">Quick Test with Sample Leaves</span>
+                    <span class="samples-title">স্যাম্পল পাতা দিয়ে এক ক্লিকে টেস্ট (Quick Test Samples)</span>
                 </div>
-                <span class="samples-hint" data-en="Click any sample to test immediately" data-bn="টেস্ট করতে যেকোনো স্যাম্পলে ক্লিক করুন">Click any sample to test immediately</span>
+                <span class="samples-hint">টেস্ট করতে নিচের যেকোনো স্যাম্পলে ক্লিক করুন</span>
             </div>
             <div class="samples-grid">
                 <button type="button" class="sample-btn" onclick="loadSample('/static/samples/brown_spot.jpg', 'Brown_spot_sample.jpg')">
                     <img src="/static/samples/brown_spot.jpg" class="sample-thumb" alt="Brown Spot" />
                     <div>
-                        <div class="sample-name">Brown Spot</div>
-                        <div class="sample-sub">বাদামী দাগ</div>
+                        <div class="sample-name">বাদামী দাগ রোগ</div>
+                        <div class="sample-sub">Brown Spot Leaf</div>
                     </div>
                 </button>
                 <button type="button" class="sample-btn" onclick="loadSample('/static/samples/healthy.jpg', 'Healthy_leaf_sample.jpg')">
                     <img src="/static/samples/healthy.jpg" class="sample-thumb" alt="Healthy Leaf" />
                     <div>
-                        <div class="sample-name">Healthy Leaf</div>
-                        <div class="sample-sub">সুস্থ পাতা</div>
+                        <div class="sample-name">সুস্থ ধানের পাতা</div>
+                        <div class="sample-sub">Healthy Rice Leaf</div>
                     </div>
                 </button>
                 <button type="button" class="sample-btn" onclick="loadSample('/static/samples/leaf_blast.jpg', 'Leaf_blast_sample.jpg')">
                     <img src="/static/samples/leaf_blast.jpg" class="sample-thumb" alt="Leaf Blast" />
                     <div>
-                        <div class="sample-name">Leaf Blast</div>
-                        <div class="sample-sub">পাতা ব্লাস্ট</div>
+                        <div class="sample-name">পাতা ব্লাস্ট রোগ</div>
+                        <div class="sample-sub">Leaf Blast Sample</div>
                     </div>
                 </button>
                 <button type="button" class="sample-btn" onclick="loadSample('/static/samples/bacterial_blight.jpg', 'Bacterial_blight_sample.jpg')">
                     <img src="/static/samples/bacterial_blight.jpg" class="sample-thumb" alt="Bacterial Blight" />
                     <div>
-                        <div class="sample-name">Bacterial Blight</div>
-                        <div class="sample-sub">পাতা পোড়া রোগ</div>
+                        <div class="sample-name">ব্যাকটেরিয়াল পাতা পোড়া</div>
+                        <div class="sample-sub">Bacterial Leaf Blight</div>
                     </div>
                 </button>
             </div>
@@ -1369,8 +1401,8 @@
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
                         </div>
                         <div>
-                            <h3 id="input-card-title" class="card-title" data-en="Analyze Rice Leaf" data-bn="ধানের পাতা আপলোড করুন">Analyze Rice Leaf</h3>
-                            <p class="card-subtext" data-en="Upload a clear, well-lit photo of a single rice leaf" data-bn="একটি ধানের পাতার স্পষ্ট ছবি নির্বাচন করুন">Upload a clear, well-lit photo of a single rice leaf</p>
+                            <h3 id="input-card-title" class="card-title">ধানের পাতা আপলোড ও পরীক্ষা</h3>
+                            <p class="card-subtext">একটি পরিষ্কার, স্পষ্ট ধানের পাতার ছবি আপলোড করুন</p>
                         </div>
                     </div>
                 </div>
@@ -1388,7 +1420,7 @@
                     <!-- Client Error Alert -->
                     <div class="alert alert-danger" role="alert" id="client-error-alert" style="display: none;">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
-                        <div id="client-error-text">An error occurred.</div>
+                        <div id="client-error-text">একটি ত্রুটি ঘটেছে।</div>
                     </div>
 
                     <form method="POST" action="/" enctype="multipart/form-data" id="diagnostic-form">
@@ -1400,9 +1432,9 @@
                                 <div class="dropzone-icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m16 16-4-4-4 4"/></svg>
                                 </div>
-                                <div class="dropzone-title" id="dropzone-title" data-en="Drop your leaf image here" data-bn="এখানে পাতার ছবি টেনে আনুন">Drop your leaf image here</div>
-                                <div class="dropzone-subtitle" data-en="or click to browse from device" data-bn="অথবা ডিভাইস থেকে সিলেক্ট করুন">or click to browse from device</div>
-                                <div class="dropzone-meta">JPG · PNG · BMP · TIFF (Max 10 MB)</div>
+                                <div class="dropzone-title" id="dropzone-title">এখানে পাতার ছবি টেনে আনুন বা ড্রপ করুন</div>
+                                <div class="dropzone-subtitle">অথবা ডিভাইস থেকে ফাইল নির্বাচন করুন (Click to browse)</div>
+                                <div class="dropzone-meta">JPG · PNG · BMP · TIFF (সর্বোচ্চ ১০ মেগাবাইট)</div>
                             </div>
                         </div>
 
@@ -1411,7 +1443,7 @@
                             <div class="preview-image-wrapper">
                                 <img id="preview-img" alt="Uploaded rice leaf sample" />
                                 
-                                <div class="preview-ready-badge" data-en="READY FOR ANALYSIS" data-bn="বিশ্লেষণের জন্য প্রস্তুত">READY FOR ANALYSIS</div>
+                                <div class="preview-ready-badge">বিশ্লেষণের জন্য প্রস্তুত (READY)</div>
 
                                 <!-- Scanner Overlay -->
                                 <div class="scanner-overlay" id="scanner-overlay">
@@ -1420,7 +1452,7 @@
 
                                 <button type="button" class="preview-overlay-btn" id="btn-zoom-preview" title="Zoom Image">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/><line x1="11" x2="11" y1="8" y2="14"/><line x1="8" x2="14" y1="11" y2="11"/></svg>
-                                    <span data-en="Zoom" data-bn="জুম">Zoom</span>
+                                    <span>জুম দেখুন</span>
                                 </button>
                             </div>
                             <div class="preview-details">
@@ -1435,7 +1467,7 @@
                                 </div>
                                 <button type="button" class="btn-remove-image" id="btn-remove-image" title="Remove image">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-                                    <span data-en="Remove" data-bn="মুছুন">Remove</span>
+                                    <span>মুছুন</span>
                                 </button>
                             </div>
                         </div>
@@ -1443,14 +1475,14 @@
                         <!-- Evaluation Mode Accordion -->
                         <div class="accordion-item" id="eval-accordion">
                             <button type="button" class="accordion-header" id="accordion-toggle" aria-expanded="false">
-                                <span data-en="Evaluation Mode (Optional Ground-Truth)" data-bn="মূল্যায়ন মোড (ঐচ্ছিক সত্যতা যাচাই)">Evaluation Mode (Optional Ground-Truth)</span>
+                                <span>মূল্যায়ন মোড (ঐচ্ছিক গ্রাউন্ড-ট্রুথ যাচাই)</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
                             </button>
                             <div class="accordion-content">
                                 <div class="form-group">
-                                    <label for="expected_class" data-en="Expected Known Class" data-bn="প্রত্যাশিত শ্রেণি নির্বাচন করুন">Expected Known Class</label>
+                                    <label for="expected_class">প্রত্যাশিত পরিচিত শ্রেণি (Known Label)</label>
                                     <select class="form-select" id="expected_class" name="expected_class">
-                                        <option value="">— Select Ground-Truth Class —</option>
+                                        <option value="">— শ্রেণি নির্বাচন করুন —</option>
                                         {% for cls in EXPECTED_CLASSES %}
                                             <option value="{{ cls }}" {% if expected_class == cls %}selected{% endif %}>{{ cls }}</option>
                                         {% endfor %}
@@ -1462,7 +1494,7 @@
                         <!-- Primary Action Button -->
                         <button type="submit" class="btn-primary" id="btn-submit" disabled>
                             <svg id="btn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/><line x1="11" x2="11" y1="8" y2="14"/><line x1="8" x2="14" y1="11" y2="11"/></svg>
-                            <span id="btn-text" data-en="Analyze Leaf" data-bn="পাতা বিশ্লেষণ করুন">Analyze Leaf</span>
+                            <span id="btn-text">পাতা বিশ্লেষণ ও রোগ শনাক্ত করুন</span>
                         </button>
 
                     </form>
@@ -1478,8 +1510,8 @@
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="m9 15 2 2 4-4"/></svg>
                         </div>
                         <div>
-                            <h3 id="output-card-title" class="card-title" data-en="Diagnostic Report" data-bn="ডায়াগনস্টিক রিপোর্ট">Diagnostic Report</h3>
-                            <p class="card-subtext" data-en="ResNet18 computer vision & agronomy output" data-bn="রেসনেট১৮ কম্পিউটার ভিশন ও কৃষিবিজ্ঞান আউটপুট">ResNet18 computer vision & agronomy output</p>
+                            <h3 id="output-card-title" class="card-title">ডায়াগনস্টিক রিপোর্ট ও প্রেসক্রিপশন</h3>
+                            <p class="card-subtext">ResNet18 কম্পিউটার ভিশন ও কৃষিবিজ্ঞান আউটপুট</p>
                         </div>
                     </div>
                 </div>
@@ -1491,15 +1523,15 @@
                         <div class="empty-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.4 19 2c1 2 2 4.1 2 8 0 5.5-4.5 10-10 10Z"/><path d="m21 21-4.3-4.3"/></svg>
                         </div>
-                        <div class="empty-title" data-en="Your diagnosis will appear here" data-bn="আপনার ফলাফল এখানে প্রদর্শিত হবে">Your diagnosis will appear here</div>
-                        <div class="empty-subtitle" data-en="Upload a rice leaf photo or click any quick sample above to start analysis." data-bn="একটি পাতার ছবি আপলোড করুন অথবা উপরের যেকোনো স্যাম্পলে ক্লিক করুন।">Upload a rice leaf photo or click any quick sample above to start analysis.</div>
+                        <div class="empty-title">আপনার রোগ নির্ণয়ের ফলাফল এখানে প্রদর্শিত হবে</div>
+                        <div class="empty-subtitle">একটি ধানের পাতার ছবি আপলোড করুন অথবা উপরের যেকোনো স্যাম্পল পাতায় ক্লিক করুন।</div>
                     </div>
 
                     <!-- State 2: Loading State -->
                     <div class="loading-state" id="state-loading">
                         <div class="loading-pulse-ring"></div>
-                        <div class="loading-step-text" id="loading-step-text" data-en="Preparing image tensor (224×224 RGB)…" data-bn="ইমেজ টেন্সর প্রস্তুত করা হচ্ছে…">Preparing image tensor (224×224 RGB)…</div>
-                        <div class="loading-subtext" data-en="Executing ResNet18 forward pass on CPU" data-bn="রেসনেট১৮ মডেলের মাধ্যমে বিশ্লেষণ চলছে">Executing ResNet18 forward pass on CPU</div>
+                        <div class="loading-step-text" id="loading-step-text">ইমেজ টেন্সর প্রস্তুত করা হচ্ছে (২২৪×২২৪)...</div>
+                        <div class="loading-subtext">রেসনেট১৮ মডেলের মাধ্যমে বিশ্লেষণ চলছে</div>
                     </div>
 
                     <!-- State 3: Active Result Content -->
@@ -1510,12 +1542,12 @@
                             <div class="headline-top-row">
                                 <div class="headline-tag">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                                    <span data-en="AI DIAGNOSIS" data-bn="শনাক্তকৃত রোগ">AI DIAGNOSIS</span>
+                                    <span>শনাক্তকৃত রোগ (AI DIAGNOSIS)</span>
                                 </div>
                                 <span class="severity-badge" id="result-severity">High Risk</span>
                             </div>
-                            <div class="disease-title-en" id="result-prediction">{{ prediction if prediction else '' }}</div>
                             <div class="disease-title-bn" id="result-prediction-bn"></div>
+                            <div class="disease-title-en" id="result-prediction">{{ prediction if prediction else '' }}</div>
                             <div class="pathogen-name" id="result-pathogen"></div>
                         </div>
 
@@ -1524,10 +1556,10 @@
                             <!-- Main Confidence Box -->
                             <div class="confidence-box">
                                 <div>
-                                    <div class="confidence-label" data-en="Primary Confidence" data-bn="মডেল কনফিডেন্স">Primary Confidence</div>
+                                    <div class="confidence-label">মডেল কনফিডেন্স (Confidence)</div>
                                     <div class="confidence-val-row">
                                         <span class="confidence-value" id="result-confidence-num">0%</span>
-                                        <span class="confidence-pill" id="result-confidence-pill">High</span>
+                                        <span class="confidence-pill" id="result-confidence-pill">উচ্চ নির্ভুলতা</span>
                                     </div>
                                 </div>
                                 <div class="progress-track" role="progressbar">
@@ -1538,7 +1570,7 @@
                             <!-- Top-3 Probabilities Box -->
                             <div class="top-predictions-box">
                                 <div class="top-pred-title">
-                                    <span data-en="Top-3 Probabilities" data-bn="সম্ভাবনার বণ্টন (টপ-৩)">Top-3 Probabilities</span>
+                                    <span>সম্ভাব্য রোগের তালিকা (Top-3)</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>
                                 </div>
                                 <div class="top-pred-list" id="top-predictions-list">
@@ -1550,13 +1582,13 @@
                         <!-- Dynamic Insights Tabs Section -->
                         <div class="insights-tabs-container">
                             <div class="tabs-header" role="tablist">
-                                <button type="button" class="tab-btn active" role="tab" aria-selected="true" aria-controls="tab-overview" id="btn-tab-overview" data-en="Overview" data-bn="সারসংক্ষেপ">Overview</button>
-                                <button type="button" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-symptoms" id="btn-tab-symptoms" data-en="Symptoms" data-bn="লক্ষণসমূহ">Symptoms</button>
-                                <button type="button" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-causes" id="btn-tab-causes" data-en="Causes" data-bn="কারণ">Causes</button>
-                                <button type="button" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-mgmt" id="btn-tab-mgmt" data-en="Treatment" data-bn="প্রতিকার ও ওষুধ">Treatment</button>
+                                <button type="button" class="tab-btn active" role="tab" aria-selected="true" aria-controls="tab-overview" id="btn-tab-overview">সারসংক্ষেপ</button>
+                                <button type="button" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-symptoms" id="btn-tab-symptoms">লক্ষণসমূহ</button>
+                                <button type="button" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-causes" id="btn-tab-causes">রোগের কারণ</button>
+                                <button type="button" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-mgmt" id="btn-tab-mgmt">প্রতিকার ও প্রেসক্রিপশন</button>
                             </div>
                             <div class="tab-pane active" id="tab-overview" role="tabpanel">
-                                <p id="text-overview">Loading overview...</p>
+                                <p id="text-overview">বিবরণ লোড হচ্ছে...</p>
                             </div>
                             <div class="tab-pane" id="tab-symptoms" role="tabpanel">
                                 <ul class="bullet-list" id="list-symptoms"></ul>
@@ -1573,11 +1605,11 @@
                         <div class="report-actions">
                             <button type="button" class="btn-print" onclick="window.print()">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
-                                <span data-en="Print / Save PDF Report" data-bn="রিপোর্ট প্রিন্ট / PDF সংরক্ষণ">Print / Save PDF Report</span>
+                                <span>রিপোর্ট প্রিন্ট / PDF সংরক্ষণ</span>
                             </button>
                             <button type="button" class="btn-reset" id="btn-reset">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-                                <span data-en="Analyze Another" data-bn="নতুন পাতা পরীক্ষা">Analyze Another</span>
+                                <span>নতুন পাতা পরীক্ষা</span>
                             </button>
                         </div>
 
@@ -1589,11 +1621,11 @@
         </div><!-- /workspace -->
 
 
-        <!-- ── Supported Rice Conditions Section (Tailored Botanical Icons) ── -->
+        <!-- ── Supported Rice Conditions Section ── -->
         <section class="supported-section" aria-labelledby="classes-title">
             <div class="section-header">
-                <h3 id="classes-title" class="section-title" data-en="Supported Rice Conditions" data-bn="শনাক্তকরণযোগ্য ধানের ৮টি রোগ ও অবস্থা">Supported Rice Conditions</h3>
-                <p class="section-subtitle" data-en="The vision model classifies leaf imagery into eight distinct botanical categories." data-bn="আমাদের কম্পিউটার ভিশন মডেল ধানের পাতার নিচের ৮টি অবস্থা নির্ভুলভাবে শনাক্ত করতে পারে।">The vision model classifies leaf imagery into eight distinct botanical categories.</p>
+                <h3 id="classes-title" class="section-title">শনাক্তকরণযোগ্য ধানের ৮টি অবস্থা ও রোগ</h3>
+                <p class="section-subtitle">আমাদের কম্পিউটার ভিশন মডেল ধানের পাতার নিচের ৮টি অবস্থা নির্ভুলভাবে শনাক্ত করতে পারে।</p>
             </div>
 
             <div class="classes-grid">
@@ -1601,12 +1633,12 @@
                 <div class="class-card">
                     <div class="class-card-idx">01</div>
                     <div class="class-card-icon" title="Bacterial Leaf Blight">
-                        <!-- Microbe / Bacteria Icon -->
+                        <!-- Microbe Icon -->
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v12a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4Z"/><path d="M6 8a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2"/><path d="M18 8a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2"/><line x1="12" x2="12" y1="8" y2="8.01"/><line x1="12" x2="12" y1="12" y2="12.01"/><line x1="12" x2="12" y1="16" y2="16.01"/></svg>
                     </div>
                     <div class="class-card-text">
-                        <div class="class-card-name">Bacterial Leaf Blight</div>
-                        <div class="class-card-bn">ব্যাকটেরিয়াল পাতা পোড়া</div>
+                        <div class="class-card-name">ব্যাকটেরিয়াল পাতা পোড়া</div>
+                        <div class="class-card-bn">Bacterial Leaf Blight</div>
                     </div>
                 </div>
 
@@ -1618,8 +1650,8 @@
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.4 19 2c1 2 2 4.1 2 8 0 5.5-4.5 10-10 10Z"/><circle cx="12" cy="11" r="1.5" fill="currentColor"/><circle cx="15" cy="8" r="1" fill="currentColor"/><circle cx="9" cy="14" r="1.2" fill="currentColor"/></svg>
                     </div>
                     <div class="class-card-text">
-                        <div class="class-card-name">Brown Spot</div>
-                        <div class="class-card-bn">বাদামী দাগ রোগ</div>
+                        <div class="class-card-name">বাদামী দাগ রোগ</div>
+                        <div class="class-card-bn">Brown Spot</div>
                     </div>
                 </div>
 
@@ -1631,8 +1663,8 @@
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
                     </div>
                     <div class="class-card-text">
-                        <div class="class-card-name">Healthy Rice Leaf</div>
-                        <div class="class-card-bn">সুস্থ ধানের পাতা</div>
+                        <div class="class-card-name">সুস্থ ধানের পাতা</div>
+                        <div class="class-card-bn">Healthy Rice Leaf</div>
                     </div>
                 </div>
 
@@ -1640,12 +1672,12 @@
                 <div class="class-card">
                     <div class="class-card-idx">04</div>
                     <div class="class-card-icon" title="Leaf Blast">
-                        <!-- Blast / Spindle Spore Icon -->
+                        <!-- Blast Spore Icon -->
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
                     </div>
                     <div class="class-card-text">
-                        <div class="class-card-name">Leaf Blast</div>
-                        <div class="class-card-bn">পাতা ব্লাস্ট রোগ</div>
+                        <div class="class-card-name">পাতা ব্লাস্ট রোগ</div>
+                        <div class="class-card-bn">Leaf Blast</div>
                     </div>
                 </div>
 
@@ -1653,12 +1685,12 @@
                 <div class="class-card">
                     <div class="class-card-idx">05</div>
                     <div class="class-card-icon" title="Leaf Scald">
-                        <!-- Chevron Waves / Scald Icon -->
+                        <!-- Chevron Scald Icon -->
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20"/><path d="m7 7 5 5-5 5"/><path d="m13 7 5 5-5 5"/></svg>
                     </div>
                     <div class="class-card-text">
-                        <div class="class-card-name">Leaf Scald</div>
-                        <div class="class-card-bn">লিফ স্ক্যাল্ড (ঝলকানো)</div>
+                        <div class="class-card-name">লিফ স্ক্যাল্ড (ঝলকানো)</div>
+                        <div class="class-card-bn">Leaf Scald</div>
                     </div>
                 </div>
 
@@ -1666,12 +1698,12 @@
                 <div class="class-card">
                     <div class="class-card-idx">06</div>
                     <div class="class-card-icon" title="Narrow Brown Leaf Spot">
-                        <!-- Linear Parallel Streaks Icon -->
+                        <!-- Parallel Streaks Icon -->
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="8" y1="4" y2="20"/><line x1="12" x2="12" y1="7" y2="17"/><line x1="16" x2="16" y1="5" y2="19"/></svg>
                     </div>
                     <div class="class-card-text">
-                        <div class="class-card-name">Narrow Brown Leaf Spot</div>
-                        <div class="class-card-bn">সরু বাদামী দাগ রোগ</div>
+                        <div class="class-card-name">সরু বাদামী দাগ রোগ</div>
+                        <div class="class-card-bn">Narrow Brown Leaf Spot</div>
                     </div>
                 </div>
 
@@ -1679,12 +1711,12 @@
                 <div class="class-card">
                     <div class="class-card-idx">07</div>
                     <div class="class-card-icon" title="Rice Hispa">
-                        <!-- Beetle / Insect Pest Icon -->
+                        <!-- Insect Icon -->
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="14" x="8" y="6" rx="4"/><path d="m19 7-3 2"/><path d="m5 7 3 2"/><path d="m19 19-3-2"/><path d="m5 19 3-2"/><path d="M20 13h-4"/><path d="M4 13h4"/><path d="m10 4 1 2"/><path d="m14 4-1 2"/></svg>
                     </div>
                     <div class="class-card-text">
-                        <div class="class-card-name">Rice Hispa</div>
-                        <div class="class-card-bn">ধানের পামরী পোকা</div>
+                        <div class="class-card-name">ধানের পামরী পোকা</div>
+                        <div class="class-card-bn">Rice Hispa</div>
                     </div>
                 </div>
 
@@ -1692,12 +1724,12 @@
                 <div class="class-card">
                     <div class="class-card-idx">08</div>
                     <div class="class-card-icon" title="Sheath Blight">
-                        <!-- Layered Sheath Fungus Icon -->
+                        <!-- Sheath Fungus Icon -->
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 0 0-9 9c0 4.97 4.03 9 9 9s9-4.03 9-9c0-4.97-4.03-9-9-9Z"/><path d="M12 7a5 5 0 0 0-5 5c0 2.76 2.24 5 5 5s5-2.24 5-5c0-2.76-2.24-5-5-5Z"/></svg>
                     </div>
                     <div class="class-card-text">
-                        <div class="class-card-name">Sheath Blight</div>
-                        <div class="class-card-bn">খোল পোড়া রোগ</div>
+                        <div class="class-card-name">খোল পোড়া রোগ</div>
+                        <div class="class-card-bn">Sheath Blight</div>
                     </div>
                 </div>
             </div>
@@ -1715,38 +1747,37 @@
         </div>
     </div>
 
-    <!-- ── Footer ── -->
+    <!-- ── Premium Footer (Developed by Ohi) ── -->
     <footer class="footer">
         <div class="container">
-            <div class="footer-brand">RiceGuard AI Platform</div>
-            <p class="footer-sub" data-en="AI-powered rice leaf disease classification & agronomy decision support system. Powered by a ResNet18 computer vision model trained with GAN-augmented data." data-bn="ধানের পাতার রোগ নির্ণয় ও আধুনিক কৃষি পরামর্শ প্ল্যাটফর্ম। জিএএন-অগমেন্টেড রেসনেট১৮ ডিপ লার্নিং মডেল দ্বারা পরিচালিত।">
-                AI-powered rice leaf disease classification & agronomy decision support system.<br/>
-                Powered by a ResNet18 computer vision model trained with GAN-augmented data.
-            </p>
+            <div class="footer-creator-box">
+                <div class="footer-creator-badge">
+                    <span>✨ Designed & Developed by</span>
+                    <strong>Ohi</strong>
+                </div>
+                <div class="footer-brand">RiceGuard AI — ধানের রোগ নির্ণয় ও ফসল সুরক্ষা প্ল্যাটফর্ম</div>
+                <p class="footer-desc">
+                    একটি কৃত্রিম বুদ্ধিমত্তা চালিত কম্পিউটার ভিশন সিস্টেম (ResNet18 + GAN-Augmented CNN)।<br/>
+                    কৃষক ও কৃষিবিদদের জন্য দ্রুত ও নির্ভুলভাবে ধানের রোগ শনাক্তকরণ ও প্রেসক্রিপশন প্রদানের লক্ষ্যে নির্মিত।
+                </p>
+                <div class="footer-tech-stack">
+                    <span class="tech-tag">PyTorch CPU</span>
+                    <span class="tech-tag">ResNet18 Classifier</span>
+                    <span class="tech-tag">GAN-Augmented CNN</span>
+                    <span class="tech-tag">Flask Framework</span>
+                    <span class="tech-tag">Agronomy Prescriptions</span>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                © 2026 RiceGuard AI Platform • Developed with ❤️ by <strong>Ohi</strong>
+            </div>
         </div>
     </footer>
 
     <!-- ── Interactive JavaScript Logic ── -->
     <script>
-        let currentLang = 'en';
         let currentDiseaseData = null;
         let currentTopPredictions = null;
-
-        function setLanguage(lang) {
-            currentLang = lang;
-            document.getElementById('lang-en').classList.toggle('active', lang === 'en');
-            document.getElementById('lang-bn').classList.toggle('active', lang === 'bn');
-
-            // Update all static i18n texts
-            document.querySelectorAll('[data-en]').forEach(el => {
-                el.textContent = el.getAttribute(`data-${lang}`) || el.getAttribute('data-en');
-            });
-
-            // Update dynamic result tabs if available
-            if (currentDiseaseData) {
-                renderDiseaseTabs(currentDiseaseData);
-            }
-        }
 
         /* Helper to format bytes */
         function formatBytes(bytes) {
@@ -1787,7 +1818,6 @@
             const form             = document.getElementById('diagnostic-form');
             const fileInput        = document.getElementById('image-input');
             const dropzone         = document.getElementById('dropzone');
-            const dropzoneTitle    = document.getElementById('dropzone-title');
             const previewBox       = document.getElementById('preview-box');
             const previewImg       = document.getElementById('preview-img');
             const scannerOverlay   = document.getElementById('scanner-overlay');
@@ -1838,13 +1868,13 @@
                 if (!file) return;
 
                 if (!file.type.startsWith('image/')) {
-                    showError('Please upload a valid JPG or PNG rice leaf image.');
+                    showError('দয়া করে একটি সঠিক JPG বা PNG ফরম্যাটের পাতার ছবি আপলোড করুন।');
                     resetFileInput();
                     return;
                 }
 
                 if (file.size > 10 * 1024 * 1024) {
-                    showError('File size exceeds the 10 MB limit. Please choose a smaller image.');
+                    showError('ছবির সাইজ ১০ মেগাবাইটের বেশি হতে পারবে না।');
                     resetFileInput();
                     return;
                 }
@@ -1957,29 +1987,24 @@
 
                 const formData = new FormData(form);
                 if (!fileInput.files || fileInput.files.length === 0) {
-                    showError('Please select or upload a rice leaf photo first.');
+                    showError('দয়া করে প্রথমে একটি ধানের পাতার ছবি নির্বাচন করুন।');
                     return;
                 }
 
                 if (scannerOverlay) scannerOverlay.classList.add('scanning');
                 btnSubmit.disabled = true;
                 btnIcon.innerHTML = '<div class="spinner"></div>';
-                btnText.textContent = currentLang === 'bn' ? 'বিশ্লেষণ চলছে…' : 'Analyzing…';
+                btnText.textContent = 'বিশ্লেষণ চলছে…';
 
                 stateEmpty.style.display = 'none';
                 stateResult.classList.remove('active');
                 stateLoading.classList.add('active');
 
-                const steps = currentLang === 'bn' ? [
-                    'ইমেজ টেন্সর প্রস্তুত করা হচ্ছে (২২৪×২২৪)...',
+                const steps = [
+                    'ইমেজ টেন্সর প্রস্তুত করা হচ্ছে (২২৪×২২৪ RGB)...',
                     'পাতার ক্ষত ও প্যাটার্ন বিশ্লেষণ চলছে...',
                     'রেসনেট১৮ মডেলের সাহায্যে রোগ নির্ণয় হচ্ছে...',
                     'কৃষিবিজ্ঞান প্রেসক্রিপশন তৈরি হচ্ছে...'
-                ] : [
-                    'Preparing image tensor (224×224 RGB)…',
-                    'Extracting lesion & vascular features…',
-                    'Matching disease classification maps…',
-                    'Generating agronomic diagnosis…'
                 ];
                 let stepIdx = 0;
                 const stepInterval = setInterval(() => {
@@ -2006,8 +2031,8 @@
                     try {
                         data = await res.json();
                     } catch (parseErr) {
-                        if (!res.ok) throw new Error(`Server returned error status ${res.status}`);
-                        throw new Error('Server returned an invalid response format.');
+                        if (!res.ok) throw new Error(`সার্ভার থেকে ত্রুটি এসেছে: ${res.status}`);
+                        throw new Error('সার্ভার থেকে সঠিক তথ্য পাওয়া যায়নি।');
                     }
                     return data;
                 });
@@ -2020,12 +2045,12 @@
 
                     btnSubmit.disabled = false;
                     btnIcon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/><line x1="11" x2="11" y1="8" y2="14"/><line x1="8" x2="14" y1="11" y2="11"/></svg>';
-                    btnText.textContent = currentLang === 'bn' ? 'পুনরায় বিশ্লেষণ' : 'Analyze Leaf';
+                    btnText.textContent = 'পাতা বিশ্লেষণ ও রোগ শনাক্ত করুন';
 
                     if (data && data.success) {
                         renderResults(data);
                     } else {
-                        showError((data && data.error) ? data.error : 'Could not analyze this image. Please try another clear leaf photo.');
+                        showError((data && data.error) ? data.error : 'ছবিটি বিশ্লেষণ করা যায়নি। অন্য একটি পরিষ্কার ছবি দিয়ে চেষ্টা করুন।');
                         stateEmpty.style.display = 'flex';
                     }
                 })
@@ -2035,11 +2060,11 @@
                     stateLoading.classList.remove('active');
                     btnSubmit.disabled = false;
                     btnIcon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/><line x1="11" x2="11" y1="8" y2="14"/><line x1="8" x2="14" y1="11" y2="11"/></svg>';
-                    btnText.textContent = currentLang === 'bn' ? 'পাতা বিশ্লেষণ করুন' : 'Analyze Leaf';
+                    btnText.textContent = 'পাতা বিশ্লেষণ ও রোগ শনাক্ত করুন';
                     
                     showError(err.name === 'AbortError'
-                        ? 'Request timed out — server is waking up. Please try again.'
-                        : (err.message || 'Could not reach server. Please try again.'));
+                        ? 'অনুরোধের সময় শেষ হয়েছে — সার্ভার স্লিপ মোড থেকে চালু হচ্ছে। অনুগ্রহ করে আবার চেষ্টা করুন।'
+                        : (err.message || 'সার্ভারে সংযোগ স্থাপন করা যায়নি।'));
                 });
             });
 
@@ -2048,9 +2073,9 @@
                 currentDiseaseData = data.disease_info || {};
                 currentTopPredictions = data.top_predictions || [];
 
-                resultPrediction.textContent = data.prediction;
-                resultPredBn.textContent = currentDiseaseData.name_bn || '';
-                resultPathogen.textContent = currentDiseaseData.pathogen ? `Pathogen: ${currentDiseaseData.pathogen}` : '';
+                resultPredBn.textContent = currentDiseaseData.name_bn || data.prediction;
+                resultPrediction.textContent = `${data.prediction} (Botanical Class)`;
+                resultPathogen.textContent = currentDiseaseData.pathogen ? `জীবাণু / Pathogen: ${currentDiseaseData.pathogen}` : '';
 
                 if (currentDiseaseData.severity) {
                     resultSeverity.textContent = currentDiseaseData.severity;
@@ -2062,13 +2087,13 @@
                 resultConfNum.textContent = data.confidence + '%';
                 resultConfPill.className = 'confidence-pill';
                 if (data.confidence >= 85) {
-                    resultConfPill.textContent = 'High Confidence';
+                    resultConfPill.textContent = 'উচ্চ নির্ভুলতা (High)';
                     resultConfPill.classList.add('pill-high');
                 } else if (data.confidence >= 65) {
-                    resultConfPill.textContent = 'Moderate Confidence';
+                    resultConfPill.textContent = 'মাঝারি নির্ভুলতা (Mod)';
                     resultConfPill.classList.add('pill-mod');
                 } else {
-                    resultConfPill.textContent = 'Low Confidence';
+                    resultConfPill.textContent = 'কম নির্ভুলতা (Low)';
                     resultConfPill.classList.add('pill-low');
                 }
 
@@ -2084,7 +2109,7 @@
                     item.className = 'top-pred-item';
                     item.innerHTML = `
                         <div class="top-pred-meta">
-                            <span class="top-pred-name">${pred.class}</span>
+                            <span class="top-pred-name">${pred.class_bn || pred.class}</span>
                             <span class="top-pred-percent">${pred.confidence}%</span>
                         </div>
                         <div class="top-pred-bar">
@@ -2113,9 +2138,8 @@
             }
         });
 
-        /* ── Dynamic Tab Population ── */
+        /* ── Dynamic Tab Population (Bangla + English Dual Details) ── */
         function renderDiseaseTabs(info) {
-            const isBn = currentLang === 'bn';
             const overviewText = document.getElementById('text-overview');
             const symptomsList = document.getElementById('list-symptoms');
             const causesList   = document.getElementById('list-causes');
@@ -2124,73 +2148,90 @@
             if (!info || !overviewText) return;
 
             // Overview
-            overviewText.textContent = (isBn ? info.overview_bn : info.overview_en) || 'No specific overview available.';
+            overviewText.innerHTML = `
+                <p style="margin-bottom:0.6rem;font-weight:500;color:var(--color-text-primary);">${info.overview_bn || info.overview_en}</p>
+                <p style="font-size:0.8rem;color:var(--color-text-muted);font-style:italic;">${info.overview_en || ''}</p>
+            `;
 
             // Symptoms
             symptomsList.innerHTML = '';
-            const symptoms = (isBn ? info.symptoms_bn : info.symptoms_en) || [];
-            symptoms.forEach(sym => {
+            const symptomsBn = info.symptoms_bn || [];
+            const symptomsEn = info.symptoms_en || [];
+            symptomsBn.forEach((symBn, idx) => {
+                const symEn = symptomsEn[idx] ? `<div style="font-size:0.75rem;color:var(--color-text-subtle);">${symptomsEn[idx]}</div>` : '';
                 const li = document.createElement('li');
                 li.className = 'bullet-item';
                 li.innerHTML = `
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                    <span>${sym}</span>
+                    <div>
+                        <strong style="color:var(--color-text-primary);">${symBn}</strong>
+                        ${symEn}
+                    </div>
                 `;
                 symptomsList.appendChild(li);
             });
 
             // Causes
             causesList.innerHTML = '';
-            const causes = (isBn ? info.causes_bn : info.causes_en) || [];
-            causes.forEach(cause => {
+            const causesBn = info.causes_bn || [];
+            const causesEn = info.causes_en || [];
+            causesBn.forEach((causeBn, idx) => {
+                const causeEn = causesEn[idx] ? `<div style="font-size:0.75rem;color:var(--color-text-subtle);">${causesEn[idx]}</div>` : '';
                 const li = document.createElement('li');
                 li.className = 'bullet-item';
                 li.innerHTML = `
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
-                    <span>${cause}</span>
+                    <div>
+                        <strong style="color:var(--color-text-primary);">${causeBn}</strong>
+                        ${causeEn}
+                    </div>
                 `;
                 causesList.appendChild(li);
             });
 
             // Management / Treatment
             mgmtGrid.innerHTML = '';
-            const mgmt = (isBn ? info.management_bn : info.management_en) || {};
+            const mgmtBn = info.management_bn || {};
+            const mgmtEn = info.management_en || {};
 
-            if (mgmt.chemical) {
+            if (mgmtBn.chemical || mgmtEn.chemical) {
                 const cDiv = document.createElement('div');
                 cDiv.className = 'rx-card';
                 cDiv.innerHTML = `
                     <div class="rx-title rx-chemical">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m14 2-4 4-2-2-4 4 4 4"/><path d="m14 10 4 4"/><path d="m19 15-4-4"/></svg>
-                        <span>${isBn ? 'রাসায়নিক প্রতিকার (Chemical Control)' : 'Chemical Fungicide / Bactericide'}</span>
+                        <span>রাসায়নিক প্রতিকার ও বালাইনাশক (Chemical Control)</span>
                     </div>
-                    <div class="rx-text">${mgmt.chemical}</div>
+                    <div class="rx-text">${mgmtBn.chemical || ''}</div>
+                    <div style="font-size:0.75rem;color:var(--color-text-muted);margin-top:0.25rem;">${mgmtEn.chemical || ''}</div>
                 `;
                 mgmtGrid.appendChild(cDiv);
             }
 
-            if (mgmt.cultural) {
+            if (mgmtBn.cultural || mgmtEn.cultural) {
                 const cultDiv = document.createElement('div');
                 cultDiv.className = 'rx-card';
                 cultDiv.innerHTML = `
                     <div class="rx-title rx-cultural">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7Z"/><line x1="9" x2="15" y1="22" y2="22"/></svg>
-                        <span>${isBn ? 'কৃষি ব্যবস্থাপনা ও পরিচর্যা (Cultural Practices)' : 'Cultural & Water Practices'}</span>
+                        <span>কৃষি ব্যবস্থাপনা ও পরিচর্যা (Cultural & Water Practices)</span>
                     </div>
-                    <div class="rx-text">${mgmt.cultural}</div>
+                    <div class="rx-text">${mgmtBn.cultural || ''}</div>
+                    <div style="font-size:0.75rem;color:var(--color-text-muted);margin-top:0.25rem;">${mgmtEn.cultural || ''}</div>
                 `;
                 mgmtGrid.appendChild(cultDiv);
             }
 
-            if (mgmt.biological) {
+            if (mgmtBn.biological || mgmtEn.biological) {
                 const bioDiv = document.createElement('div');
                 bioDiv.className = 'rx-card';
                 bioDiv.innerHTML = `
                     <div class="rx-title rx-bio">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.4 19 2c1 2 2 4.1 2 8 0 5.5-4.5 10-10 10Z"/></svg>
-                        <span>${isBn ? 'জৈব বা প্রাকৃতিক নিয়ন্ত্রণ (Biological Control)' : 'Biological & Organic Control'}</span>
+                        <span>জৈব ও প্রাকৃতিক নিয়ন্ত্রণ (Biological & Organic Control)</span>
                     </div>
-                    <div class="rx-text">${mgmt.biological}</div>
+                    <div class="rx-text">${mgmtBn.biological || ''}</div>
+                    <div style="font-size:0.75rem;color:var(--color-text-muted);margin-top:0.25rem;">${mgmtEn.biological || ''}</div>
                 `;
                 mgmtGrid.appendChild(bioDiv);
             }
