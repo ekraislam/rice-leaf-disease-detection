@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title id="page-title">RiceGuard AI — ধানের পাতার রোগ নির্ণয় ও বালাইনাশক প্রেসক্রিপশন</title>
     <meta name="description" content="AI-powered rice leaf disease detection, Grad-CAM explainability, and agronomic prescription platform powered by a GAN-augmented ResNet18 deep learning vision model. Developed by Ohi." />
+    <meta name="google" content="notranslate" />
 
     <!-- Google Fonts: Plus Jakarta Sans & Noto Sans Bengali -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1035,31 +1036,44 @@
         }
         .tabs-header {
             display: flex;
-            background: #FAFCFA;
-            border-bottom: 1px solid var(--color-border);
+            background: #F1F5F9;
+            padding: 6px;
+            gap: 6px;
             overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .tabs-header::-webkit-scrollbar {
+            display: none;
         }
         .tab-btn {
-            flex: 1;
-            min-width: 80px;
-            padding: 0.65rem 0.35rem;
+            flex: 1 1 auto;
+            min-width: fit-content;
+            padding: 0.55rem 0.85rem;
             font-family: inherit;
             font-size: 0.8125rem;
             font-weight: 700;
             color: var(--color-text-muted);
             background: transparent;
             border: none;
-            border-bottom: 2px solid transparent;
+            border-radius: var(--radius-sm);
             cursor: pointer;
             transition: all var(--transition-fast);
             text-align: center;
             white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
         }
-        .tab-btn:hover { color: var(--color-primary); }
+        .tab-btn:hover {
+            color: var(--color-primary);
+            background: rgba(255, 255, 255, 0.6);
+        }
         .tab-btn.active {
             color: var(--color-primary);
-            border-bottom-color: var(--color-accent);
-            background: var(--color-surface);
+            background: #FFFFFF;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
         }
         .tab-pane {
             display: none;
@@ -1518,7 +1532,7 @@
 
                 <div class="creator-tag-nav">
                     <span data-i18n="dev_tag">Developed by</span>
-                    <strong>Ohi</strong>
+                    <strong class="notranslate" translate="no">Ohi</strong>
                 </div>
 
                 <div class="status-pill" role="status">
@@ -2039,7 +2053,7 @@
                 <div class="footer-creator-badge">
                     <span>✨</span>
                     <span data-i18n="footer_dev_label">Designed & Developed by</span>
-                    <strong>Ohi</strong>
+                    <strong class="notranslate" translate="no">Ohi</strong>
                 </div>
                 <div class="footer-brand" data-i18n="footer_brand">RiceGuard AI — ধানের রোগ নির্ণয় ও ফসল সুরক্ষা প্ল্যাটফর্ম</div>
                 <p class="footer-desc" data-i18n="footer_desc">
@@ -2056,7 +2070,7 @@
                 </div>
             </div>
             <div class="footer-copyright">
-                <span data-i18n="footer_copy">© 2026 RiceGuard AI Platform • Developed with ❤️ by</span> <strong>Ohi</strong>
+                <span data-i18n="footer_copy">© 2026 RiceGuard AI Platform • Developed with ❤️ by</span> <strong class="notranslate" translate="no">Ohi</strong>
             </div>
         </div>
     </footer>
@@ -2104,11 +2118,11 @@
                 btn_voice_read: 'প্রেসক্রিপশন শুনুন',
                 conf_label: 'মডেল কনফিডেন্স',
                 top3_title: 'সম্ভাব্য রোগের তালিকা (Top-3)',
-                tab_overview: 'সারসংক্ষেপ',
-                tab_symptoms: 'লক্ষণসমূহ',
-                tab_causes: 'রোগের কারণ',
-                tab_mgmt: 'প্রতিকার ও প্রেসক্রিপশন',
-                tab_calc: 'ডোজ ক্যালকুলেটর',
+                tab_overview: '🌿 সারসংক্ষেপ',
+                tab_symptoms: '🔍 লক্ষণসমূহ',
+                tab_causes: '⚠️ কারণসমূহ',
+                tab_mgmt: '💊 প্রতিকার',
+                tab_calc: '🧪 ডোজ হিসাব',
                 adv_title: 'মাঠ ও আবহাওয়া স্প্রে সতর্কতা গাইড',
                 adv_1: 'স্প্রে করার ৪ ঘণ্টার মধ্যে বৃষ্টির সম্ভাবনা থাকলে স্প্রে স্থগিত রাখুন।',
                 adv_2: 'মেঘলা দিনে বা শিশির ভেজা অবস্থায় বালাইনাশকের সাথে কৃষি আঠা (Sticker) মিশিয়ে নিন।',
@@ -2194,11 +2208,11 @@
                 btn_voice_read: 'Listen Audio',
                 conf_label: 'Model Confidence',
                 top3_title: 'Top-3 Probability Distribution',
-                tab_overview: 'Overview',
-                tab_symptoms: 'Symptoms',
-                tab_causes: 'Causes & Pathogen',
-                tab_mgmt: 'Treatment & Prescription',
-                tab_calc: 'Dosage Calculator',
+                tab_overview: '🌿 Overview',
+                tab_symptoms: '🔍 Symptoms',
+                tab_causes: '⚠️ Causes',
+                tab_mgmt: '💊 Treatment',
+                tab_calc: '🧪 Dosage Calc',
                 adv_title: 'Weather & Spraying Advisory',
                 adv_1: 'Postpone spraying if rain is expected within 4 hours.',
                 adv_2: 'Mix an agricultural sticker/surfactant during humid or overcast conditions.',
