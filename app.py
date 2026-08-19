@@ -220,6 +220,38 @@ def index():
 
 
 
+import urllib.parse
+import urllib.request
+from flask import Response
+
+
+@app.route("/api/tts", methods=["GET"])
+def text_to_speech():
+    text = request.args.get("text", "").strip()
+    lang = request.args.get("lang", "bn").strip()
+    if not text:
+        return jsonify({"error": "No text provided"}), 400
+
+    # Limit text length to 300 chars for rapid streaming
+    if len(text) > 300:
+        text = text[:300]
+
+    try:
+        encoded_text = urllib.parse.quote(text)
+        tts_url = f"https://translate.google.com/translate_tts?ie=UTF-8&q={encoded_text}&tl={lang}&client=tw-ob"
+        req = urllib.request.Request(
+            tts_url,
+            headers={
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+            }
+        )
+        with urllib.request.urlopen(req, timeout=6) as response:
+            audio_data = response.read()
+        return Response(audio_data, mimetype="audio/mpeg")
+    except Exception as e:
+        return jsonify({"error": f"TTS generation failed: {str(e)}"}), 500
+
+
 if __name__ == "__main__":
     import os
     port = int(os.environ.get("PORT", 5000))

@@ -2532,18 +2532,8 @@
         }
 
         /* ── Feature 3: Voice / Audio Prescription Speech ── */
+        let activeAudio = null;
         let isSpeaking = false;
-        let availableVoices = [];
-
-        function loadVoices() {
-            if ('speechSynthesis' in window) {
-                availableVoices = window.speechSynthesis.getVoices();
-            }
-        }
-        if ('speechSynthesis' in window) {
-            loadVoices();
-            window.speechSynthesis.onvoiceschanged = loadVoices;
-        }
 
         function cleanSpeechText(text, isBn) {
             if (!text) return '';
@@ -2558,20 +2548,28 @@
             return cleaned.replace(/\s+/g, ' ').trim();
         }
 
+        function stopAudioSpeech() {
+            if (activeAudio) {
+                activeAudio.pause();
+                activeAudio.currentTime = 0;
+                activeAudio = null;
+            }
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+            isSpeaking = false;
+            const btn = document.getElementById('btn-voice-read');
+            const btnText = document.getElementById('voice-btn-text');
+            if (btn) btn.classList.remove('speaking');
+            if (btnText) btnText.textContent = currentLang === 'bn' ? 'প্রেসক্রিপশন শুনুন' : 'Listen Audio';
+        }
+
         function toggleVoiceSpeech() {
             const btn = document.getElementById('btn-voice-read');
             const btnText = document.getElementById('voice-btn-text');
 
-            if (!('speechSynthesis' in window)) {
-                alert(currentLang === 'bn' ? 'আপনার ব্রাউজারে স্পিচ সিন্থেসিস সাপোর্ট করে না।' : 'Speech synthesis not supported on this browser.');
-                return;
-            }
-
             if (isSpeaking) {
-                window.speechSynthesis.cancel();
-                isSpeaking = false;
-                btn.classList.remove('speaking');
-                btnText.textContent = currentLang === 'bn' ? 'প্রেসক্রিপশন শুনুন' : 'Listen Audio';
+                stopAudioSpeech();
                 return;
             }
 
@@ -2588,7 +2586,7 @@
                 if (diseaseName.includes('সুস্থ')) {
                     speechText = 'আপনার পরীক্ষিত ধানের পাতাটি সম্পূর্ণ সুস্থ ও রোগমুক্ত। জমিতে কোনো কীটনাশক বা বালাইনাশক স্প্রে করার প্রয়োজন নেই। সুষম সেচ বজায় রাখুন।';
                 } else {
-                    speechText = `ধানের পাতায় সনাক্তকৃত রোগ হলো ${cleanSpeechText(diseaseName, true)}। এটি একটি ${severity} মাত্রার রোগ। বালাইনাশক প্রেসক্রিপশন: ${chemRx}। জমিতে অতিরিক্ত পানি থাকলে নিষ্কাশন করুন এবং বিকেল বেলা মিষ্টি রোদে স্প্রে করুন।`;
+                    speechText = `ধানের পাতায় সনাক্তকৃত রোগ হলো ${cleanSpeechText(diseaseName, true)}। এটি একটি ${severity} মাত্রার রোগ। বালাইনাশক প্রেসক্রিপশন: ${chemRx}। জমিতে অতিরিক্ত পানি থাকলে নিষ্কাশন করুন এবং বিকেলে স্প্রে করুন।`;
                 }
             } else {
                 if (diseaseName.toLowerCase().includes('healthy')) {
@@ -2598,50 +2596,47 @@
                 }
             }
 
-            window.speechSynthesis.cancel();
+            // Start Audio playback
+            isSpeaking = true;
+            btn.classList.add('speaking');
+            btnText.textContent = isBn ? 'থামুন ⏸' : 'Stop ⏸';
 
-            const utterance = new SpeechSynthesisUtterance(speechText);
-            utterance.lang = isBn ? 'bn-BD' : 'en-US';
-            utterance.rate = isBn ? 0.9 : 0.95;
-            utterance.pitch = 1.0;
+            // High-fidelity natural voice stream from /api/tts
+            const audioUrl = '/api/tts?lang=' + (isBn ? 'bn' : 'en') + '&text=' + encodeURIComponent(speechText);
+            activeAudio = new Audio(audioUrl);
 
-            loadVoices();
-            if (isBn) {
-                const bnVoice = availableVoices.find(v => 
-                    v.lang === 'bn-BD' || v.lang === 'bn_BD' || v.lang === 'bn-IN' || v.lang === 'bn' ||
-                    (v.name && (v.name.includes('Bangla') || v.name.includes('Bengali') || v.name.includes('বাংলা')))
-                );
-                if (bnVoice) {
-                    utterance.voice = bnVoice;
+            activeAudio.onended = () => {
+                stopAudioSpeech();
+            };
+
+            activeAudio.onerror = () => {
+                // Fallback to Web Speech API if backend stream fails
+                console.warn('Backend audio failed, falling back to Web Speech API');
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    const utterance = new SpeechSynthesisUtterance(speechText);
+                    utterance.lang = isBn ? 'bn-BD' : 'en-US';
+                    utterance.rate = isBn ? 0.9 : 0.95;
+                    utterance.onend = stopAudioSpeech;
+                    utterance.onerror = stopAudioSpeech;
+                    window.speechSynthesis.speak(utterance);
+                } else {
+                    stopAudioSpeech();
                 }
-            } else {
-                const enVoice = availableVoices.find(v => 
-                    v.lang.startsWith('en') && (v.name.includes('Natural') || v.name.includes('Google') || v.default)
-                );
-                if (enVoice) {
-                    utterance.voice = enVoice;
+            };
+
+            activeAudio.play().catch(err => {
+                console.warn('Audio play error, falling back to SpeechSynthesis:', err);
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(speechText);
+                    utterance.lang = isBn ? 'bn-BD' : 'en-US';
+                    utterance.onend = stopAudioSpeech;
+                    utterance.onerror = stopAudioSpeech;
+                    window.speechSynthesis.speak(utterance);
+                } else {
+                    stopAudioSpeech();
                 }
-            }
-
-            utterance.onstart = () => {
-                isSpeaking = true;
-                btn.classList.add('speaking');
-                btnText.textContent = isBn ? 'থামুন ⏸' : 'Stop ⏸';
-            };
-
-            utterance.onend = () => {
-                isSpeaking = false;
-                btn.classList.remove('speaking');
-                btnText.textContent = isBn ? 'প্রেসক্রিপশন শুনুন' : 'Listen Audio';
-            };
-
-            utterance.onerror = () => {
-                isSpeaking = false;
-                btn.classList.remove('speaking');
-                btnText.textContent = isBn ? 'প্রেসক্রিপশন শুনুন' : 'Listen Audio';
-            };
-
-            window.speechSynthesis.speak(utterance);
+            });
         }
 
         /* Helper to format bytes */
