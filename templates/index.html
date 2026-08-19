@@ -7,27 +7,43 @@
     <meta name="description" content="AI-powered rice leaf disease detection, Grad-CAM explainability, and agronomic prescription platform powered by a GAN-augmented ResNet18 deep learning vision model. Developed by Ohi." />
     <meta name="google" content="notranslate" />
 
+    <!-- PWA & Mobile Web App Capabilities -->
+    <meta name="theme-color" content="#0F5132" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="RiceGuard" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="apple-touch-icon" href="/static/icons/icon-192.png" />
+
     <!-- Google Fonts: Plus Jakarta Sans & Noto Sans Bengali -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
+    <!-- Client-Side PDF Engines (html2canvas, jsPDF, html2pdf.js) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
     <style>
         /* ── Botanical Precision Design System ────────────────── */
         :root {
-            --color-primary: #0F5132;
-            --color-primary-dark: #0A3622;
-            --color-primary-light: #1E6B47;
+            --color-primary: #064E3B;
+            --color-primary-dark: #022C22;
+            --color-primary-light: #047857;
             --color-accent: #10B981;
             --color-accent-light: #34D399;
             --color-accent-subtle: #ECFDF5;
-            --color-bg: #F8FAF8;
+            --color-accent-glow: rgba(16, 185, 129, 0.25);
+            --color-bg: #F8FAF9;
             --color-surface: #FFFFFF;
             --color-border: #E2E8F0;
             --color-border-hover: #CBD5E1;
-            --color-text-primary: #0F291E;
-            --color-text-muted: #475569;
-            --color-text-subtle: #94A3B8;
+            --color-border-emerald: rgba(16, 185, 129, 0.2);
+            --color-text-primary: #062317;
+            --color-text-muted: #334155;
+            --color-text-subtle: #64748B;
             
             --color-success-bg: #F0FDF4;
             --color-success-border: #86EFAC;
@@ -41,13 +57,15 @@
             --color-danger-border: #FCA5A5;
             --color-danger-text: #991B1B;
 
-            --shadow-sm: 0 1px 3px rgba(15, 81, 50, 0.04);
-            --shadow-md: 0 4px 16px -2px rgba(15, 81, 50, 0.08), 0 2px 6px -1px rgba(15, 81, 50, 0.03);
-            --shadow-lg: 0 16px 36px -4px rgba(15, 81, 50, 0.12), 0 4px 12px -2px rgba(15, 81, 50, 0.04);
+            --shadow-sm: 0 1px 3px rgba(6, 78, 59, 0.04);
+            --shadow-md: 0 4px 16px -2px rgba(6, 78, 59, 0.08), 0 2px 6px -1px rgba(6, 78, 59, 0.03);
+            --shadow-lg: 0 16px 36px -4px rgba(6, 78, 59, 0.12), 0 4px 12px -2px rgba(6, 78, 59, 0.04);
+            --shadow-card: 0 8px 28px -4px rgba(6, 78, 59, 0.07), 0 2px 8px -2px rgba(6, 78, 59, 0.04);
+            --shadow-card-hover: 0 16px 36px -4px rgba(16, 185, 129, 0.18), 0 4px 12px -2px rgba(6, 78, 59, 0.06);
 
             --radius-sm: 8px;
             --radius-md: 12px;
-            --radius-lg: 20px;
+            --radius-lg: 18px;
             --radius-full: 9999px;
             
             --font-family: 'Plus Jakarta Sans', 'Noto Sans Bengali', system-ui, -apple-system, sans-serif;
@@ -62,8 +80,13 @@
         body {
             font-family: var(--font-family);
             background-color: var(--color-bg);
+            background-image: 
+                radial-gradient(circle at 50% -120px, rgba(16, 185, 129, 0.15) 0%, rgba(236, 253, 245, 0.5) 45%, rgba(248, 250, 249, 0) 75%),
+                radial-gradient(circle at 10% 400px, rgba(52, 211, 153, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 90% 700px, rgba(16, 185, 129, 0.05) 0%, transparent 40%);
+            background-attachment: fixed;
             color: var(--color-text-primary);
-            line-height: 1.55;
+            line-height: 1.6;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -79,16 +102,16 @@
             top: -180px;
             left: 50%;
             transform: translateX(-50%);
-            width: 920px;
-            height: 520px;
-            background: radial-gradient(circle, rgba(16, 185, 129, 0.09) 0%, rgba(15, 81, 50, 0.03) 55%, transparent 75%);
+            width: 1000px;
+            height: 580px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, rgba(6, 78, 59, 0.04) 55%, transparent 75%);
             pointer-events: none;
             z-index: 0;
             animation: ambient-glow 14s ease-in-out infinite alternate;
         }
         @keyframes ambient-glow {
-            0% { opacity: 0.5; transform: translateX(-50%) scale(1); }
-            100% { opacity: 0.95; transform: translateX(-52%) scale(1.1); }
+            0% { opacity: 0.6; transform: translateX(-50%) scale(1); }
+            100% { opacity: 1; transform: translateX(-52%) scale(1.12); }
         }
 
         :focus-visible {
@@ -107,14 +130,15 @@
 
         /* ── Top Navigation ──────────────────────────────────── */
         .navbar {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--color-border);
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(16, 185, 129, 0.16);
             position: sticky;
             top: 0;
             z-index: 50;
-            box-shadow: var(--shadow-sm);
+            box-shadow: 0 4px 20px -4px rgba(6, 78, 59, 0.05);
+            transition: all var(--transition-normal);
         }
         .navbar-inner {
             display: flex;
@@ -130,20 +154,25 @@
             color: inherit;
         }
         .brand-icon {
-            width: 42px;
-            height: 42px;
-            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #064E3B, #022C22);
+            border: 1px solid rgba(16, 185, 129, 0.4);
             border-radius: var(--radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
             color: #FFFFFF;
-            box-shadow: 0 4px 12px rgba(15, 81, 50, 0.22);
+            box-shadow: 0 4px 14px rgba(6, 78, 59, 0.28);
+            transition: transform var(--transition-bounce);
+        }
+        .brand:hover .brand-icon {
+            transform: scale(1.05) rotate(-2deg);
         }
         .brand-text h1 {
             font-size: 1.25rem;
             font-weight: 800;
-            color: var(--color-primary);
+            color: #064E3B;
             letter-spacing: -0.02em;
             line-height: 1.1;
         }
@@ -182,9 +211,9 @@
             transition: all var(--transition-fast);
         }
         .lang-btn.active {
-            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+            background: linear-gradient(135deg, #064E3B, #022C22);
             color: #FFFFFF;
-            box-shadow: 0 2px 8px rgba(15, 81, 50, 0.25);
+            box-shadow: 0 2px 8px rgba(6, 78, 59, 0.3);
         }
 
         .creator-tag-nav {
@@ -192,7 +221,7 @@
             align-items: center;
             gap: 0.4rem;
             background: #F8FAF8;
-            border: 1px solid var(--color-border);
+            border: 1px solid rgba(16, 185, 129, 0.2);
             padding: 0.35rem 0.75rem;
             border-radius: var(--radius-full);
             font-size: 0.75rem;
@@ -211,7 +240,7 @@
             align-items: center;
             gap: 0.5rem;
             background: var(--color-accent-subtle);
-            border: 1px solid rgba(16, 185, 129, 0.3);
+            border: 1px solid rgba(16, 185, 129, 0.35);
             color: var(--color-primary);
             padding: 0.4rem 0.85rem;
             border-radius: var(--radius-full);
@@ -233,73 +262,117 @@
             50% { transform: scale(1.15); opacity: 0.85; box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.1); }
         }
 
+        /* ── PWA Install App Button with Shimmer ── */
+        @keyframes btn-shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+        .btn-install-app {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            background: linear-gradient(135deg, #064E3B 0%, #10B981 50%, #047857 100%);
+            background-size: 200% auto;
+            animation: btn-shimmer 6s linear infinite;
+            color: #FFFFFF;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 0.38rem 0.9rem;
+            border-radius: var(--radius-full);
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
+        }
+        .btn-install-app:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.45);
+        }
+        .btn-install-app svg {
+            color: #FEF08A;
+        }
+
         /* ── Hero Section ────────────────────────────────────── */
         .hero {
-            padding: 2.75rem 0 1.75rem;
+            padding: 3.25rem 0 2rem;
             text-align: center;
         }
         .hero-eyebrow {
             font-size: 0.8125rem;
             font-weight: 800;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            color: var(--color-accent);
-            margin-bottom: 0.4rem;
+            letter-spacing: 0.04em;
+            color: #065F46;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(6, 78, 59, 0.05));
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 0.35rem 0.95rem;
+            border-radius: var(--radius-full);
+            margin-bottom: 0.75rem;
             display: inline-flex;
             align-items: center;
-            gap: 0.4rem;
+            gap: 0.45rem;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1);
         }
         .hero-title {
-            font-size: clamp(1.85rem, 4vw, 2.7rem);
+            font-size: clamp(2rem, 4.5vw, 2.9rem);
             font-weight: 800;
-            color: var(--color-text-primary);
-            letter-spacing: -0.03em;
-            margin-bottom: 0.75rem;
-            line-height: 1.25;
+            color: #064E3B;
+            letter-spacing: -0.025em;
+            margin-bottom: 0.85rem;
+            line-height: 1.32;
+            text-shadow: 0 2px 14px rgba(6, 78, 59, 0.08);
         }
         .hero-subtitle {
-            font-size: 1.02rem;
+            font-size: 1.05rem;
             color: var(--color-text-muted);
-            max-width: 740px;
-            margin: 0 auto 1.25rem;
-            font-weight: 400;
+            max-width: 760px;
+            margin: 0 auto 1.5rem;
+            font-weight: 500;
+            line-height: 1.65;
         }
         .hero-badges {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.65rem;
+            gap: 0.75rem;
             flex-wrap: wrap;
         }
         .badge {
             display: inline-flex;
             align-items: center;
-            gap: 0.4rem;
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
-            padding: 0.35rem 0.85rem;
+            gap: 0.45rem;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 0.38rem 0.95rem;
             border-radius: var(--radius-full);
             font-size: 0.78125rem;
-            font-weight: 600;
-            color: var(--color-text-muted);
-            box-shadow: var(--shadow-sm);
+            font-weight: 700;
+            color: #064E3B;
+            box-shadow: 0 2px 8px rgba(6, 78, 59, 0.04);
+            transition: all var(--transition-fast);
+        }
+        .badge:hover {
+            border-color: var(--color-accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.18);
         }
         .badge svg { width: 14px; height: 14px; color: var(--color-accent); }
 
         /* ── Quick Test Sample Selector ──────────────────────── */
         .samples-section {
-            margin-bottom: 2rem;
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
+            margin-bottom: 2.25rem;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(16, 185, 129, 0.2);
             border-radius: var(--radius-md);
-            padding: 1rem 1.25rem;
-            box-shadow: var(--shadow-sm);
+            padding: 1.15rem 1.35rem;
+            box-shadow: 0 4px 20px -2px rgba(6, 78, 59, 0.05);
         }
         .samples-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.85rem;
             flex-wrap: wrap;
             gap: 0.4rem;
         }
@@ -309,48 +382,55 @@
             gap: 0.5rem;
         }
         .samples-title {
-            font-size: 0.875rem;
+            font-size: 0.9rem;
             font-weight: 800;
-            color: var(--color-primary);
+            color: #064E3B;
         }
         .samples-hint {
             font-size: 0.75rem;
             color: var(--color-text-subtle);
+            font-weight: 600;
         }
         .samples-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 0.75rem;
+            gap: 0.85rem;
         }
         @media (max-width: 768px) {
             .samples-grid { grid-template-columns: repeat(2, 1fr); }
         }
         .sample-btn {
-            background: #FAFCFA;
-            border: 1px solid var(--color-border);
+            background: #FFFFFF;
+            border: 1px solid rgba(16, 185, 129, 0.16);
             border-radius: var(--radius-sm);
-            padding: 0.55rem 0.7rem;
+            padding: 0.6rem 0.75rem;
             display: flex;
             align-items: center;
-            gap: 0.65rem;
+            gap: 0.7rem;
             cursor: pointer;
             font-family: inherit;
             text-align: left;
             transition: all var(--transition-fast);
+            box-shadow: 0 1px 4px rgba(6, 78, 59, 0.03);
         }
         .sample-btn:hover {
             border-color: var(--color-accent);
             background: var(--color-accent-subtle);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-sm);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 18px rgba(16, 185, 129, 0.2);
         }
         .sample-thumb {
-            width: 40px;
-            height: 40px;
-            border-radius: 6px;
+            width: 42px;
+            height: 42px;
+            border-radius: 8px;
             object-fit: cover;
             flex-shrink: 0;
-            border: 1px solid var(--color-border);
+            border: 1.5px solid rgba(16, 185, 129, 0.25);
+            transition: transform var(--transition-fast);
+        }
+        .sample-btn:hover .sample-thumb {
+            transform: scale(1.08);
+            border-color: var(--color-accent);
         }
         .sample-name {
             font-size: 0.8125rem;
@@ -422,9 +502,9 @@
             padding: 1.5rem;
         }
 
-        /* ── Dropzone ────────────────────────────────────────── */
+        /* ── Dropzone & Upload Bar ────────────────────────────── */
         .dropzone-container {
-            margin-bottom: 1.25rem;
+            margin-bottom: 0.85rem;
         }
         .dropzone {
             border: 2px dashed var(--color-border);
@@ -477,6 +557,35 @@
             font-size: 0.72rem;
             font-weight: 600;
             color: var(--color-text-subtle);
+        }
+
+        /* Feature 3: Camera Trigger Bar */
+        .upload-options-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.25rem;
+        }
+        .btn-camera-trigger {
+            background: #FAFCFA;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            padding: 0.55rem 1.2rem;
+            font-family: inherit;
+            font-size: 0.8125rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all var(--transition-fast);
+            box-shadow: var(--shadow-sm);
+        }
+        .btn-camera-trigger:hover {
+            border-color: var(--color-accent);
+            background: var(--color-accent-subtle);
+            transform: translateY(-1px);
         }
 
         /* ── Preview Box + Heatmap Switcher ──────────────────── */
@@ -1026,7 +1135,7 @@
             transition: width 0.8s ease-out;
         }
 
-        /* ── Dynamic Insights Tabs ───────────────────────────── */
+        /* ── Dynamic Insights Tabs (5-Column Grid) ───────────── */
         .insights-tabs-container {
             border: 1px solid var(--color-border);
             border-radius: var(--radius-md);
@@ -1245,15 +1354,69 @@
         /* ── Action Footer in Diagnostic Card ───────────────── */
         .report-actions {
             display: flex;
-            gap: 0.75rem;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+        .btn-whatsapp {
+            flex: 1.2;
+            min-width: 155px;
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: #FFFFFF;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: var(--radius-md);
+            padding: 0.75rem 0.95rem;
+            font-family: inherit;
+            font-size: 0.8125rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.45rem;
+            box-shadow: 0 4px 14px rgba(37, 211, 102, 0.3);
+            transition: all var(--transition-fast);
+        }
+        .btn-whatsapp:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.45);
+            background: linear-gradient(135deg, #22BF5B, #0E7063);
+        }
+        .btn-whatsapp svg {
+            width: 16px;
+            height: 16px;
+        }
+        .btn-pdf {
+            flex: 1.2;
+            min-width: 150px;
+            background: linear-gradient(135deg, #064E3B, #022C22);
+            color: #FFFFFF;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: var(--radius-md);
+            padding: 0.75rem 0.85rem;
+            font-family: inherit;
+            font-size: 0.8125rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            box-shadow: 0 2px 8px rgba(6, 78, 59, 0.2);
+            transition: all var(--transition-fast);
+        }
+        .btn-pdf:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(6, 78, 59, 0.35);
+            background: linear-gradient(135deg, #047857, #064E3B);
         }
         .btn-print {
-            flex: 1;
+            flex: 0.7;
+            min-width: 80px;
             background: #FAFCFA;
             color: var(--color-text-primary);
             border: 1px solid var(--color-border);
             border-radius: var(--radius-md);
-            padding: 0.75rem 1rem;
+            padding: 0.75rem 0.85rem;
             font-family: inherit;
             font-size: 0.8125rem;
             font-weight: 700;
@@ -1267,14 +1430,16 @@
         .btn-print:hover {
             border-color: var(--color-accent);
             color: var(--color-primary);
+            background: var(--color-accent-subtle);
         }
         .btn-reset {
-            flex: 1;
+            flex: 0.7;
+            min-width: 80px;
             background: var(--color-surface);
             color: var(--color-text-muted);
             border: 1px solid var(--color-border);
             border-radius: var(--radius-md);
-            padding: 0.75rem 1rem;
+            padding: 0.75rem 0.85rem;
             font-family: inherit;
             font-size: 0.8125rem;
             font-weight: 700;
@@ -1288,55 +1453,340 @@
         .btn-reset:hover {
             background: #FAFCFA;
             color: var(--color-text-primary);
+            border-color: var(--color-border-hover);
         }
 
-        /* ── Supported Classes Section ───────────────────────── */
-        .supported-section { margin-bottom: 4rem; }
-        .section-header { margin-bottom: 1.5rem; text-align: center; }
-        .section-title {
-            font-size: 1.5rem;
+        /* ── Emergency National Agri Helpline & Support Desk ── */
+        .helpline-section {
+            margin-bottom: 4.5rem;
+        }
+        .helpline-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            background: #FEF2F2;
+            border: 1px solid #FECACA;
+            color: #DC2626;
+            padding: 0.35rem 0.95rem;
+            border-radius: var(--radius-full);
+            font-size: 0.78rem;
             font-weight: 800;
-            color: var(--color-text-primary);
+            margin-bottom: 0.5rem;
+        }
+        .pulse-ring-red {
+            width: 8px;
+            height: 8px;
+            background-color: #DC2626;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.25);
+            animation: pulse-dot-red 2s ease-in-out infinite;
+        }
+        @keyframes pulse-dot-red {
+            0%, 100% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.3); }
+            50% { transform: scale(1.2); opacity: 0.8; box-shadow: 0 0 0 6px rgba(220, 38, 38, 0.1); }
+        }
+        .helpline-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+        }
+        @media (max-width: 900px) {
+            .helpline-grid { grid-template-columns: 1fr; gap: 1rem; }
+        }
+        .helpline-card {
+            background: #FFFFFF;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            box-shadow: 0 4px 18px -2px rgba(6, 78, 59, 0.05);
+            transition: all var(--transition-bounce);
+            overflow: hidden;
+        }
+        .helpline-card:hover {
+            transform: translateY(-4px);
+            border-color: #10B981;
+            box-shadow: 0 12px 30px -4px rgba(16, 185, 129, 0.2);
+        }
+        .helpline-card.highlight {
+            background: linear-gradient(135deg, #F0FDF4 0%, #FFFFFF 100%);
+            border: 1.5px solid #86EFAC;
+        }
+        .helpline-badge {
+            display: inline-block;
+            align-self: flex-start;
+            font-size: 0.72rem;
+            font-weight: 800;
+            color: #065F46;
+            background: #ECFDF5;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 0.22rem 0.65rem;
+            border-radius: var(--radius-full);
+            margin-bottom: 0.85rem;
+        }
+        .helpline-icon-box {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, #064E3B, #10B981);
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            transition: transform var(--transition-bounce);
+        }
+        .helpline-card:hover .helpline-icon-box {
+            transform: scale(1.1) rotate(-4deg);
+        }
+        .helpline-name {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #064E3B;
+            margin-bottom: 0.2rem;
+        }
+        .helpline-number {
+            font-size: 1.45rem;
+            font-weight: 800;
+            color: #0F291E;
+            letter-spacing: 0.02em;
+            margin-bottom: 0.45rem;
+            font-family: 'Plus Jakarta Sans', monospace;
+        }
+        .helpline-desc {
+            font-size: 0.8125rem;
+            color: var(--color-text-muted);
+            line-height: 1.5;
+            margin-bottom: 1.15rem;
+        }
+        .helpline-cta {
+            font-size: 0.825rem;
+            font-weight: 800;
+            color: #047857;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: gap var(--transition-fast);
+        }
+        .helpline-card:hover .helpline-cta {
+            gap: 0.6rem;
+            color: #064E3B;
+        }
+
+        /* ── Feature 3: Live Camera Modal Styles ─────────────── */
+        .camera-modal-content {
+            position: relative;
+            max-width: 500px;
+            width: 100%;
+            background: #0F172A;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .camera-modal-header {
+            padding: 0.85rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: #FFFFFF;
+            font-size: 0.875rem;
+            font-weight: 700;
+        }
+        .camera-close-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.25rem;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0.2rem 0.5rem;
+            border-radius: var(--radius-sm);
+        }
+        .camera-close-btn:hover { color: #FFFFFF; background: rgba(255, 255, 255, 0.1); }
+        .camera-viewfinder-box {
+            position: relative;
+            width: 100%;
+            height: 380px;
+            background: #000000;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #camera-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .camera-target-reticle {
+            position: absolute;
+            width: 80%;
+            height: 75%;
+            border: 2px dashed rgba(16, 185, 129, 0.75);
+            border-radius: var(--radius-md);
+            pointer-events: none;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 0.75rem;
+        }
+        .reticle-scanline {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #34D399, #FFFFFF, #34D399, transparent);
+            box-shadow: 0 0 12px rgba(52, 211, 153, 0.8);
+            animation: reticle-sweep 2.5s ease-in-out infinite;
+        }
+        @keyframes reticle-sweep {
+            0% { top: 5%; opacity: 0; }
+            15% { opacity: 1; }
+            85% { opacity: 1; }
+            100% { top: 92%; opacity: 0; }
+        }
+        .reticle-hint {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #FFFFFF;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(4px);
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-full);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .camera-modal-controls {
+            padding: 1.15rem 1.25rem;
+            background: #0F172A;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            position: relative;
+        }
+        .btn-capture-shutter {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: #FFFFFF;
+            border: 4px solid rgba(16, 185, 129, 0.6);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-bounce);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+        }
+        .btn-capture-shutter:hover {
+            transform: scale(1.08);
+            border-color: var(--color-accent);
+        }
+        .shutter-inner {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+        }
+        .btn-switch-cam {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #FFFFFF;
+            padding: 0.5rem 0.85rem;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: all var(--transition-fast);
+        }
+        .btn-switch-cam:hover { background: rgba(255, 255, 255, 0.2); }
+
+        /* ── Supported Classes Section ───────────────────────── */
+        .supported-section { margin-bottom: 4.5rem; }
+        .section-header { margin-bottom: 2rem; text-align: center; }
+        .section-title {
+            font-size: 1.7rem;
+            font-weight: 800;
+            color: #064E3B;
             letter-spacing: -0.02em;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.35rem;
+            text-shadow: 0 2px 10px rgba(6, 78, 59, 0.06);
         }
         .section-subtitle {
-            font-size: 0.875rem;
+            font-size: 0.92rem;
             color: var(--color-text-muted);
+            font-weight: 500;
         }
         .classes-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 1rem;
+            gap: 1.15rem;
         }
         .class-card {
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
+            background: #FFFFFF;
+            border: 1px solid rgba(16, 185, 129, 0.18);
             border-radius: var(--radius-md);
-            padding: 1rem 1.15rem;
+            padding: 1.1rem 1.25rem;
             display: flex;
             align-items: center;
-            gap: 0.85rem;
-            box-shadow: var(--shadow-sm);
+            gap: 0.95rem;
+            box-shadow: 0 2px 8px rgba(6, 78, 59, 0.04);
             transition: all var(--transition-bounce);
+            position: relative;
+            overflow: hidden;
+        }
+        .class-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3.5px;
+            height: 100%;
+            background: var(--color-accent);
+            opacity: 0;
+            transition: opacity var(--transition-fast);
         }
         .class-card:hover {
-            transform: translateY(-3px);
+            transform: translateY(-4px);
             border-color: var(--color-accent);
-            box-shadow: var(--shadow-md);
+            box-shadow: 0 10px 25px -4px rgba(16, 185, 129, 0.22);
+        }
+        .class-card:hover::before {
+            opacity: 1;
         }
         .class-card.healthy {
-            background: var(--color-success-bg);
-            border-color: var(--color-success-border);
+            background: linear-gradient(135deg, #F0FDF4, #ECFDF5);
+            border-color: #86EFAC;
+        }
+        .class-card.healthy::before {
+            opacity: 1;
+            background: #10B981;
         }
         .class-card-idx {
             font-size: 0.75rem;
             font-weight: 800;
-            color: var(--color-text-subtle);
+            color: var(--color-accent);
+            background: var(--color-accent-subtle);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            border-radius: 6px;
+            padding: 2px 7px;
+            font-family: monospace;
         }
         .class-card-icon {
-            width: 42px;
-            height: 42px;
+            width: 44px;
+            height: 44px;
             border-radius: var(--radius-sm);
             background: var(--color-accent-subtle);
             color: var(--color-primary);
@@ -1344,10 +1794,16 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            transition: transform var(--transition-bounce);
+        }
+        .class-card:hover .class-card-icon {
+            transform: scale(1.1) rotate(-4deg);
         }
         .class-card.healthy .class-card-icon {
             background: #DCFCE7;
             color: #15803D;
+            border-color: #86EFAC;
         }
         .class-card-icon svg { width: 22px; height: 22px; }
         .class-card-text {
@@ -1355,10 +1811,10 @@
             flex-direction: column;
         }
         .class-card-name {
-            font-size: 0.875rem;
+            font-size: 0.9rem;
             font-weight: 700;
             color: var(--color-text-primary);
-            line-height: 1.2;
+            line-height: 1.25;
         }
         .class-card-sub {
             font-size: 0.75rem;
@@ -1371,8 +1827,8 @@
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(8px);
+            background: rgba(6, 35, 23, 0.88);
+            backdrop-filter: blur(12px);
             z-index: 100;
             align-items: center;
             justify-content: center;
@@ -1381,12 +1837,13 @@
         .modal-backdrop.active { display: flex; }
         .modal-content {
             position: relative;
-            max-width: 650px;
+            max-width: 680px;
             width: 100%;
             background: #000000;
             border-radius: var(--radius-md);
             overflow: hidden;
-            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
         }
         .modal-content img {
             width: 100%;
@@ -1398,84 +1855,101 @@
             position: absolute;
             top: 12px;
             right: 12px;
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.35);
             color: #FFF;
             border-radius: 50%;
-            width: 32px;
-            height: 32px;
+            width: 34px;
+            height: 34px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            transition: all var(--transition-fast);
         }
+        .modal-close-btn:hover {
+            background: #DC2626;
+            border-color: #EF4444;
+            transform: scale(1.1);
+        }
+
 
         /* ── Premium High-Contrast Footer (Developed by Ohi) ── */
         .footer {
             margin-top: auto;
-            border-top: 1px solid rgba(16, 185, 129, 0.2);
-            background: linear-gradient(180deg, #0D3322 0%, #061F14 100%);
+            border-top: 1px solid rgba(16, 185, 129, 0.25);
+            background: linear-gradient(180deg, #062317 0%, #02120C 100%);
             color: #FFFFFF;
-            padding: 3rem 0 2.25rem;
+            padding: 3.5rem 0 2.5rem;
             text-align: center;
+            position: relative;
         }
         .footer-creator-box {
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(8px);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            backdrop-filter: blur(12px);
             border-radius: var(--radius-lg);
-            padding: 2rem 2.25rem;
-            max-width: 820px;
-            margin: 0 auto 1.5rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            padding: 2.25rem 2.5rem;
+            max-width: 840px;
+            margin: 0 auto 1.75rem;
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+            position: relative;
+            overflow: hidden;
         }
         .footer-creator-badge {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            background: linear-gradient(135deg, #10B981, #059669);
+            gap: 0.55rem;
+            background: linear-gradient(135deg, #10B981, #047857);
             color: #FFFFFF;
-            padding: 0.45rem 1.3rem;
+            padding: 0.45rem 1.4rem;
             border-radius: var(--radius-full);
-            font-size: 0.9rem;
+            font-size: 0.92rem;
             font-weight: 700;
-            margin-bottom: 1rem;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.35);
+            margin-bottom: 1.1rem;
+            box-shadow: 0 4px 18px rgba(16, 185, 129, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         .footer-creator-badge strong {
             color: #FEF08A;
             font-weight: 800;
-            font-size: 0.95rem;
+            font-size: 0.98rem;
             letter-spacing: 0.04em;
         }
         .footer-brand {
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             font-weight: 800;
             color: #FFFFFF;
-            margin-bottom: 0.4rem;
+            margin-bottom: 0.45rem;
             letter-spacing: -0.01em;
         }
         .footer-desc {
             font-size: 0.875rem;
-            color: rgba(255, 255, 255, 0.8);
-            line-height: 1.65;
-            margin-bottom: 1.15rem;
+            color: rgba(255, 255, 255, 0.85);
+            line-height: 1.7;
+            margin-bottom: 1.25rem;
         }
         .footer-tech-stack {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.6rem;
+            gap: 0.65rem;
             flex-wrap: wrap;
         }
         .tech-tag {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            padding: 0.3rem 0.75rem;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            padding: 0.32rem 0.85rem;
             border-radius: var(--radius-full);
-            font-size: 0.75rem;
+            font-size: 0.76rem;
             font-weight: 600;
             color: #E2E8F0;
+            transition: all var(--transition-fast);
+        }
+        .tech-tag:hover {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: #10B981;
+            color: #FFFFFF;
         }
         .footer-copyright {
             font-size: 0.8125rem;
@@ -1503,14 +1977,1009 @@
         }
         .alert svg { width: 18px; height: 18px; flex-shrink: 0; margin-top: 1px; }
 
-        /* Print Media Styles */
+        /* ── Ground-Truth Evaluation Verification Banner ── */
+        .eval-verification-banner {
+            border-radius: var(--radius-md);
+            padding: 0.85rem 1.15rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            animation: fadeIn 0.3s ease-out;
+            box-shadow: var(--shadow-sm);
+        }
+        .eval-banner-match {
+            background: #ECFDF5;
+            border: 1.5px solid #A7F3D0;
+            color: #065F46;
+        }
+        .eval-banner-match .eval-banner-icon {
+            background: #10B981;
+            color: #FFFFFF;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 800;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        .eval-banner-mismatch {
+            background: #FFFBEB;
+            border: 1.5px solid #FCD34D;
+            color: #92400E;
+        }
+        .eval-banner-mismatch .eval-banner-icon {
+            background: #F59E0B;
+            color: #FFFFFF;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 800;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        .eval-banner-title {
+            font-weight: 800;
+            font-size: 0.9rem;
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .eval-banner-desc {
+            font-size: 0.825rem;
+            color: inherit;
+        }
+
+        /* ── Comprehensive Mobile & Tablet Responsive Design ── */
+        @media (max-width: 992px) {
+            .workspace {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                margin-bottom: 2.5rem;
+            }
+            .classes-grid {
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            .navbar {
+                padding: 0.65rem 0;
+            }
+            .brand-icon {
+                width: 36px;
+                height: 36px;
+            }
+            .brand-text h1 {
+                font-size: 1.15rem;
+            }
+            .brand-text p {
+                font-size: 0.68rem;
+            }
+            .creator-tag-nav, .status-pill {
+                display: none;
+            }
+            .btn-install-app {
+                padding: 0.32rem 0.65rem;
+                font-size: 0.72rem;
+            }
+            .lang-switch-box {
+                padding: 2px;
+            }
+            .lang-btn {
+                padding: 0.25rem 0.55rem;
+                font-size: 0.75rem;
+            }
+            .hero {
+                padding: 1.75rem 0 1.25rem;
+            }
+            .hero-title {
+                font-size: 1.65rem;
+                line-height: 1.25;
+            }
+            .hero-subtitle {
+                font-size: 0.875rem;
+                margin-bottom: 1rem;
+            }
+            .hero-badges {
+                gap: 0.4rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .hero-badge {
+                font-size: 0.72rem;
+                padding: 0.3rem 0.65rem;
+            }
+            .samples-section {
+                margin-bottom: 1.75rem;
+            }
+            .samples-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.2rem;
+                margin-bottom: 0.6rem;
+            }
+            .samples-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.6rem;
+            }
+            .sample-btn {
+                padding: 0.45rem 0.6rem;
+                gap: 0.5rem;
+            }
+            .sample-thumb {
+                width: 36px;
+                height: 36px;
+            }
+            .sample-name {
+                font-size: 0.75rem;
+            }
+            .sample-sub {
+                font-size: 0.68rem;
+            }
+            .card-header {
+                padding: 1rem 1.15rem;
+            }
+            .card-title {
+                font-size: 0.95rem;
+            }
+            .card-subtitle {
+                font-size: 0.72rem;
+            }
+            .card-body {
+                padding: 1.15rem;
+            }
+            .dropzone {
+                padding: 1.75rem 1rem;
+            }
+            .drop-title {
+                font-size: 0.92rem;
+            }
+            .drop-sub {
+                font-size: 0.78rem;
+            }
+            .upload-options-bar {
+                flex-direction: column;
+                gap: 0.6rem;
+            }
+            .btn-live-camera {
+                width: 100%;
+                justify-content: center;
+                font-size: 0.85rem;
+                padding: 0.7rem 1rem;
+            }
+            .btn-primary {
+                padding: 0.85rem 1.25rem;
+                font-size: 0.92rem;
+            }
+            .result-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.85rem;
+            }
+            .result-confidence-box {
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background: #F8FAF8;
+                padding: 0.6rem 0.85rem;
+                border-radius: var(--radius-sm);
+                border: 1px solid var(--color-border);
+            }
+            .result-prediction-name {
+                font-size: 1.35rem;
+            }
+            .result-tabs {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                -webkit-overflow-scrolling: touch;
+                padding-bottom: 0.4rem;
+                gap: 0.35rem;
+            }
+            .result-tab-btn {
+                flex-shrink: 0;
+                white-space: nowrap;
+                padding: 0.45rem 0.75rem;
+                font-size: 0.78rem;
+            }
+            .dosage-inputs {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.6rem;
+            }
+            .dosage-summary-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.6rem;
+            }
+            .dosage-summary-grid > div:last-child {
+                grid-column: span 2;
+            }
+            .dosage-card {
+                padding: 0.65rem 0.75rem;
+            }
+            .dosage-val {
+                font-size: 1.1rem;
+            }
+            .report-actions {
+                flex-direction: column;
+                gap: 0.6rem;
+            }
+            .report-actions button, .report-actions .btn-audio-listen {
+                width: 100%;
+                justify-content: center;
+            }
+            .footer-creator-box {
+                padding: 1.5rem 1.15rem;
+            }
+            .footer-brand {
+                font-size: 1.05rem;
+            }
+            .footer-desc {
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 0.75rem;
+            }
+            .brand-text p {
+                display: none;
+            }
+            .hero-title {
+                font-size: 1.45rem;
+            }
+            .samples-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.45rem;
+            }
+            .sample-btn {
+                padding: 0.4rem 0.45rem;
+            }
+            .sample-thumb {
+                width: 32px;
+                height: 32px;
+            }
+            .classes-grid {
+                grid-template-columns: 1fr;
+            }
+            .dosage-inputs {
+                grid-template-columns: 1fr;
+            }
+            .dosage-summary-grid {
+                grid-template-columns: 1fr;
+            }
+            .dosage-summary-grid > div:last-child {
+                grid-column: span 1;
+            }
+        }
+
+        /* ── Prescription Live Preview Modal & Canvas Styling ── */
+        .prescription-modal-wrap {
+            position: relative;
+            max-width: 860px;
+            width: 100%;
+            height: 88vh;
+            max-height: 92vh;
+            background: #F1F5F9;
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1.5px solid #10B981;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+            animation: modalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .prescription-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #064E3B;
+            color: #FFFFFF;
+            padding: 0.85rem 1.25rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .modal-header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .rx-symbol {
+            font-size: 1.6rem;
+            line-height: 1;
+        }
+
+        .rx-modal-title {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #FFFFFF;
+            letter-spacing: -0.01em;
+        }
+
+        .rx-modal-sub {
+            font-size: 0.72rem;
+            color: #A7F3D0;
+            font-weight: 500;
+        }
+
+        .prescription-modal-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-rx-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            border: none;
+            border-radius: var(--radius-full);
+            padding: 0.45rem 0.95rem;
+            font-family: inherit;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .btn-rx-action.download {
+            background: #10B981;
+            color: #FFFFFF;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+        }
+        .btn-rx-action.download:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+
+        .btn-rx-action.print {
+            background: rgba(255, 255, 255, 0.18);
+            color: #FFFFFF;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .btn-rx-action.print:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-rx-action.close {
+            background: rgba(255, 255, 255, 0.15);
+            color: #FFFFFF;
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 1rem;
+        }
+        .btn-rx-action.close:hover {
+            background: #EF4444;
+        }
+
+        .prescription-modal-body {
+            overflow-y: auto;
+            padding: 1.25rem;
+            background: #E2E8F0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            flex: 1;
+        }
+
+        #prescription-pdf-canvas {
+            display: block !important;
+            width: 100%;
+            max-width: 794px;
+            background: #FFFFFF;
+            color: #0F291E;
+            font-family: 'Noto Sans Bengali', 'Plus Jakarta Sans', Arial, sans-serif;
+            box-sizing: border-box;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-radius: 8px;
+        }
+
+        .pr-sheet-box {
+            border: 2px solid #0F5132;
+            border-radius: 8px;
+            padding: 1.15rem 1.35rem;
+            background: #FFFFFF;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
         @media print {
-            .navbar, .hero, .samples-section, .supported-section, .footer, .report-actions, .accordion-item, .btn-primary, .dropzone-container, .view-mode-pill {
+            @page {
+                size: A4 portrait;
+                margin: 0;
+            }
+            html, body {
+                background: #FFFFFF !important;
+                color: #0F291E !important;
+                font-family: 'Noto Sans Bengali', 'Plus Jakarta Sans', Arial, sans-serif !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            /* Hide EVERYTHING in body except modal-prescription */
+            body > *:not(#modal-prescription) {
                 display: none !important;
             }
-            .workspace { display: block; }
-            .card { border: none; box-shadow: none; }
-            body { background: #FFFFFF; }
+            #modal-prescription {
+                display: block !important;
+                position: static !important;
+                background: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                inset: auto !important;
+            }
+            .prescription-modal-wrap {
+                border: none !important;
+                box-shadow: none !important;
+                max-width: 100% !important;
+                max-height: none !important;
+                background: none !important;
+                border-radius: 0 !important;
+            }
+            .prescription-modal-header {
+                display: none !important;
+            }
+            .prescription-modal-body {
+                padding: 6mm 8mm !important;
+                background: none !important;
+                display: block !important;
+            }
+            #prescription-pdf-canvas {
+                max-width: 100% !important;
+                box-shadow: none !important;
+                border: none !important;
+            }
+            .pr-sheet-box {
+                border: 2px solid #0F5132 !important;
+                border-radius: 8px !important;
+                padding: 1.15rem 1.35rem !important;
+                background: #FFFFFF !important;
+                box-sizing: border-box !important;
+                width: 100% !important;
+            }
+        }
+
+        /* ── Feature 3: Image Enhancement & Rotation Toolbar ── */
+        .image-tool-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            padding: 0.45rem 0.75rem;
+            background: #F1F5F9;
+            border-top: 1px solid var(--color-border);
+            border-bottom: 1px solid var(--color-border);
+            flex-wrap: wrap;
+        }
+        .tool-btn {
+            background: #FFFFFF;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-full);
+            padding: 0.28rem 0.7rem;
+            font-family: inherit;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: all var(--transition-fast);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .tool-btn:hover {
+            border-color: var(--color-accent);
+            background: var(--color-accent-subtle);
+            color: var(--color-primary);
+            transform: translateY(-1px);
+        }
+        .tool-btn.active {
+            background: linear-gradient(135deg, #064E3B, #10B981);
+            color: #FFFFFF;
+            border-color: transparent;
+        }
+        .tool-btn.reset-tool {
+            background: #FEF2F2;
+            border-color: #FECACA;
+            color: #DC2626;
+        }
+        .tool-btn.reset-tool:hover {
+            background: #FEE2E2;
+        }
+
+        /* ── Feature 1: Floating AI Agri-Assistant Chatbot (Elite Luxury Upgrade) ── */
+        .chat-widget-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 99;
+        }
+        .chat-floating-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            background: linear-gradient(135deg, #064E3B 0%, #047857 50%, #10B981 100%);
+            color: #FFFFFF;
+            border: 1.5px solid rgba(255, 255, 255, 0.45);
+            border-radius: var(--radius-full);
+            padding: 0.7rem 1.25rem 0.7rem 0.85rem;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(6, 78, 59, 0.4), 0 3px 8px rgba(0,0,0,0.15);
+            transition: all var(--transition-bounce);
+            position: relative;
+        }
+        .chat-floating-btn:hover {
+            transform: translateY(-3px) scale(1.04);
+            box-shadow: 0 14px 36px rgba(16, 185, 129, 0.5);
+        }
+        .chat-btn-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.22);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+        }
+        .chat-btn-text {
+            font-size: 0.88rem;
+            font-weight: 800;
+            letter-spacing: 0.01em;
+        }
+        .chat-pulse-ring {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 14px;
+            height: 14px;
+            background-color: #22C55E;
+            border: 2.5px solid #FFFFFF;
+            border-radius: 50%;
+            animation: pulse-dot 2s infinite;
+        }
+
+        /* Hide floating button when chat is open to prevent awkward overlap */
+        .chat-widget-container.chat-open .chat-floating-btn {
+            display: none !important;
+        }
+
+        /* Chat Window Box */
+        .chat-window-box {
+            display: none;
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 385px;
+            max-width: calc(100vw - 32px);
+            height: 565px;
+            max-height: calc(100vh - 48px);
+            background: #FFFFFF;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 24px;
+            box-shadow: 0 25px 65px -10px rgba(6, 78, 59, 0.35), 0 0 0 1px rgba(0,0,0,0.06);
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 100;
+            animation: chat-popup 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes chat-popup {
+            0% { opacity: 0; transform: translateY(25px) scale(0.92); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .chat-window-box.active {
+            display: flex;
+        }
+        .chat-header {
+            padding: 0.95rem 1.15rem;
+            background: linear-gradient(135deg, #063C2E 0%, #065F46 55%, #047857 100%);
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(16, 185, 129, 0.35);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        .chat-header-info {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+        .chat-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10B981, #059669);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
+            position: relative;
+        }
+        .chat-avatar::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 10px;
+            height: 10px;
+            background: #22C55E;
+            border: 2px solid #FFFFFF;
+            border-radius: 50%;
+        }
+        .chat-title {
+            font-size: 0.94rem;
+            font-weight: 800;
+            line-height: 1.2;
+            letter-spacing: -0.01em;
+        }
+        .chat-status {
+            font-size: 0.72rem;
+            color: #86EFAC;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-weight: 600;
+            margin-top: 0.15rem;
+        }
+        .chat-online-dot {
+            width: 6px;
+            height: 6px;
+            background-color: #86EFAC;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 6px #86EFAC;
+        }
+        .chat-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+        }
+        .chat-action-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: #FFFFFF;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            transition: all var(--transition-fast);
+        }
+        .chat-action-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.08);
+        }
+        .chat-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            background: #F8FAF9;
+            scroll-behavior: smooth;
+        }
+        .chat-msg {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.55rem;
+            max-width: 88%;
+            animation: msg-slide 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes msg-slide {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .chat-msg.bot {
+            align-self: flex-start;
+        }
+        .chat-msg.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+        .msg-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #ECFDF5;
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            flex-shrink: 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .msg-bubble-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .msg-bubble {
+            padding: 0.75rem 0.95rem;
+            border-radius: 16px;
+            font-size: 0.8125rem;
+            line-height: 1.55;
+            word-break: break-word;
+            position: relative;
+        }
+        .chat-msg.bot .msg-bubble {
+            background: #FFFFFF;
+            color: var(--color-text-primary);
+            border: 1px solid rgba(16, 185, 129, 0.18);
+            border-left: 3.5px solid #10B981;
+            border-top-left-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .chat-msg.user .msg-bubble {
+            background: linear-gradient(135deg, #064E3B 0%, #047857 100%);
+            color: #FFFFFF;
+            border-top-right-radius: 4px;
+            box-shadow: 0 3px 10px rgba(6, 78, 59, 0.25);
+        }
+        .msg-time {
+            font-size: 0.65rem;
+            color: #94A3B8;
+            padding: 0 0.35rem;
+        }
+        .chat-msg.user .msg-time {
+            text-align: right;
+        }
+        .chat-voice-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            margin-top: 0.55rem;
+            flex-wrap: wrap;
+        }
+        .msg-listen-btn {
+            background: #F0FDF4;
+            border: 1px solid #A7F3D0;
+            color: #065F46;
+            border-radius: var(--radius-full);
+            padding: 0.25rem 0.65rem;
+            font-size: 0.72rem;
+            font-weight: 800;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            transition: all var(--transition-fast);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+        }
+        .msg-listen-btn:hover {
+            background: #10B981;
+            color: #FFFFFF;
+            border-color: #10B981;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(16, 185, 129, 0.25);
+        }
+        .msg-listen-btn.en-btn {
+            background: #EFF6FF;
+            border-color: #BFDBFE;
+            color: #1D4ED8;
+        }
+        .msg-listen-btn.en-btn:hover {
+            background: #2563EB;
+            color: #FFFFFF;
+            border-color: #2563EB;
+            box-shadow: 0 3px 8px rgba(37, 99, 235, 0.25);
+        }
+        .msg-listen-btn.playing {
+            background: #DC2626 !important;
+            color: #FFFFFF !important;
+            border-color: #B91C1C !important;
+            animation: pulse-dot 1.2s infinite;
+        }
+
+        /* Welcome Starter Card */
+        .chat-welcome-card {
+            background: #FFFFFF;
+            border: 1px solid #A7F3D0;
+            border-radius: 16px;
+            padding: 0.95rem;
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.09);
+            margin-bottom: 0.3rem;
+        }
+        .welcome-header {
+            font-size: 0.88rem;
+            font-weight: 800;
+            color: #064E3B;
+            margin-bottom: 0.35rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .welcome-desc {
+            font-size: 0.76rem;
+            color: #475569;
+            line-height: 1.5;
+            margin-bottom: 0.75rem;
+        }
+        .welcome-topics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.45rem;
+        }
+        .welcome-topic-btn {
+            background: #F0FDF4;
+            border: 1px solid #D1FAE5;
+            border-radius: 10px;
+            padding: 0.5rem 0.6rem;
+            text-align: left;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+        .welcome-topic-btn:hover {
+            background: #D1FAE5;
+            border-color: #10B981;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(16, 185, 129, 0.15);
+        }
+        .welcome-topic-title {
+            font-size: 0.74rem;
+            font-weight: 800;
+            color: #065F46;
+        }
+        .welcome-topic-sub {
+            font-size: 0.65rem;
+            color: #64748B;
+        }
+
+        /* Typing Dots Indicator */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 0.6rem 0.85rem;
+            background: #FFFFFF;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 14px;
+            width: fit-content;
+        }
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: #10B981;
+            border-radius: 50%;
+            animation: typing-bounce 1.3s infinite ease-in-out;
+        }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing-bounce {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-5px); opacity: 1; }
+        }
+
+        /* Quick Suggestion Chips Bar */
+        .chat-quick-prompts {
+            padding: 0.6rem 0.85rem;
+            display: flex;
+            gap: 0.45rem;
+            overflow-x: auto;
+            white-space: nowrap;
+            background: #FFFFFF;
+            border-top: 1px solid #E2E8F0;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .chat-quick-prompts::-webkit-scrollbar { display: none; }
+        .prompt-chip {
+            background: #F0FDF4;
+            border: 1px solid #A7F3D0;
+            color: #065F46;
+            padding: 0.35rem 0.8rem;
+            border-radius: var(--radius-full);
+            font-size: 0.73rem;
+            font-weight: 700;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: all var(--transition-fast);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+        }
+        .prompt-chip:hover {
+            background: #10B981;
+            color: #FFFFFF;
+            border-color: #10B981;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.28);
+        }
+
+        /* Input Area */
+        .chat-input-bar {
+            padding: 0.75rem 0.85rem;
+            background: #FFFFFF;
+            border-top: 1px solid #E2E8F0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .chat-input {
+            flex: 1;
+            border: 1.5px solid #E2E8F0;
+            border-radius: var(--radius-full);
+            padding: 0.55rem 1rem;
+            font-family: inherit;
+            font-size: 0.8125rem;
+            outline: none;
+            transition: all var(--transition-fast);
+            background: #FAFCFA;
+        }
+        .chat-input:focus {
+            border-color: #10B981;
+            background: #FFFFFF;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+        }
+        .chat-send-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #064E3B 0%, #10B981 100%);
+            color: #FFFFFF;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+            flex-shrink: 0;
+            box-shadow: 0 2px 6px rgba(6, 78, 59, 0.3);
+        }
+        .chat-send-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.45);
+        }
+
+        @media (max-width: 600px) {
+            .chat-window-box {
+                bottom: 12px;
+                right: 12px;
+                width: calc(100vw - 24px);
+                height: calc(100vh - 75px);
+                border-radius: 20px;
+            }
+            .welcome-topics-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -1533,6 +3002,12 @@
             </a>
 
             <div class="nav-right">
+                <!-- PWA Install App Button -->
+                <button type="button" class="btn-install-app" id="btn-install-pwa" onclick="installPWA()" title="Install RiceGuard App" style="display: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                    <span data-i18n="btn_install_pwa">অ্যাপ ইনস্টল</span>
+                </button>
+
                 <!-- 1-Click Language Switcher (EN | বাংলা) -->
                 <div class="lang-switch-box" role="group" aria-label="Language Selector">
                     <button type="button" class="lang-btn" id="lang-en" onclick="setLanguage('en')">EN</button>
@@ -1659,7 +3134,7 @@
                         <!-- Dropzone -->
                         <div class="dropzone-container">
                             <div class="dropzone" id="dropzone">
-                                <input type="file" id="image-input" name="image" accept="image/*" capture="environment" aria-label="Upload rice leaf image" />
+                                <input type="file" id="image-input" name="image" accept="image/*" aria-label="Upload rice leaf image" />
                                 <div class="dropzone-icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m16 16-4-4-4 4"/></svg>
                                 </div>
@@ -1667,6 +3142,14 @@
                                 <div class="dropzone-subtitle" data-i18n="drop_sub">অথবা ডিভাইস থেকে ফাইল নির্বাচন করুন</div>
                                 <div class="dropzone-meta" data-i18n="drop_meta">JPG · PNG · BMP · TIFF (সর্বোচ্চ ১০ মেগাবাইট)</div>
                             </div>
+                        </div>
+
+                        <!-- Feature 3: Camera Trigger Bar -->
+                        <div class="upload-options-bar">
+                            <button type="button" class="btn-camera-trigger" id="btn-open-camera">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                                <span data-i18n="btn_live_cam">সরাসরি ক্যামেরা দিয়ে ছবি তুলুন</span>
+                            </button>
                         </div>
 
                         <!-- Image Preview Box + Grad-CAM Heatmap Toggle (Feature 1) -->
@@ -1698,6 +3181,27 @@
                                     <span data-i18n="btn_zoom">জুম দেখুন</span>
                                 </button>
                             </div>
+
+                            <!-- Image Enhancement & Rotation Toolbar (Feature 3) -->
+                            <div class="image-tool-bar" id="image-tool-bar">
+                                <button type="button" class="tool-btn" id="btn-auto-enhance" onclick="applyImageAutoEnhance()" title="Auto Enhance Brightness, Contrast & Colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+                                    <span data-i18n="tool_enhance">অটো-এনহ্যান্স</span>
+                                </button>
+                                <button type="button" class="tool-btn" id="btn-rotate-leaf" onclick="rotateImage90()" title="Rotate Leaf 90 Degrees">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
+                                    <span data-i18n="tool_rotate">৯০° ঘোরান</span>
+                                </button>
+                                <button type="button" class="tool-btn" id="btn-sharpen-leaf" onclick="applyImageSharpen()" title="Sharpen Leaf Focus">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 22 22 22"/></svg>
+                                    <span data-i18n="tool_sharpen">শার্প ফোকাস</span>
+                                </button>
+                                <button type="button" class="tool-btn reset-tool" id="btn-reset-filters" onclick="resetImageFilters()" title="Reset Original" style="display: none;">
+                                    <span>↩️</span>
+                                    <span data-i18n="tool_reset">রিসেট</span>
+                                </button>
+                            </div>
+
                             <div class="preview-details">
                                 <div class="file-info">
                                     <div class="file-icon">
@@ -1780,6 +3284,15 @@
                     <!-- State 3: Active Result Content -->
                     <div class="result-content {% if prediction %}active{% endif %}" id="state-result" aria-live="polite">
 
+                        <!-- Ground-Truth Evaluation Verification Banner (Shown only when Expected Class is selected) -->
+                        <div class="eval-verification-banner" id="eval-verification-banner" style="display: none;">
+                            <div class="eval-banner-icon" id="eval-banner-icon">✓</div>
+                            <div class="eval-banner-content">
+                                <div class="eval-banner-title" id="eval-banner-title">গ্রাউন্ড-ট্রুথ যাচাই ফলাফল</div>
+                                <div class="eval-banner-desc" id="eval-banner-desc"></div>
+                            </div>
+                        </div>
+
                         <!-- Disease Headline Card with Audio Voice Button (Feature 3) -->
                         <div class="disease-headline-card">
                             <div class="headline-top-row">
@@ -1828,14 +3341,14 @@
                             </div>
                         </div>
 
-                        <!-- Dynamic Insights Tabs Section -->
+                        <!-- Dynamic Insights Tabs Section (5-Column Responsive Grid) -->
                         <div class="insights-tabs-container">
                             <div class="tabs-header" role="tablist">
-                                <button type="button" class="tab-btn active" role="tab" aria-selected="true" aria-controls="tab-overview" id="btn-tab-overview" data-i18n="tab_overview">সারসংক্ষেপ</button>
-                                <button type="button" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-symptoms" id="btn-tab-symptoms" data-i18n="tab_symptoms">লক্ষণসমূহ</button>
-                                <button type="button" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-causes" id="btn-tab-causes" data-i18n="tab_causes">রোগের কারণ</button>
-                                <button type="button" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-mgmt" id="btn-tab-mgmt" data-i18n="tab_mgmt">প্রতিকার ও প্রেসক্রিপশন</button>
-                                <button type="button" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-calc" id="btn-tab-calc" data-i18n="tab_calc">ডোজ ক্যালকুলেটর</button>
+                                <button type="button" class="tab-btn active" role="tab" aria-selected="true" aria-controls="tab-overview" id="btn-tab-overview" data-i18n="tab_overview">🌿 সারসংক্ষেপ</button>
+                                <button type="button" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-symptoms" id="btn-tab-symptoms" data-i18n="tab_symptoms">🔍 লক্ষণসমূহ</button>
+                                <button type="button" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-causes" id="btn-tab-causes" data-i18n="tab_causes">⚠️ কারণসমূহ</button>
+                                <button type="button" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-mgmt" id="btn-tab-mgmt" data-i18n="tab_mgmt">💊 প্রতিকার</button>
+                                <button type="button" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-calc" id="btn-tab-calc" data-i18n="tab_calc">🧪 ডোজ হিসাব</button>
                             </div>
                             <div class="tab-pane active" id="tab-overview" role="tabpanel">
                                 <p id="text-overview">বিবরণ লোড হচ্ছে...</p>
@@ -1917,15 +3430,23 @@
                             </div>
                         </div>
 
-                        <!-- Bottom Action Buttons -->
+                        <!-- Bottom Action Buttons (WhatsApp Share & PDF Rx Download) -->
                         <div class="report-actions">
-                            <button type="button" class="btn-print" onclick="window.print()">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
-                                <span data-i18n="btn_print">রিপোর্ট প্রিন্ট / PDF সংরক্ষণ</span>
+                            <button type="button" class="btn-whatsapp" id="btn-share-whatsapp" onclick="sharePrescriptionWhatsApp()">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.634.044-1.042-.089-.408-.133-1.092-.418-1.928-1.163-.997-.887-1.637-2.029-1.834-2.368-.198-.34-.022-.524.15-.695.155-.155.342-.397.513-.595.17-.198.227-.34.341-.567.113-.227.056-.425-.028-.595-.085-.17-.765-1.842-1.049-2.522-.275-.662-.555-.572-.765-.583-.198-.01-.425-.013-.652-.013-.227 0-.595.085-.907.425-.312.34-1.191 1.163-1.191 2.836 0 1.673 1.219 3.287 1.389 3.514.17.227 2.399 3.664 5.812 5.137.812.35 1.446.559 1.94.716.816.26 1.558.223 2.146.135.656-.098 2.013-.823 2.296-1.62.283-.797.283-1.48.198-1.62-.085-.14-.312-.227-.652-.397z"/></svg>
+                                <span data-i18n="btn_whatsapp">WhatsApp-এ পাঠান</span>
+                            </button>
+                            <button type="button" class="btn-pdf" id="btn-download-pdf" onclick="openPrescriptionModal()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                                <span data-i18n="btn_pdf_rx">📄 প্রেসক্রিপশন ও PDF</span>
+                            </button>
+                            <button type="button" class="btn-print" onclick="openPrescriptionModal()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+                                <span data-i18n="btn_print">প্রিন্ট</span>
                             </button>
                             <button type="button" class="btn-reset" id="btn-reset">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-                                <span data-i18n="btn_new_test">নতুন পাতা পরীক্ষা</span>
+                                <span data-i18n="btn_new_test">নতুন</span>
                             </button>
                         </div>
 
@@ -2043,7 +3564,93 @@
             </div>
         </section>
 
+
+        <!-- ── Emergency National Agri Helpline & Support Desk ── -->
+        <section class="helpline-section" aria-labelledby="helpline-title">
+            <div class="section-header">
+                <div class="helpline-eyebrow">
+                    <span class="pulse-ring-red"></span>
+                    <span data-i18n="helpline_eyebrow">জরুরি কৃষি সহায়তা ও বিশেষজ্ঞ পরামর্শ</span>
+                </div>
+                <h3 id="helpline-title" class="section-title" data-i18n="helpline_title">জাতীয় জরুরি কৃষি হেল্পলাইন ও বিজ্ঞানী সেল</h3>
+                <p class="section-subtitle" data-i18n="helpline_sub">রোগের তীব্র আক্রমণ বা জরুরি প্রয়োজনে সরকারি কৃষি বিজ্ঞানী ও কর্মকর্তাদের সাথে সরাসরি কথা বলুন।</p>
+            </div>
+
+            <div class="helpline-grid">
+                <!-- 01 Krishi Call Center 16123 -->
+                <a href="tel:16123" class="helpline-card highlight" title="Call Krishi Call Center 16123">
+                    <div>
+                        <div class="helpline-badge" data-i18n="help_1_badge">সরকারি টোল-ফ্রি হটলাইন</div>
+                        <div class="helpline-icon-box">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                        </div>
+                        <h4 class="helpline-name" data-i18n="help_1_name">জাতীয় কৃষি কল সেন্টার</h4>
+                        <div class="helpline-number">১৬১২৩</div>
+                        <p class="helpline-desc" data-i18n="help_1_desc">কৃষি, প্রাণিসম্পদ ও মৎস্য বিষয়ক তাৎক্ষণিক সরকারি বিশেষজ্ঞ পরামর্শ (সকাল ৯টা - বিকাল ৫টা)।</p>
+                    </div>
+                    <span class="helpline-cta" data-i18n="help_dial_btn">📞 ১-ট্যাপে কল করুন →</span>
+                </a>
+
+                <!-- 02 BRRI Rice Scientists Cell -->
+                <a href="tel:01713383134" class="helpline-card" title="Call BRRI Rice Scientists Helpdesk">
+                    <div>
+                        <div class="helpline-badge" data-i18n="help_2_badge">ধান বিশেষজ্ঞ বিজ্ঞানী সেল</div>
+                        <div class="helpline-icon-box">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.4 19 2c1 2 2 4.1 2 8 0 5.5-4.5 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+                        </div>
+                        <h4 class="helpline-name" data-i18n="help_2_name">ধান গবেষণা ইনস্টিটিউট (BRRI)</h4>
+                        <div class="helpline-number">০২-৪৯২৭২০০৫</div>
+                        <p class="helpline-desc" data-i18n="help_2_desc">ধানের জটিল ব্লাস্ট, পাতা ঝলসানো ও পামরী পোকার বিস্তার রোধে বিজ্ঞানীদের বিশেষ সহায়তা।</p>
+                    </div>
+                    <span class="helpline-cta" data-i18n="help_dial_btn">📞 ১-ট্যাপে কল করুন →</span>
+                </a>
+
+                <!-- 03 DAE Extension Portal -->
+                <a href="https://dae.gov.bd/" target="_blank" rel="noopener noreferrer" class="helpline-card" title="Visit DAE Field Extension Portal">
+                    <div>
+                        <div class="helpline-badge" data-i18n="help_3_badge">মাঠ পর্যায়ের কর্মকর্তা ডিরেক্টরি</div>
+                        <div class="helpline-icon-box">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        </div>
+                        <h4 class="helpline-name" data-i18n="help_3_name">কৃষি সম্প্রসারণ অধিদপ্তর (DAE)</h4>
+                        <div class="helpline-number">dae.gov.bd</div>
+                        <p class="helpline-desc" data-i18n="help_3_desc">আপনার উপজেলা ও ইউনিয়নের উপ-সহকারী কৃষি কর্মকর্তা (SAAO)-এর সাথে সরাসরি যোগাযোগ করুন।</p>
+                    </div>
+                    <span class="helpline-cta" data-i18n="help_web_btn">🌐 কর্মকর্তা পোর্টাল দেখুন →</span>
+                </a>
+            </div>
+        </section>
+
     </main>
+
+    <!-- ── Feature 3: Live Camera Viewfinder Modal ── -->
+    <div class="modal-backdrop" id="modal-camera" role="dialog" aria-modal="true" aria-label="Live Camera Scanner">
+        <div class="camera-modal-content">
+            <div class="camera-modal-header">
+                <div style="display:flex;align-items:center;gap:0.5rem;">
+                    <span class="status-dot"></span>
+                    <span data-i18n="camera_title">লাইভ ক্যামেরা ভিউফাইন্ডার</span>
+                </div>
+                <button type="button" class="camera-close-btn" id="btn-close-camera" aria-label="Close camera">✕</button>
+            </div>
+            <div class="camera-viewfinder-box">
+                <video id="camera-video" autoplay playsinline muted></video>
+                <div class="camera-target-reticle">
+                    <div class="reticle-scanline"></div>
+                    <span class="reticle-hint" data-i18n="camera_hint">ধানের পাতা ফ্রেমের ভেতরে রাখুন</span>
+                </div>
+            </div>
+            <div class="camera-modal-controls">
+                <button type="button" class="btn-switch-cam" id="btn-switch-cam" title="Switch Camera">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                    <span data-i18n="btn_flip_cam">ক্যামেরা পাল্টান</span>
+                </button>
+                <button type="button" class="btn-capture-shutter" id="btn-capture-photo" title="Capture Photo">
+                    <div class="shutter-inner"></div>
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- ── Image Zoom Lightbox Modal ── -->
     <div class="modal-backdrop" id="modal-zoom" role="dialog" aria-modal="true" aria-label="Image Zoom View">
@@ -2052,6 +3659,140 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg>
             </button>
             <img id="modal-img" alt="Zoomed rice leaf" />
+        </div>
+    </div>
+
+    <!-- ── Feature 2: Doctor-Style Digital Agronomy Prescription Live Preview Modal ── -->
+    <div class="modal-backdrop" id="modal-prescription" role="dialog" aria-modal="true" aria-label="Agronomy Prescription Preview">
+        <div class="prescription-modal-wrap">
+            
+            <!-- Modal Sticky Header / Action Toolbar -->
+            <div class="prescription-modal-header">
+                <div class="modal-header-left">
+                    <span class="rx-symbol">📄</span>
+                    <div>
+                        <div class="rx-modal-title" id="rx-modal-title" data-i18n="rx_modal_title">ডিজিটাল প্রেসক্রিপশন প্রিভিউ (Live Report)</div>
+                        <div class="rx-modal-sub" id="rx-modal-sub" data-i18n="rx_modal_sub">ডাউনলোড বা প্রিন্ট করার আগে পুরো রিপোর্টটি যাচাই করুন</div>
+                    </div>
+                </div>
+                <div class="prescription-modal-actions">
+                    <button type="button" class="btn-rx-action download" id="btn-modal-pdf-download" onclick="executePdfDownload()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                        <span id="btn-modal-dl-text" data-i18n="btn_modal_dl">📥 PDF ডাউনলোড</span>
+                    </button>
+                    <button type="button" class="btn-rx-action print" onclick="printPrescription()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+                        <span id="btn-modal-print-text" data-i18n="btn_modal_print">🖨️ প্রিন্ট</span>
+                    </button>
+                    <button type="button" class="btn-rx-action close" onclick="closePrescriptionModal()" title="Close">✕</button>
+                </div>
+            </div>
+
+            <!-- Scrollable Modal Body containing the full Prescription Sheet -->
+            <div class="prescription-modal-body">
+                <div id="prescription-pdf-canvas">
+                    <div class="pr-sheet-box">
+                        
+                        <!-- Header -->
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #10B981; padding-bottom: 0.65rem; margin-bottom: 0.75rem;">
+                            <div style="display: flex; align-items: center; gap: 0.6rem;">
+                                <span style="font-size: 1.8rem; line-height: 1;">🌾</span>
+                                <div>
+                                    <h1 style="font-size: 1.4rem; color: #0F5132; font-weight: 900; margin: 0; line-height: 1.1; letter-spacing: -0.01em;">RiceGuard AI</h1>
+                                    <p id="pdf-hdr-sub" style="font-size: 0.76rem; color: #1E6B47; font-weight: 700; margin: 0.15rem 0 0;">ডিজিটাল ফসল চিকিৎসাপত্র ও পূর্ণাঙ্গ রিপোর্ট (Digital Agronomy Prescription)</p>
+                                </div>
+                            </div>
+                            <div style="text-align: right; font-size: 0.74rem; color: #475569; line-height: 1.4;">
+                                <div style="font-weight: 700; color: #0F291E;"><span id="pdf-lbl-date">তারিখ:</span> <span id="pdf-date"></span></div>
+                                <div><span id="pdf-lbl-case">কেস আইডি:</span> <span id="pdf-case-id" style="font-family: monospace; font-weight: 800; color: #0F5132;"></span></div>
+                                <div id="pdf-lbl-model" style="color: #10B981; font-weight: 700;">এআই মডেল: ResNet-18 (GAN-Augmented)</div>
+                            </div>
+                        </div>
+
+                        <!-- Diagnosis Banner -->
+                        <div style="background: #F0FDF4; border: 1.5px solid #86EFAC; border-radius: 8px; padding: 0.7rem 1rem; margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div id="pdf-lbl-diag" style="font-size: 0.7rem; font-weight: 800; color: #166534; text-transform: uppercase; letter-spacing: 0.04em;">শনাক্তকৃত রোগ (AI Diagnosis)</div>
+                                <div id="pdf-disease-name" style="font-size: 1.25rem; font-weight: 900; color: #0F291E; margin: 0.15rem 0 0.1rem;"></div>
+                                <div id="pdf-pathogen" style="font-size: 0.78rem; font-style: italic; color: #475569;"></div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div id="pdf-lbl-conf" style="font-size: 0.7rem; font-weight: 700; color: #475569;">মডেল কনফিডেন্স</div>
+                                <div id="pdf-confidence" style="font-size: 1.4rem; font-weight: 900; color: #0F5132; line-height: 1.1;"></div>
+                                <span id="pdf-severity" style="display: inline-block; font-size: 0.7rem; font-weight: 800; padding: 0.15rem 0.55rem; border-radius: 9999px; background: #DC2626; color: #FFF; margin-top: 0.2rem;"></span>
+                            </div>
+                        </div>
+
+                        <!-- Images Row -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;">
+                            <div style="text-align: center; border: 1px solid #E2E8F0; border-radius: 6px; padding: 0.35rem; background: #FAFCFA;">
+                                <div id="pdf-lbl-orig" style="font-size: 0.7rem; font-weight: 700; color: #475569; margin-bottom: 0.25rem;">১. মূল ধানের পাতা (Sample Leaf)</div>
+                                <img id="pdf-img-orig" alt="Original Leaf" style="width: 100%; height: 125px; object-fit: cover; border-radius: 4px; border: 1px solid #E2E8F0; display: block;" />
+                            </div>
+                            <div style="text-align: center; border: 1px solid #E2E8F0; border-radius: 6px; padding: 0.35rem; background: #FAFCFA;">
+                                <div id="pdf-lbl-cam" style="font-size: 0.7rem; font-weight: 700; color: #475569; margin-bottom: 0.25rem;">২. এআই দৃষ্টি হিটম্যাপ (Grad-CAM XAI)</div>
+                                <img id="pdf-img-cam" alt="Grad-CAM Heatmap" style="width: 100%; height: 125px; object-fit: cover; border-radius: 4px; border: 1px solid #E2E8F0; display: block;" />
+                            </div>
+                        </div>
+
+                        <!-- Symptoms & Causes Row -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;">
+                            <div style="background: #FAFCFA; border: 1px solid #E2E8F0; border-radius: 6px; padding: 0.6rem 0.75rem;">
+                                <div id="pdf-lbl-sym" style="font-size: 0.74rem; font-weight: 800; color: #0F5132; margin-bottom: 0.25rem;">🔍 প্রধান লক্ষণসমূহ (Symptoms):</div>
+                                <ul id="pdf-list-symptoms" style="margin: 0; padding-left: 1.1rem; font-size: 0.73rem; color: #334155; line-height: 1.35;"></ul>
+                            </div>
+                            <div style="background: #FAFCFA; border: 1px solid #E2E8F0; border-radius: 6px; padding: 0.6rem 0.75rem;">
+                                <div id="pdf-lbl-causes" style="font-size: 0.74rem; font-weight: 800; color: #9A3412; margin-bottom: 0.25rem;">⚠️ আক্রমণের কারণসমূহ (Causes):</div>
+                                <ul id="pdf-list-causes" style="margin: 0; padding-left: 1.1rem; font-size: 0.73rem; color: #334155; line-height: 1.35;"></ul>
+                            </div>
+                        </div>
+
+                        <!-- Rx Treatment Section -->
+                        <div style="margin-bottom: 0.75rem;">
+                            <div id="pdf-lbl-rx" style="font-size: 0.8rem; font-weight: 800; color: #0F5132; border-bottom: 1px solid #E2E8F0; padding-bottom: 0.2rem; margin-bottom: 0.35rem;">
+                                💊 পূর্ণাঙ্গ বালাইনাশক ও প্রতিকার প্রেসক্রিপশন (Rx Treatment)
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem;">
+                                <div style="background: #FEF2F2; border: 1px solid #FECACA; border-radius: 6px; padding: 0.55rem 0.7rem;">
+                                    <strong id="pdf-lbl-chem" style="color: #DC2626; font-size: 0.73rem;">[রাসায়নিক প্রতিকার]</strong>
+                                    <p id="pdf-rx-chemical" style="margin: 0.15rem 0 0; font-size: 0.73rem; color: #0F291E; line-height: 1.35;"></p>
+                                </div>
+                                <div style="background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 6px; padding: 0.55rem 0.7rem;">
+                                    <strong id="pdf-lbl-cult" style="color: #15803D; font-size: 0.73rem;">[কৃষি ও পরিচর্যা ব্যবস্থাপনা]</strong>
+                                    <p id="pdf-rx-cultural" style="margin: 0.15rem 0 0; font-size: 0.73rem; color: #0F291E; line-height: 1.35;"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dosage Calculation & Weather Advisory Row -->
+                        <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 0.65rem; margin-bottom: 0.65rem;">
+                            <div style="background: #F8FAF8; border: 1px dashed #10B981; border-radius: 6px; padding: 0.55rem 0.75rem;">
+                                <div style="font-size: 0.73rem; font-weight: 800; color: #0F5132; margin-bottom: 0.15rem;"><span id="pdf-lbl-calc">🧪 জমির ডোজ হিসাব:</span> <span id="pdf-land-calc-text"></span></div>
+                                <div id="pdf-calc-summary" style="font-size: 0.73rem; color: #334155; font-weight: 600;"></div>
+                            </div>
+                            <div style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 6px; padding: 0.55rem 0.75rem;">
+                                <div id="pdf-lbl-spray" style="font-size: 0.73rem; font-weight: 800; color: #B45309; margin-bottom: 0.15rem;">🌦️ স্প্রে সতর্কতা:</div>
+                                <div id="pdf-txt-spray" style="font-size: 0.71rem; color: #78350F; line-height: 1.3;">
+                                    • ৪ ঘণ্টার মধ্যে বৃষ্টির সম্ভাবনা থাকলে স্প্রে স্থগিত রাখুন।<br/>
+                                    • বিকেলে মিষ্টি রোদে বাতাসের অনুকূলে স্প্রে করুন।
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer Verification -->
+                        <div style="border-top: 1px solid #E2E8F0; padding-top: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+                            <div style="font-size: 0.69rem; color: #64748B; line-height: 1.35;">
+                                <div id="pdf-lbl-sys">সিস্টেম: <strong>RiceGuard AI Autonomous Vision Platform</strong></div>
+                                <div id="pdf-lbl-dev">কারিগরি বিকাশ ও ডিজাইন: <strong class="notranslate" translate="no">Ohi</strong></div>
+                            </div>
+                            <div style="border: 1.5px solid #10B981; border-radius: 6px; padding: 0.2rem 0.6rem; text-align: center; color: #0F5132; font-size: 0.69rem; font-weight: 800; background: #F0FDF4;">
+                                ✓ AI VERIFIED RX • DIGITAL SEAL
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -2073,8 +3814,9 @@
                     <span class="tech-tag">PyTorch CPU</span>
                     <span class="tech-tag">ResNet18 Classifier</span>
                     <span class="tech-tag">Grad-CAM (XAI)</span>
-                    <span class="tech-tag">GAN-Augmented CNN</span>
+                    <span class="tech-tag">Neural Voice Audio</span>
                     <span class="tech-tag">Dosage Calculator</span>
+                    <span class="tech-tag">PDF Rx Generator</span>
                     <span class="tech-tag" data-i18n="tag_agronomy">বালাইনাশক প্রেসক্রিপশন</span>
                 </div>
             </div>
@@ -2084,7 +3826,92 @@
         </div>
     </footer>
 
-    <!-- ── Interactive JavaScript Logic with Grad-CAM, Voice Speech & Dosage Calculator ── -->
+    <!-- ── Floating AI Agri-Assistant Chatbot (Feature 1) ── -->
+    <div class="chat-widget-container" id="chat-widget-container">
+        <!-- Floating Trigger Button -->
+        <button type="button" class="chat-floating-btn" id="btn-toggle-chat" onclick="toggleAgriChat()" title="Open AI Agri Assistant" aria-label="Open AI Agri Assistant">
+            <span class="chat-pulse-ring"></span>
+            <div class="chat-btn-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <span class="chat-btn-text" data-i18n="chat_btn_text">এআই কৃষি বিশেষজ্ঞ</span>
+        </button>
+
+        <!-- Chat Window Box -->
+        <div class="chat-window-box" id="chat-window-box">
+            <!-- Chat Header -->
+            <div class="chat-header">
+                <div class="chat-header-info">
+                    <div class="chat-avatar">🌾</div>
+                    <div>
+                        <div class="chat-title" data-i18n="chat_bot_name">RiceGuard এআই কৃষি ডাক্তার</div>
+                        <div class="chat-status">
+                            <span class="chat-online-dot"></span>
+                            <span data-i18n="chat_bot_status">অনলাইনে সক্রিয় • ২৪/৭ সাপোর্ট</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-header-actions">
+                    <button type="button" class="chat-action-btn" onclick="clearChatHistory()" title="Clear Chat" aria-label="Clear Chat">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                    </button>
+                    <button type="button" class="chat-action-btn" onclick="toggleAgriChat()" title="Close Chat" aria-label="Close Chat">✕</button>
+                </div>
+            </div>
+
+            <!-- Chat Messages Body -->
+            <div class="chat-messages" id="chat-messages">
+                <!-- Welcome Card -->
+                <div class="chat-welcome-card" id="chat-welcome-card">
+                    <div class="welcome-header">
+                        <span>✨</span>
+                        <span data-i18n="chat_welcome_title">RiceGuard AI ফসল সহকারীতে স্বাগতম!</span>
+                    </div>
+                    <p class="welcome-desc" data-i18n="chat_welcome_desc">
+                        ধানের রোগ শনাক্তকরণ, বালাইনাশক প্রেসক্রিপশন, সারের সঠিক মাত্রা ও মাঠ পরিচর্যা সংক্রান্ত যেকোনো প্রশ্ন করুন।
+                    </p>
+                    <div class="welcome-topics-grid">
+                        <button type="button" class="welcome-topic-btn" onclick="sendQuickPrompt('ব্লাস্ট রোগের দ্রুত প্রতিকার কী?')">
+                            <span class="welcome-topic-title">🌾 ব্লাস্ট রোগ দমন</span>
+                            <span class="welcome-topic-sub">লক্ষণ ও ওষুধ স্প্রে</span>
+                        </button>
+                        <button type="button" class="welcome-topic-btn" onclick="sendQuickPrompt('ইউরিয়া সার কখন দেওয়া উচিত নয়?')">
+                            <span class="welcome-topic-title">🧪 ইউরিয়া সারের নিয়ম</span>
+                            <span class="welcome-topic-sub">প্রয়োগ সতর্কতা</span>
+                        </button>
+                        <button type="button" class="welcome-topic-btn" onclick="sendQuickPrompt('পামরী পোকা দমনের ঘরোয়া উপায় কী?')">
+                            <span class="welcome-topic-title">🐛 পামরী পোকা দমন</span>
+                            <span class="welcome-topic-sub">পার্চিং ও রাসায়নিক</span>
+                        </button>
+                        <button type="button" class="welcome-topic-btn" onclick="sendQuickPrompt('স্প্রে করার সঠিক আবহাওয়া ও সময় কী?')">
+                            <span class="welcome-topic-title">🌦️ স্প্রে সতর্কতা</span>
+                            <span class="welcome-topic-sub">আবহাওয়া ও সময়</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Prompt Suggestion Pills -->
+            <div class="chat-quick-prompts" id="chat-quick-prompts">
+                <button type="button" class="prompt-chip" onclick="sendQuickPrompt('ব্লাস্ট রোগের প্রতিকার')">🌾 ব্লাস্ট রোগ</button>
+                <button type="button" class="prompt-chip" onclick="sendQuickPrompt('ব্যাকটেরিয়াল পাতা পোড়া প্রতিকার')">🍂 পাতা পোড়া</button>
+                <button type="button" class="prompt-chip" onclick="sendQuickPrompt('ইউরিয়া সারের সঠিক নিয়ম')">🧪 ইউরিয়া নিয়ম</button>
+                <button type="button" class="prompt-chip" onclick="sendQuickPrompt('পামরী পোকা দমন পদ্ধতি')">🐛 পামরী পোকা</button>
+                <button type="button" class="prompt-chip" onclick="sendQuickPrompt('খোল পোড়া রোগ দমন')">🌿 খোল পোড়া</button>
+                <button type="button" class="prompt-chip" onclick="sendQuickPrompt('সেচ ও পানি ব্যবস্থাপনা')">💧 সেচ নিয়ম</button>
+            </div>
+
+            <!-- Chat Input Bar -->
+            <form class="chat-input-bar" id="chat-form" onsubmit="handleChatSubmit(event)">
+                <input type="text" id="chat-input" class="chat-input" placeholder="ধানের রোগ বা চাষ নিয়ে প্রশ্ন লিখুন..." autocomplete="off" />
+                <button type="submit" class="chat-send-btn" id="btn-chat-send" title="Send Message" aria-label="Send Message">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ── Interactive JavaScript Logic with Camera, PDF Generator & Neural Voice ── -->
     <script>
         /* ── Full i18n Translation Dictionary ── */
         const I18N = {
@@ -2108,6 +3935,10 @@
                 drop_title: 'এখানে পাতার ছবি টেনে আনুন বা ড্রপ করুন',
                 drop_sub: 'অথবা ডিভাইস থেকে ফাইল নির্বাচন করুন',
                 drop_meta: 'JPG · PNG · BMP · TIFF (সর্বোচ্চ ১০ মেগাবাইট)',
+                btn_live_cam: '📷 সরাসরি ক্যামেরা দিয়ে ছবি তুলুন',
+                camera_title: 'লাইভ ক্যামেরা ভিউফাইন্ডার',
+                camera_hint: 'ধানের পাতা ফ্রেমের ভেতরে রাখুন',
+                btn_flip_cam: 'ক্যামেরা পাল্টান',
                 ready_badge: 'বিশ্লেষণের জন্য প্রস্তুত',
                 view_orig: 'আসল পাতা',
                 view_cam: 'এআই হিটম্যাপ (Grad-CAM)',
@@ -2146,8 +3977,14 @@
                 calc_water_label: 'প্রয়োজনীয় পানি',
                 calc_chem_label: 'বালাইনাশক পরিমাণ',
                 calc_tanks_label: '১৬ লিটার স্প্রে ড্রাম',
-                btn_print: 'রিপোর্ট প্রিন্ট / PDF সংরক্ষণ',
-                btn_new_test: 'নতুন পাতা পরীক্ষা',
+                btn_whatsapp: '💬 WhatsApp-এ পাঠান',
+                btn_pdf_rx: '📄 প্রেসক্রিপশন ও PDF',
+                btn_print: 'প্রিন্ট',
+                btn_new_test: 'নতুন',
+                rx_modal_title: 'ডিজিটাল প্রেসক্রিপশন প্রিভিউ (Live Report)',
+                rx_modal_sub: 'ডাউনলোড বা প্রিন্ট করার আগে পুরো রিপোর্টটি যাচাই করুন',
+                btn_modal_dl: '📥 PDF ডাউনলোড',
+                btn_modal_print: '🖨️ প্রিন্ট',
                 classes_sec_title: 'শনাক্তকরণযোগ্য ধানের ৮টি অবস্থা ও রোগ',
                 classes_sec_sub: 'আমাদের কম্পিউটার ভিশন মডেল ধানের পাতার নিচের ৮টি অবস্থা নির্ভুলভাবে শনাক্ত করতে পারে।',
                 class_1_name: 'ব্যাকটেরিয়াল পাতা পোড়া',
@@ -2166,6 +4003,20 @@
                 class_7_sub: 'Dicladispa armigera',
                 class_8_name: 'খোল পোড়া রোগ',
                 class_8_sub: 'Rhizoctonia solani',
+                helpline_eyebrow: 'জরুরি কৃষি সহায়তা ও বিশেষজ্ঞ পরামর্শ',
+                helpline_title: 'জাতীয় জরুরি কৃষি হেল্পলাইন ও বিজ্ঞানী সেল',
+                helpline_sub: 'রোগের তীব্র আক্রমণ বা জরুরি প্রয়োজনে সরকারি কৃষি বিজ্ঞানী ও কর্মকর্তাদের সাথে সরাসরি কথা বলুন।',
+                help_1_name: 'জাতীয় কৃষি কল সেন্টার',
+                help_1_badge: 'সরকারি টোল-ফ্রি হটলাইন',
+                help_1_desc: 'কৃষি, প্রাণিসম্পদ ও মৎস্য বিষয়ক তাৎক্ষণিক সরকারি বিশেষজ্ঞ পরামর্শ (সকাল ৯টা - বিকাল ৫টা)।',
+                help_2_name: 'বাংলাদেশ ধান গবেষণা ইনস্টিটিউট (BRRI)',
+                help_2_badge: 'ধান বিশেষজ্ঞ বিজ্ঞানী সেল',
+                help_2_desc: 'ধানের জটিল ব্লাস্ট, পাতা ঝলসানো ও পামরী পোকার বিস্তার রোধে বিজ্ঞানীদের বিশেষ সহায়তা।',
+                help_3_name: 'কৃষি সম্প্রসারণ অধিদপ্তর (DAE)',
+                help_3_badge: 'মাঠ পর্যায়ের কর্মকর্তা ডিরেক্টরি',
+                help_3_desc: 'আপনার উপজেলা ও ইউনিয়নের উপ-সহকারী কৃষি কর্মকর্তা (SAAO)-এর সাথে সরাসরি যোগাযোগ করুন।',
+                help_dial_btn: '📞 ১-ট্যাপে কল করুন →',
+                help_web_btn: '🌐 কর্মকর্তা পোর্টাল দেখুন →',
                 footer_dev_label: 'Designed & Developed by',
                 footer_brand: 'RiceGuard AI — ধানের রোগ নির্ণয় ও ফসল সুরক্ষা প্ল্যাটফর্ম',
                 footer_desc: 'একটি কৃত্রিম বুদ্ধিমত্তা চালিত কম্পিউটার ভিশন সিস্টেম (ResNet18 + GAN-Augmented CNN)।<br/>কৃষক ও কৃষিবিদদের জন্য দ্রুত ও নির্ভুলভাবে ধানের রোগ শনাক্তকরণ ও প্রেসক্রিপশন প্রদানের লক্ষ্যে নির্মিত।',
@@ -2176,7 +4027,17 @@
                 rx_bio: 'জৈব ও প্রাকৃতিক নিয়ন্ত্রণ',
                 conf_high: 'উচ্চ নির্ভুলতা',
                 conf_mod: 'মাঝারি নির্ভুলতা',
-                conf_low: 'কম নির্ভুলতা'
+                conf_low: 'কম নির্ভুলতা',
+                btn_install_pwa: 'অ্যাপ ইনস্টল',
+                tool_enhance: '✨ অটো-এনহ্যান্স',
+                tool_rotate: '🔄 ৯০° ঘোরান',
+                tool_sharpen: '🔍 শার্প ফোকাস',
+                chat_btn_text: 'এআই কৃষি বিশেষজ্ঞ',
+                chat_bot_name: 'RiceGuard এআই কৃষি ডাক্তার',
+                chat_bot_status: 'অনলাইনে সক্রিয় • ২৪/৭ সাপোর্ট',
+                chat_welcome_title: 'RiceGuard AI ফসল সহকারীতে স্বাগতম!',
+                chat_welcome_desc: 'ধানের রোগ শনাক্তকরণ, বালাইনাশক প্রেসক্রিপশন, সারের সঠিক মাত্রা ও মাঠ পরিচর্যা সংক্রান্ত যেকোনো প্রশ্ন করুন।',
+                chat_welcome_msg: 'নমস্কার/সালাম! আমি <strong>RiceGuard AI</strong>-এর ডিজিটাল ফসল বিশেষজ্ঞ।<br/>ধানের রোগ, বালাইনাশক প্রয়োগ, সারের নিয়ম বা চাষাবাদ নিয়ে যেকোনো প্রশ্ন করুন।'
             },
             en: {
                 page_title: 'RiceGuard AI — Rice Leaf Disease Detection & Agronomy Prescription',
@@ -2198,6 +4059,10 @@
                 drop_title: 'Drop your leaf image here',
                 drop_sub: 'or browse from device (Click to browse)',
                 drop_meta: 'JPG · PNG · BMP · TIFF (Max 10 MB)',
+                btn_live_cam: '📷 Open Live Camera Scanner',
+                camera_title: 'Live Camera Viewfinder',
+                camera_hint: 'Position rice leaf inside frame',
+                btn_flip_cam: 'Flip Camera',
                 ready_badge: 'READY FOR ANALYSIS',
                 view_orig: 'Original Leaf',
                 view_cam: 'AI Heatmap (Grad-CAM)',
@@ -2236,8 +4101,14 @@
                 calc_water_label: 'Water Required',
                 calc_chem_label: 'Chemical Dosage',
                 calc_tanks_label: '16L Sprayer Tanks',
-                btn_print: 'Print Report / Save PDF',
-                btn_new_test: 'Analyze Another Leaf',
+                btn_whatsapp: '💬 Share on WhatsApp',
+                btn_pdf_rx: '📄 Prescription & PDF',
+                btn_print: 'Print',
+                btn_new_test: 'New',
+                rx_modal_title: 'Digital Prescription Preview (Live Report)',
+                rx_modal_sub: 'Review full diagnosis & dosage before downloading or printing',
+                btn_modal_dl: '📥 Download PDF',
+                btn_modal_print: '🖨️ Print',
                 classes_sec_title: 'Supported Rice Conditions & Pathogens',
                 classes_sec_sub: 'Our computer vision model classifies leaf imagery into eight distinct botanical categories.',
                 class_1_name: 'Bacterial Leaf Blight',
@@ -2256,6 +4127,20 @@
                 class_7_sub: 'Dicladispa armigera',
                 class_8_name: 'Sheath Blight',
                 class_8_sub: 'Rhizoctonia solani',
+                helpline_eyebrow: 'EMERGENCY AGRI HELPLINE & SCIENTIST DESK',
+                helpline_title: 'National Emergency Agri Helplines & Expert Cell',
+                helpline_sub: 'Call national agronomists, BRRI scientists, and field extension officers directly for immediate support.',
+                help_1_name: 'National Krishi Call Center',
+                help_1_badge: 'Govt Toll-Free Hotline',
+                help_1_desc: 'Instant advisory on crops, pests, and fertilizers by govt agronomists (9 AM - 5 PM).',
+                help_2_name: 'Bangladesh Rice Research Institute (BRRI)',
+                help_2_badge: 'Rice Scientist Taskforce',
+                help_2_desc: 'Dedicated scientist helpdesk for epidemic blast, blights, and rice insect infestations.',
+                help_3_name: 'Department of Agricultural Extension (DAE)',
+                help_3_badge: 'Field Extension Officer Portal',
+                help_3_desc: 'Locate and connect with your sub-district / union Sub-Assistant Agriculture Officer (SAAO).',
+                help_dial_btn: '📞 1-Tap Direct Call →',
+                help_web_btn: '🌐 View DAE Directory →',
                 footer_dev_label: 'Designed & Developed by',
                 footer_brand: 'RiceGuard AI — Rice Crop Protection Platform',
                 footer_desc: 'An AI-powered computer vision system (ResNet18 + GAN-Augmented CNN).<br/>Built for farmers and agronomists to rapidly detect rice diseases and provide verified chemical and organic prescriptions.',
@@ -2266,7 +4151,17 @@
                 rx_bio: 'Biological & Organic Control',
                 conf_high: 'High Confidence',
                 conf_mod: 'Moderate Confidence',
-                conf_low: 'Low Confidence'
+                conf_low: 'Low Confidence',
+                btn_install_pwa: 'Install App',
+                tool_enhance: '✨ Auto-Enhance',
+                tool_rotate: '🔄 Rotate 90°',
+                tool_sharpen: '🔍 Sharpen Focus',
+                chat_btn_text: 'AI Agri Specialist',
+                chat_bot_name: 'RiceGuard AI Agri Specialist',
+                chat_bot_status: 'Online & Active • 24/7 Support',
+                chat_welcome_title: 'Welcome to RiceGuard AI Assistant!',
+                chat_welcome_desc: 'Ask any questions regarding rice leaf disease diagnosis, fungicide prescriptions, fertilizer dosages, or crop field care.',
+                chat_welcome_msg: 'Hello! I am the <strong>RiceGuard AI</strong> Agronomy Assistant.<br/>Ask me any question about rice diseases, fungicides, fertilizers, or crop care.'
             }
         };
 
@@ -2278,6 +4173,8 @@
         let originalImageSrc = '';
         let gradcamImageSrc = '';
         let currentViewMode = 'orig'; // 'orig' or 'cam'
+        let rawOriginalDataUrl = '';
+        let rawOriginalFile = null;
 
         /* ── 1-Click Language Switcher Function ── */
         function setLanguage(lang) {
@@ -2298,13 +4195,32 @@
                 }
             });
 
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                isSpeaking = false;
-                const btn = document.getElementById('btn-voice-read');
-                const btnText = document.getElementById('voice-btn-text');
-                if (btn) btn.classList.remove('speaking');
-                if (btnText) btnText.textContent = lang === 'bn' ? 'প্রেসক্রিপশন শুনুন' : 'Listen Audio';
+            // Translate Expected Class dropdown options
+            const classSelect = document.getElementById('expected_class');
+            if (classSelect) {
+                const isBn = lang === 'bn';
+                const classTranslations = {
+                    "Bacterial Leaf Blight": { bn: "ব্যাকটেরিয়াল পাতা পোড়া রোগ (Bacterial Blight)", en: "Bacterial Leaf Blight" },
+                    "Brown Spot": { bn: "বাদামী দাগ রোগ (Brown Spot)", en: "Brown Spot" },
+                    "Healthy Rice Leaf": { bn: "সুস্থ ধানের পাতা (Healthy Leaf)", en: "Healthy Rice Leaf" },
+                    "Leaf Blast": { bn: "পাতা ব্লাস্ট রোগ (Leaf Blast)", en: "Leaf Blast" },
+                    "Leaf scald": { bn: "লিফ স্ক্যাল্ড (Leaf Scald)", en: "Leaf Scald" },
+                    "Narrow Brown Leaf Spot": { bn: "সরু বাদামী দাগ রোগ (Narrow Brown Spot)", en: "Narrow Brown Leaf Spot" },
+                    "Rice Hispa": { bn: "ধানের পামরী পোকা (Rice Hispa)", en: "Rice Hispa" },
+                    "Sheath Blight": { bn: "খোল পোড়া রোগ (Sheath Blight)", en: "Sheath Blight" }
+                };
+
+                Array.from(classSelect.options).forEach(opt => {
+                    if (!opt.value) return; // Prompt option handled by data-i18n
+                    const trans = classTranslations[opt.value];
+                    if (trans) {
+                        opt.textContent = isBn ? trans.bn : trans.en;
+                    }
+                });
+            }
+
+            if (isSpeaking) {
+                stopAudioSpeech();
             }
 
             if (currentDiseaseData) {
@@ -2507,7 +4423,7 @@
             const tanks = (totalWater / 16).toFixed(1);
 
             // Chemical dosage calculation
-            const ratePerL = (currentDiseaseData && currentDiseaseData.dosage_rate_per_liter) ? currentDiseaseData.dosage_rate_per_liter : 1.0;
+            const ratePerL = (currentDiseaseData && typeof currentDiseaseData.dosage_rate_per_liter === 'number') ? currentDiseaseData.dosage_rate_per_liter : 1.0;
             const chemUnit = (currentDiseaseData && currentDiseaseData.dosage_unit) ? currentDiseaseData.dosage_unit : 'ml';
             const totalChem = (totalWater * ratePerL).toFixed(1);
             const chemName  = isBn 
@@ -2516,7 +4432,7 @@
 
             if (ratePerL === 0) {
                 waterVal.textContent = isBn ? `${totalWater} লিটার` : `${totalWater} L`;
-                chemVal.textContent  = isBn ? 'প্রয়োজন নেই' : 'None';
+                chemVal.textContent  = isBn ? 'প্রয়োজন নেই (০ মিলি)' : 'None (0 ml)';
                 tanksVal.textContent = isBn ? `${tanks} ড্রাম` : `${tanks} Tanks`;
                 adviceText.innerHTML = isBn 
                     ? '💡 পাতা সম্পূর্ণ সুস্থ। কোনো রাসায়নিক বালাইনাশক স্প্রে করার প্রয়োজন নেই।' 
@@ -2529,6 +4445,401 @@
                     ? `💡 <strong>হিসাব:</strong> মোট <strong>${totalWater} লিটার</strong> পানিতে <strong>${totalChem} ${chemUnit}</strong> ${chemName} ভালোভাবে গুলিয়ে <strong>${tanks}টি</strong> ড্রামের সাহায্যে পুরো ক্ষেতে সমানভাবে স্প্রে করুন।`
                     : `💡 <strong>Mixing:</strong> Dissolve <strong>${totalChem} ${chemUnit}</strong> of ${chemName} in <strong>${totalWater} Liters</strong> of water and apply evenly using <strong>${tanks}</strong> knapsack tanks.`;
             }
+        }
+
+        /* ── Feature 2: Populate Official Doctor-Style Prescription Sheet ── */
+        function populatePrescriptionData() {
+            if (!currentDiseaseData) return null;
+
+            const isBn = currentLang === 'bn';
+            const dateStr = new Date().toLocaleDateString(isBn ? 'bn-BD' : 'en-US', {
+                year: 'numeric', month: 'long', day: 'numeric'
+            });
+            const caseId = 'RX-' + Math.floor(100000 + Math.random() * 900000);
+
+            // Dynamic Bilingual Labels in PDF Sheet
+            const hdrSub = document.getElementById('pdf-hdr-sub');
+            if (hdrSub) hdrSub.textContent = isBn 
+                ? 'ডিজিটাল ফসল চিকিৎসাপত্র ও পূর্ণাঙ্গ রিপোর্ট (Digital Agronomy Prescription)' 
+                : 'Digital Agronomy Prescription & Diagnostic Report';
+
+            const lblDate = document.getElementById('pdf-lbl-date');
+            if (lblDate) lblDate.textContent = isBn ? 'তারিখ:' : 'Date:';
+
+            const lblCase = document.getElementById('pdf-lbl-case');
+            if (lblCase) lblCase.textContent = isBn ? 'কেস আইডি:' : 'Case ID:';
+
+            const lblModel = document.getElementById('pdf-lbl-model');
+            if (lblModel) lblModel.textContent = isBn 
+                ? 'এআই মডেল: ResNet-18 (GAN-Augmented)' 
+                : 'AI Model: ResNet-18 (GAN-Augmented)';
+
+            const lblDiag = document.getElementById('pdf-lbl-diag');
+            if (lblDiag) lblDiag.textContent = isBn 
+                ? 'শনাক্তকৃত রোগ (AI Diagnosis)' 
+                : 'DIAGNOSED CONDITION (AI OUTPUT)';
+
+            const lblConf = document.getElementById('pdf-lbl-conf');
+            if (lblConf) lblConf.textContent = isBn ? 'মডেল কনফিডেন্স' : 'Model Confidence';
+
+            const lblOrig = document.getElementById('pdf-lbl-orig');
+            if (lblOrig) lblOrig.textContent = isBn 
+                ? '১. মূল ধানের পাতা (Sample Leaf)' 
+                : '1. Original Leaf Sample';
+
+            const lblCam = document.getElementById('pdf-lbl-cam');
+            if (lblCam) lblCam.textContent = isBn 
+                ? '২. এআই দৃষ্টি হিটম্যাপ (Grad-CAM XAI)' 
+                : '2. AI Attention Heatmap (Grad-CAM)';
+
+            const lblSym = document.getElementById('pdf-lbl-sym');
+            if (lblSym) lblSym.textContent = isBn 
+                ? '🔍 প্রধান লক্ষণসমূহ (Symptoms):' 
+                : '🔍 Visible Symptoms:';
+
+            const lblCauses = document.getElementById('pdf-lbl-causes');
+            if (lblCauses) lblCauses.textContent = isBn 
+                ? '⚠️ আক্রমণের কারণসমূহ (Causes):' 
+                : '⚠️ Disease Causes & Triggers:';
+
+            const lblRx = document.getElementById('pdf-lbl-rx');
+            if (lblRx) lblRx.textContent = isBn 
+                ? '💊 পূর্ণাঙ্গ বালাইনাশক ও প্রতিকার প্রেসক্রিপশন (Rx Treatment)' 
+                : '💊 Complete Agronomic Rx Prescription & Control';
+
+            const lblChem = document.getElementById('pdf-lbl-chem');
+            if (lblChem) lblChem.textContent = isBn ? '[রাসায়নিক প্রতিকার]' : '[Chemical Control]';
+
+            const lblCult = document.getElementById('pdf-lbl-cult');
+            if (lblCult) lblCult.textContent = isBn ? '[কৃষি ও পরিচর্যা ব্যবস্থাপনা]' : '[Cultural & Field Care]';
+
+            const lblCalc = document.getElementById('pdf-lbl-calc');
+            if (lblCalc) lblCalc.textContent = isBn ? '🧪 জমির ডোজ হিসাব:' : '🧪 Field Spray & Dosage:';
+
+            const lblSpray = document.getElementById('pdf-lbl-spray');
+            if (lblSpray) lblSpray.textContent = isBn ? '🌦️ স্প্রে সতর্কতা:' : '🌦️ Spraying Advisory:';
+
+            const txtSpray = document.getElementById('pdf-txt-spray');
+            if (txtSpray) txtSpray.innerHTML = isBn 
+                ? '• ৪ ঘণ্টার মধ্যে বৃষ্টির সম্ভাবনা থাকলে স্প্রে স্থগিত রাখুন।<br/>• বিকেলে মিষ্টি রোদে বাতাসের অনুকূলে স্প্রে করুন।' 
+                : '• Postpone spraying if rain is expected within 4 hours.<br/>• Always spray in late afternoon with mild sunlight along wind direction.';
+
+            const lblSys = document.getElementById('pdf-lbl-sys');
+            if (lblSys) lblSys.innerHTML = isBn 
+                ? 'সিস্টেম: <strong>RiceGuard AI Autonomous Vision Platform</strong>' 
+                : 'System: <strong>RiceGuard AI Autonomous Vision Platform</strong>';
+
+            const lblDev = document.getElementById('pdf-lbl-dev');
+            if (lblDev) lblDev.innerHTML = isBn 
+                ? 'কারিগরি বিকাশ ও ডিজাইন: <strong class="notranslate" translate="no">Ohi</strong>' 
+                : 'Designed & Developed by: <strong class="notranslate" translate="no">Ohi</strong>';
+
+            // Diagnostic Values
+            document.getElementById('pdf-date').textContent = dateStr;
+            document.getElementById('pdf-case-id').textContent = caseId;
+            document.getElementById('pdf-disease-name').textContent = isBn ? (currentDiseaseData.name_bn || currentPredictionName) : (currentDiseaseData.name_en || currentPredictionName);
+            document.getElementById('pdf-pathogen').textContent = currentDiseaseData.pathogen 
+                ? (isBn ? `জীবাণু: ${currentDiseaseData.pathogen}` : `Pathogen: ${currentDiseaseData.pathogen}`)
+                : '';
+            document.getElementById('pdf-confidence').textContent = currentConfidence + '%';
+            
+            const sevEl = document.getElementById('pdf-severity');
+            sevEl.textContent = isBn ? (currentDiseaseData.severity_bn || 'ঝুঁকি') : (currentDiseaseData.severity_en || 'Risk');
+            if (currentDiseaseData.severity_color) {
+                sevEl.style.background = currentDiseaseData.severity_color;
+            }
+
+            document.getElementById('pdf-img-orig').src = originalImageSrc;
+            document.getElementById('pdf-img-cam').src = gradcamImageSrc || originalImageSrc;
+
+            // Symptoms List
+            const symListEl = document.getElementById('pdf-list-symptoms');
+            if (symListEl) {
+                symListEl.innerHTML = '';
+                const symptoms = (isBn ? currentDiseaseData.symptoms_bn : currentDiseaseData.symptoms_en) || [];
+                symptoms.slice(0, 3).forEach(s => {
+                    const li = document.createElement('li');
+                    li.textContent = s;
+                    symListEl.appendChild(li);
+                });
+            }
+
+            // Causes List
+            const causeListEl = document.getElementById('pdf-list-causes');
+            if (causeListEl) {
+                causeListEl.innerHTML = '';
+                const causes = (isBn ? currentDiseaseData.causes_bn : currentDiseaseData.causes_en) || [];
+                causes.slice(0, 3).forEach(c => {
+                    const li = document.createElement('li');
+                    li.textContent = c;
+                    causeListEl.appendChild(li);
+                });
+            }
+
+            const mgmt = isBn ? currentDiseaseData.management_bn : currentDiseaseData.management_en;
+            document.getElementById('pdf-rx-chemical').textContent = mgmt?.chemical || (isBn ? 'প্রয়োজন নেই' : 'None required.');
+            document.getElementById('pdf-rx-cultural').textContent = mgmt?.cultural || (isBn ? 'সুষম সেচ ও মাঠ পরিচর্যা বজায় রাখুন।' : 'Maintain proper crop care.');
+
+            calculateDosage();
+
+            const landAmt = document.getElementById('land-amount')?.value || '10';
+            const landUnitSelect = document.getElementById('land-unit');
+            const landUnitText = landUnitSelect ? landUnitSelect.options[landUnitSelect.selectedIndex].text : 'শতক';
+            const water = document.getElementById('calc-water-val')?.textContent || '';
+            const chem = document.getElementById('calc-chem-val')?.textContent || '';
+            const tanks = document.getElementById('calc-tanks-val')?.textContent || '';
+
+            document.getElementById('pdf-land-calc-text').textContent = `${landAmt} ${landUnitText}`;
+            document.getElementById('pdf-calc-summary').textContent = isBn 
+                ? `প্রয়োজনীয় পানি: ${water} | বালাইনাশক ডোজ: ${chem} | ১৬ লিটার স্প্রে ড্রাম: ${tanks}`
+                : `Water Volume: ${water} | Chemical Dosage: ${chem} | 16L Tanks: ${tanks}`;
+
+            return caseId;
+        }
+
+        /* ── Feature 2: Open / Close Doctor-Style Live Prescription Modal ── */
+        function openPrescriptionModal() {
+            if (!currentDiseaseData) {
+                alert(currentLang === 'bn' ? 'অনুগ্রহ করে প্রথমে একটি পাতার ছবি আপলোড করে বিশ্লেষণ করুন।' : 'Please upload and analyze a rice leaf photo first.');
+                return;
+            }
+            populatePrescriptionData();
+            const modal = document.getElementById('modal-prescription');
+            if (modal) {
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closePrescriptionModal() {
+            const modal = document.getElementById('modal-prescription');
+            if (modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+
+        function downloadPrescriptionPDF() {
+            openPrescriptionModal();
+        }
+
+        /* ── Direct 1-Click PDF File Download (html2canvas + jsPDF) ── */
+        async function executePdfDownload() {
+            if (!currentDiseaseData) return;
+
+            const caseId = populatePrescriptionData() || 'RX-REPORT';
+            const btn = document.getElementById('btn-modal-pdf-download');
+            const originalHtml = btn ? btn.innerHTML : '';
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = `<svg class="spin-svg" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="animation: spin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> <span>${currentLang === 'bn' ? 'PDF ডাউনলোড হচ্ছে…' : 'Downloading PDF…'}</span>`;
+            }
+
+            const source = document.getElementById('prescription-pdf-canvas');
+            if (!source) {
+                if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; }
+                return;
+            }
+
+            // Ensure images have source loaded
+            const imgOrig = document.getElementById('pdf-img-orig');
+            const imgCam = document.getElementById('pdf-img-cam');
+            if (imgOrig && !imgOrig.src) imgOrig.src = originalImageSrc;
+            if (imgCam && !imgCam.src) imgCam.src = gradcamImageSrc || originalImageSrc;
+
+            try {
+                // Use html2canvas directly on the styled prescription canvas
+                if (typeof html2canvas !== 'undefined') {
+                    const canvas = await html2canvas(source, {
+                        scale: 2.5,
+                        useCORS: true,
+                        allowTaint: true,
+                        backgroundColor: '#FFFFFF',
+                        logging: false
+                    });
+
+                    const imgData = canvas.toDataURL('image/jpeg', 0.98);
+
+                    // Determine jsPDF constructor
+                    const jsPDFClass = (window.jspdf && window.jspdf.jsPDF) ? window.jspdf.jsPDF : (window.jsPDF || null);
+
+                    if (jsPDFClass) {
+                        const pdf = new jsPDFClass({
+                            orientation: 'portrait',
+                            unit: 'mm',
+                            format: 'a4',
+                            compress: true
+                        });
+
+                        const pdfWidth = pdf.internal.pageSize.getWidth();
+                        const pdfHeight = pdf.internal.pageSize.getHeight();
+                        const margin = 4;
+                        const printWidth = pdfWidth - (margin * 2);
+                        const printHeight = (canvas.height * printWidth) / canvas.width;
+
+                        pdf.addImage(imgData, 'JPEG', margin, margin, printWidth, Math.min(printHeight, pdfHeight - (margin * 2)));
+                        pdf.save(`RiceGuard_Prescription_${caseId}.pdf`);
+                        return;
+                    }
+                }
+
+                // Fallback to html2pdf if jsPDF object was not directly found
+                if (typeof html2pdf !== 'undefined') {
+                    const opt = {
+                        margin: [4, 4, 4, 4],
+                        filename: `RiceGuard_Prescription_${caseId}.pdf`,
+                        image: { type: 'jpeg', quality: 0.98 },
+                        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#FFFFFF' },
+                        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                    };
+                    await html2pdf().set(opt).from(source).save();
+                } else {
+                    printPrescription();
+                }
+            } catch (err) {
+                console.error('PDF generation error, falling back:', err);
+                printPrescription();
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = originalHtml;
+                }
+            }
+        }
+
+        /* ── Direct Native Print / PDF Save via Dedicated Clean Window ── */
+        function printPrescription() {
+            if (!currentDiseaseData) {
+                alert(currentLang === 'bn' ? 'অনুগ্রহ করে প্রথমে একটি পাতার ছবি আপলোড করে বিশ্লেষণ করুন।' : 'Please upload and analyze a rice leaf photo first.');
+                return;
+            }
+            populatePrescriptionData();
+            
+            const source = document.getElementById('prescription-pdf-canvas');
+            if (!source) {
+                window.print();
+                return;
+            }
+
+            const sheetHtml = source.innerHTML;
+            const printWin = window.open('', '_blank', 'width=850,height=900');
+            if (printWin) {
+                printWin.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>RiceGuard_Prescription</title>
+                        <meta charset="utf-8" />
+                        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+                        <style>
+                            * { box-sizing: border-box; }
+                            body {
+                                margin: 0;
+                                padding: 8mm 10mm;
+                                background: #FFFFFF;
+                                color: #0F291E;
+                                font-family: 'Noto Sans Bengali', 'Plus Jakarta Sans', Arial, sans-serif;
+                                -webkit-print-color-adjust: exact !important;
+                                print-color-adjust: exact !important;
+                            }
+                            @page {
+                                size: A4 portrait;
+                                margin: 0;
+                            }
+                            .pr-sheet-box {
+                                border: 2px solid #0F5132 !important;
+                                border-radius: 8px !important;
+                                padding: 1.15rem 1.35rem !important;
+                                background: #FFFFFF !important;
+                                width: 100% !important;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        ${sheetHtml}
+                        <script>
+                            window.onload = function() {
+                                setTimeout(function() {
+                                    window.print();
+                                }, 300);
+                            };
+                        <\/script>
+                    </body>
+                    </html>
+                `);
+                printWin.document.close();
+            } else {
+                window.print();
+            }
+        }
+
+        /* ── 1-Click WhatsApp Direct Prescription Share ── */
+        function sharePrescriptionWhatsApp() {
+            if (!currentDiseaseData) {
+                alert(currentLang === 'bn' ? 'অনুগ্রহ করে প্রথমে একটি পাতার ছবি আপলোড করে বিশ্লেষণ করুন।' : 'Please upload and analyze a rice leaf first.');
+                return;
+            }
+
+            const isBn = currentLang === 'bn';
+            const diseaseName = isBn ? (currentDiseaseData.name_bn || currentPredictionName) : (currentDiseaseData.name_en || currentPredictionName);
+            const pathogen = currentDiseaseData.pathogen || 'N/A';
+            const severity = isBn ? (currentDiseaseData.severity_bn || 'সতর্কতা') : (currentDiseaseData.severity_en || 'Caution');
+            const mgmt = isBn ? currentDiseaseData.management_bn : currentDiseaseData.management_en;
+            const chemical = mgmt?.chemical || (isBn ? 'প্রয়োজন নেই' : 'None required.');
+            const cultural = mgmt?.cultural || (isBn ? 'সুষম সার ও সেচ ব্যবস্থাপনা।' : 'Proper water & fertilizer management.');
+
+            calculateDosage();
+
+            const landAmt = document.getElementById('land-amount')?.value || '10';
+            const landUnitSelect = document.getElementById('land-unit');
+            const landUnitText = landUnitSelect ? landUnitSelect.options[landUnitSelect.selectedIndex].text : 'শতক';
+            const water = document.getElementById('calc-water-val')?.textContent || '';
+            const chem = document.getElementById('calc-chem-val')?.textContent || '';
+            const tanks = document.getElementById('calc-tanks-val')?.textContent || '';
+
+            let message = '';
+            if (isBn) {
+                message = `🌾 *RiceGuard AI — ডিজিটাল ফসল প্রেসক্রিপশন*\n` +
+                          `━━━━━━━━━━━━━━━━━━━━\n` +
+                          `📋 *শনাক্তকৃত অবস্থা:* ${diseaseName}\n` +
+                          `🔬 *জীবাণু/প্যাথোজেন:* ${pathogen}\n` +
+                          `🎯 *মডেল কনফিডেন্স:* ${currentConfidence}%\n` +
+                          `⚠️ *ঝুঁকির মাত্রা:* ${severity}\n\n` +
+                          `💊 *বালাইনাশক ও চিকিৎসা পরামর্শ:*\n${chemical}\n\n` +
+                          `🌱 *মাঠ পরিচর্যা:*\n${cultural}\n\n` +
+                          `🧪 *জমির ডোজ হিসাব (${landAmt} ${landUnitText}):*\n` +
+                          `• মোট পানি: ${water}\n` +
+                          `• ওষুধের পরিমাণ: ${chem}\n` +
+                          `• ১৬ লিটার ড্রাম: ${tanks}\n\n` +
+                          `🌦️ *স্প্রে সতর্কতা:*\n` +
+                          `• ৪ ঘণ্টার মধ্যে বৃষ্টির সম্ভাবনা থাকলে স্প্রে স্থগিত রাখুন।\n` +
+                          `• বিকেলে মিষ্টি রোদে বাতাসের অনুকূলে স্প্রে করুন।\n\n` +
+                          `📞 *জরুরি কৃষি হেল্পলাইন:* ১৬১২৩ (টোল-ফ্রি)\n` +
+                          `👨‍🔬 *ডিজাইন ও বিকাশ:* Ohi\n` +
+                          `🌐 *লাইভ প্ল্যাটফর্ম:* https://rice-leaf-disease-detection-1-1m1k.onrender.com/`;
+            } else {
+                message = `🌾 *RiceGuard AI — Digital Crop Prescription*\n` +
+                          `━━━━━━━━━━━━━━━━━━━━\n` +
+                          `📋 *Diagnosis:* ${diseaseName}\n` +
+                          `🔬 *Pathogen:* ${pathogen}\n` +
+                          `🎯 *AI Confidence:* ${currentConfidence}%\n` +
+                          `⚠️ *Severity:* ${severity}\n\n` +
+                          `💊 *Treatment & Rx:*\n${chemical}\n\n` +
+                          `🌱 *Field Management:*\n${cultural}\n\n` +
+                          `🧪 *Field Dosage (${landAmt} ${landUnitText}):*\n` +
+                          `• Total Water: ${water}\n` +
+                          `• Chemical Dosage: ${chem}\n` +
+                          `• 16L Knapsack Tanks: ${tanks}\n\n` +
+                          `🌦️ *Spraying Advisory:*\n` +
+                          `• Postpone spraying if rain is expected within 4 hours.\n` +
+                          `• Spray along wind direction in late afternoon.\n\n` +
+                          `📞 *National Agri Hotline:* 16123\n` +
+                          `👨‍🔬 *Developed by:* Ohi\n` +
+                          `🌐 *Platform:* https://rice-leaf-disease-detection-1-1m1k.onrender.com/`;
+            }
+
+            const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
         }
 
         /* ── Feature 3: Voice / Audio Prescription Speech ── */
@@ -2672,7 +4983,670 @@
 
         let handleFile = null;
 
+        /* ── Feature 3: WebRTC Live Camera Capture Engine ── */
+        let cameraStream = null;
+        let facingMode = 'environment';
+
+        async function startCamera() {
+            const modalCamera = document.getElementById('modal-camera');
+            const video = document.getElementById('camera-video');
+
+            try {
+                if (cameraStream) {
+                    cameraStream.getTracks().forEach(track => track.stop());
+                }
+                cameraStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: facingMode, width: { ideal: 1280 }, height: { ideal: 720 } }
+                });
+                video.srcObject = cameraStream;
+                modalCamera.classList.add('active');
+            } catch (err) {
+                console.warn('Camera access error:', err);
+                alert(currentLang === 'bn' ? 'ক্যামেরা চালু করা যায়নি। অনুগ্রহ করে ব্রাউজার থেকে ক্যামেরার অনুমতি দিন।' : 'Could not access camera. Please allow camera permissions in your browser.');
+            }
+        }
+
+        function stopCamera() {
+            const modalCamera = document.getElementById('modal-camera');
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
+            modalCamera.classList.remove('active');
+        }
+
+        function captureFromCamera() {
+            const video = document.getElementById('camera-video');
+            if (!video || !video.videoWidth) return;
+
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            canvas.toBlob((blob) => {
+                const file = new File([blob], `Camera_Capture_${Date.now()}.jpg`, { type: 'image/jpeg' });
+                const container = new DataTransfer();
+                container.items.add(file);
+                
+                const fileInput = document.getElementById('image-input');
+                fileInput.files = container.files;
+                
+                handleFile(file);
+                stopCamera();
+
+                const form = document.getElementById('diagnostic-form');
+                form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+            }, 'image/jpeg', 0.92);
+        }
+
+        function switchCamera() {
+            facingMode = (facingMode === 'environment') ? 'user' : 'environment';
+            startCamera();
+        }
+
+        /* ── Feature 3: Image Enhancement, Rotation & Sharpening Engine ── */
+        function applyImageAutoEnhance() {
+            const previewImg = document.getElementById('preview-img');
+            if (!previewImg || !previewImg.src || previewImg.src.startsWith('data:image/svg')) return;
+
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.naturalWidth || img.width;
+                canvas.height = img.naturalHeight || img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+
+                const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const d = imgData.data;
+
+                // Simple auto-level stretching + contrast boost
+                const contrast = 1.20; // +20% contrast
+                const brightness = 6;  // +6 brightness
+                for (let i = 0; i < d.length; i += 4) {
+                    d[i]   = Math.min(255, Math.max(0, (d[i] - 128) * contrast + 128 + brightness));
+                    d[i+1] = Math.min(255, Math.max(0, (d[i+1] - 128) * contrast + 128 + brightness));
+                    d[i+2] = Math.min(255, Math.max(0, (d[i+2] - 128) * contrast + 128 + brightness));
+                }
+                ctx.putImageData(imgData, 0, 0);
+
+                canvas.toBlob((blob) => {
+                    const newUrl = URL.createObjectURL(blob);
+                    originalImageSrc = newUrl;
+                    previewImg.src = newUrl;
+                    document.getElementById('modal-img').src = newUrl;
+                    updateFileInputWithBlob(blob, 'enhanced_leaf.jpg');
+                    document.getElementById('btn-reset-filters').style.display = 'inline-flex';
+                }, 'image/jpeg', 0.95);
+            };
+            img.src = previewImg.src;
+        }
+
+        function rotateImage90() {
+            const previewImg = document.getElementById('preview-img');
+            if (!previewImg || !previewImg.src) return;
+
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.naturalHeight || img.height;
+                canvas.height = img.naturalWidth || img.width;
+                const ctx = canvas.getContext('2d');
+
+                ctx.translate(canvas.width / 2, canvas.height / 2);
+                ctx.rotate(Math.PI / 2);
+                ctx.drawImage(img, -img.width / 2, -img.height / 2);
+
+                canvas.toBlob((blob) => {
+                    const newUrl = URL.createObjectURL(blob);
+                    originalImageSrc = newUrl;
+                    previewImg.src = newUrl;
+                    document.getElementById('modal-img').src = newUrl;
+                    updateFileInputWithBlob(blob, 'rotated_leaf.jpg');
+                    document.getElementById('btn-reset-filters').style.display = 'inline-flex';
+                }, 'image/jpeg', 0.95);
+            };
+            img.src = previewImg.src;
+        }
+
+        function applyImageSharpen() {
+            const previewImg = document.getElementById('preview-img');
+            if (!previewImg || !previewImg.src) return;
+
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.naturalWidth || img.width;
+                canvas.height = img.naturalHeight || img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+
+                const srcData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const dstData = ctx.createImageData(canvas.width, canvas.height);
+                const src = srcData.data;
+                const dst = dstData.data;
+                const w = canvas.width;
+                const h = canvas.height;
+
+                // Sharpen convolution kernel [0, -0.6, 0, -0.6, 3.4, -0.6, 0, -0.6, 0]
+                for (let y = 1; y < h - 1; y++) {
+                    for (let x = 1; x < w - 1; x++) {
+                        const idx = (y * w + x) * 4;
+                        for (let c = 0; c < 3; c++) {
+                            const val = 3.4 * src[idx + c]
+                                      - 0.6 * src[((y - 1) * w + x) * 4 + c]
+                                      - 0.6 * src[((y + 1) * w + x) * 4 + c]
+                                      - 0.6 * src[(y * w + (x - 1)) * 4 + c]
+                                      - 0.6 * src[(y * w + (x + 1)) * 4 + c];
+                            dst[idx + c] = Math.min(255, Math.max(0, val));
+                        }
+                        dst[idx + 3] = src[idx + 3];
+                    }
+                }
+                ctx.putImageData(dstData, 0, 0);
+
+                canvas.toBlob((blob) => {
+                    const newUrl = URL.createObjectURL(blob);
+                    originalImageSrc = newUrl;
+                    previewImg.src = newUrl;
+                    document.getElementById('modal-img').src = newUrl;
+                    updateFileInputWithBlob(blob, 'sharpened_leaf.jpg');
+                    document.getElementById('btn-reset-filters').style.display = 'inline-flex';
+                }, 'image/jpeg', 0.95);
+            };
+            img.src = previewImg.src;
+        }
+
+        function resetImageFilters() {
+            if (rawOriginalDataUrl) {
+                originalImageSrc = rawOriginalDataUrl;
+                document.getElementById('preview-img').src = rawOriginalDataUrl;
+                document.getElementById('modal-img').src = rawOriginalDataUrl;
+                if (rawOriginalFile) {
+                    const container = new DataTransfer();
+                    container.items.add(rawOriginalFile);
+                    document.getElementById('image-input').files = container.files;
+                }
+            }
+            document.getElementById('btn-reset-filters').style.display = 'none';
+        }
+
+        function updateFileInputWithBlob(blob, filename) {
+            const file = new File([blob], filename, { type: 'image/jpeg' });
+            const container = new DataTransfer();
+            container.items.add(file);
+            document.getElementById('image-input').files = container.files;
+        }
+
+        /* ── Feature 1: Floating AI Agri-Assistant Chatbot Logic ── */
+        let isChatOpen = false;
+
+        function toggleAgriChat() {
+            const chatBox = document.getElementById('chat-window-box');
+            const widgetContainer = document.getElementById('chat-widget-container');
+            if (!chatBox) return;
+            isChatOpen = !isChatOpen;
+            chatBox.classList.toggle('active', isChatOpen);
+            if (widgetContainer) {
+                widgetContainer.classList.toggle('chat-open', isChatOpen);
+            }
+            if (isChatOpen) {
+                setTimeout(() => {
+                    const input = document.getElementById('chat-input');
+                    if (input) input.focus();
+                }, 150);
+            }
+        }
+
+        function clearChatHistory() {
+            const chatMsgs = document.getElementById('chat-messages');
+            if (!chatMsgs) return;
+            const dict = I18N[currentLang] || I18N.bn;
+            chatMsgs.innerHTML = `
+                <div class="chat-welcome-card" id="chat-welcome-card">
+                    <div class="welcome-header">
+                        <span>✨</span>
+                        <span>${dict.chat_welcome_title}</span>
+                    </div>
+                    <p class="welcome-desc">${dict.chat_welcome_desc}</p>
+                    <div class="welcome-topics-grid">
+                        <button type="button" class="welcome-topic-btn" onclick="sendQuickPrompt('${currentLang === 'bn' ? 'ব্লাস্ট রোগের দ্রুত প্রতিকার কী?' : 'Quick remedy for Rice Blast?'}')">
+                            <span class="welcome-topic-title">${currentLang === 'bn' ? '🌾 ব্লাস্ট রোগ দমন' : '🌾 Blast Disease Control'}</span>
+                            <span class="welcome-topic-sub">${currentLang === 'bn' ? 'লক্ষণ ও ওষুধ স্প্রে' : 'Symptoms & Spray Rx'}</span>
+                        </button>
+                        <button type="button" class="welcome-topic-btn" onclick="sendQuickPrompt('${currentLang === 'bn' ? 'ইউরিয়া সার কখন দেওয়া উচিত নয়?' : 'When to avoid Urea fertilizer?'}')">
+                            <span class="welcome-topic-title">${currentLang === 'bn' ? '🧪 ইউরিয়া সারের নিয়ম' : '🧪 Urea Fertilizer Rules'}</span>
+                            <span class="welcome-topic-sub">${currentLang === 'bn' ? 'প্রয়োগ সতর্কতা' : 'Application Warnings'}</span>
+                        </button>
+                        <button type="button" class="welcome-topic-btn" onclick="sendQuickPrompt('${currentLang === 'bn' ? 'পামরী পোকা দমনের ঘরোয়া উপায় কী?' : 'How to manage Rice Hispa?'}')">
+                            <span class="welcome-topic-title">${currentLang === 'bn' ? '🐛 পামরী পোকা দমন' : '🐛 Rice Hispa Control'}</span>
+                            <span class="welcome-topic-sub">${currentLang === 'bn' ? 'পার্চিং ও রাসায়নিক' : 'Perching & Chemicals'}</span>
+                        </button>
+                        <button type="button" class="welcome-topic-btn" onclick="sendQuickPrompt('${currentLang === 'bn' ? 'স্প্রে করার সঠিক আবহাওয়া ও সময় কী?' : 'Best time and weather for spraying?'}')">
+                            <span class="welcome-topic-title">${currentLang === 'bn' ? '🌦️ স্প্রে সতর্কতা' : '🌦️ Spray Weather Alert'}</span>
+                            <span class="welcome-topic-sub">${currentLang === 'bn' ? 'আবহাওয়া ও সময়' : 'Wind & Rain Rules'}</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function sendQuickPrompt(text) {
+            const input = document.getElementById('chat-input');
+            if (input) {
+                input.value = text;
+                handleChatSubmit(new Event('submit'));
+            }
+        }
+
+        function getChatTimeString() {
+            const now = new Date();
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            const minStr = minutes < 10 ? '0' + minutes : minutes;
+            const timeRaw = `${hours}:${minStr} ${ampm}`;
+            if (currentLang === 'bn') {
+                const bnNums = {'0':'০','1':'১','2':'২','3':'৩','4':'৪','5':'৫','6':'৬','7':'৭','8':'৮','9':'৯'};
+                return timeRaw.replace(/[0-9]/g, w => bnNums[w] || w);
+            }
+            return timeRaw;
+        }
+
+        function escapeJsString(str) {
+            return (str || '')
+                .replace(/\\/g, '\\\\')
+                .replace(/`/g, '\\`')
+                .replace(/\$/g, '\\$')
+                .replace(/"/g, '&quot;')
+                .replace(/\n/g, ' ');
+        }
+
+        let activeChatAudio = null;
+        let activeChatBtn = null;
+
+        function stopChatAudio() {
+            if (activeChatAudio) {
+                activeChatAudio.pause();
+                activeChatAudio.currentTime = 0;
+                activeChatAudio = null;
+            }
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+            if (activeChatBtn) {
+                activeChatBtn.classList.remove('playing');
+                const orig = activeChatBtn.getAttribute('data-orig-text');
+                if (orig) activeChatBtn.innerHTML = orig;
+                activeChatBtn = null;
+            }
+        }
+
+        function speakChatAudio(btn, lang, text) {
+            if (activeChatBtn === btn) {
+                stopChatAudio();
+                return;
+            }
+
+            stopChatAudio();
+            stopAudioSpeech(); // Stop main report voice if running
+
+            activeChatBtn = btn;
+            const origHtml = btn.innerHTML;
+            btn.setAttribute('data-orig-text', origHtml);
+            btn.classList.add('playing');
+            btn.innerHTML = `⏸️ ${lang === 'bn' ? 'থামুন' : 'Stop'}`;
+
+            // Clean text for speech
+            const cleanText = text.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+
+            const audioUrl = '/api/tts?lang=' + encodeURIComponent(lang) + '&text=' + encodeURIComponent(cleanText);
+            activeChatAudio = new Audio(audioUrl);
+
+            activeChatAudio.onended = () => {
+                stopChatAudio();
+            };
+
+            activeChatAudio.onerror = () => {
+                console.warn('Backend TTS audio error, falling back to Web Speech API');
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(cleanText);
+                    utterance.lang = lang === 'bn' ? 'bn-BD' : 'en-US';
+                    utterance.rate = lang === 'bn' ? 0.9 : 0.95;
+                    utterance.onend = stopChatAudio;
+                    utterance.onerror = stopChatAudio;
+                    window.speechSynthesis.speak(utterance);
+                } else {
+                    stopChatAudio();
+                }
+            };
+
+            activeChatAudio.play().catch(err => {
+                console.warn('Audio play failed, falling back to SpeechSynthesis:', err);
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(cleanText);
+                    utterance.lang = lang === 'bn' ? 'bn-BD' : 'en-US';
+                    utterance.rate = lang === 'bn' ? 0.9 : 0.95;
+                    utterance.onend = stopChatAudio;
+                    utterance.onerror = stopChatAudio;
+                    window.speechSynthesis.speak(utterance);
+                } else {
+                    stopChatAudio();
+                }
+            });
+        }
+
+        async function handleChatSubmit(e) {
+            if (e && e.preventDefault) e.preventDefault();
+            const input = document.getElementById('chat-input');
+            if (!input || !input.value.trim()) return;
+
+            const userText = input.value.trim();
+            input.value = '';
+
+            const chatMsgs = document.getElementById('chat-messages');
+            if (!chatMsgs) return;
+
+            const timeStr = getChatTimeString();
+
+            // Append user message bubble with wrap & time
+            const userDiv = document.createElement('div');
+            userDiv.className = 'chat-msg user';
+            userDiv.innerHTML = `
+                <div class="msg-bubble-wrap">
+                    <div class="msg-bubble">${escapeHtml(userText)}</div>
+                    <div class="msg-time">${timeStr}</div>
+                </div>
+            `;
+            chatMsgs.appendChild(userDiv);
+            chatMsgs.scrollTop = chatMsgs.scrollHeight;
+
+            // Show typing indicator
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'chat-msg bot typing-temp';
+            typingDiv.innerHTML = `
+                <div class="msg-avatar">🌾</div>
+                <div class="typing-indicator">
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                </div>
+            `;
+            chatMsgs.appendChild(typingDiv);
+            chatMsgs.scrollTop = chatMsgs.scrollHeight;
+
+            let botRes = null;
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: userText,
+                        lang: currentLang,
+                        current_disease: currentPredictionName || null,
+                        current_confidence: currentConfidence || null
+                    })
+                });
+                if (response.ok) {
+                    const resJson = await response.json();
+                    if (resJson && resJson.success) {
+                        botRes = {
+                            html: resJson.html,
+                            text_bn: resJson.text_bn,
+                            text_en: resJson.text_en
+                        };
+                    }
+                }
+            } catch (err) {
+                console.warn('Backend /api/chat error, falling back to local engine:', err);
+            }
+
+            // Fallback if backend failed or offline
+            if (!botRes) {
+                botRes = getAgriBotResponse(userText);
+            }
+
+            const tempTyping = chatMsgs.querySelector('.typing-temp');
+            if (tempTyping) tempTyping.remove();
+
+            const botTime = getChatTimeString();
+            const botDiv = document.createElement('div');
+            botDiv.className = 'chat-msg bot';
+            
+            const listenBnBtn = `<button type="button" class="msg-listen-btn bn-btn" onclick="speakChatAudio(this, 'bn', \`${escapeJsString(botRes.text_bn)}\`)">🔊 বাংলায় শুনুন</button>`;
+            const listenEnBtn = `<button type="button" class="msg-listen-btn en-btn" onclick="speakChatAudio(this, 'en', \`${escapeJsString(botRes.text_en)}\`)">🌐 Listen English</button>`;
+
+            botDiv.innerHTML = `
+                <div class="msg-avatar">🌾</div>
+                <div class="msg-bubble-wrap">
+                    <div class="msg-bubble">
+                        ${botRes.html}
+                        <div class="chat-voice-actions">
+                            ${listenBnBtn}
+                            ${listenEnBtn}
+                        </div>
+                    </div>
+                    <div class="msg-time">${botTime}</div>
+                </div>
+            `;
+            chatMsgs.appendChild(botDiv);
+            chatMsgs.scrollTop = chatMsgs.scrollHeight;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function getAgriBotResponse(query) {
+            const isBn = currentLang === 'bn';
+            const q = query.toLowerCase().trim();
+
+            // 1. Contextual match: if disease is currently diagnosed
+            if (currentDiseaseData && (q.includes('বর্তমান') || q.includes('এই রোগ') || q.includes('প্রেসক্রিপশন') || q.includes('current') || q.includes('this disease') || q.includes('rx'))) {
+                const dNameBn = currentDiseaseData.name_bn || currentPredictionName;
+                const dNameEn = currentDiseaseData.name_en || currentPredictionName;
+                const chemBn = currentDiseaseData.management_bn?.chemical || 'প্রয়োজন নেই';
+                const chemEn = currentDiseaseData.management_en?.chemical || 'None required';
+                const cultBn = currentDiseaseData.management_bn?.cultural || 'সুষম সেচ বজায় রাখুন।';
+                const cultEn = currentDiseaseData.management_en?.cultural || 'Maintain proper irrigation.';
+
+                const html = isBn 
+                    ? `🌿 <strong>${dNameBn}</strong>-এর জন্য প্রস্তাবিত চিকিৎসা:<br/><br/>💊 <strong>বালাইনাশক:</strong> ${chemBn}<br/><br/>🌱 <strong>মাঠ পরিচর্যা:</strong> ${cultBn}<br/><br/>💡 <em>ডোজ ক্যালকুলেটর ব্যবহার করে আপনার জমির মাপ অনুযায়ী পানির পরিমাণ বের করে নিন।</em>`
+                    : `🌿 Recommended management for <strong>${dNameEn}</strong>:<br/><br/>💊 <strong>Chemical Rx:</strong> ${chemEn}<br/><br/>🌱 <strong>Cultural Practice:</strong> ${cultEn}<br/><br/>💡 <em>Use the Dosage Calculator above to determine exact water & chemical mix for your plot.</em>`;
+
+                return {
+                    html: html,
+                    text_bn: `ধানের পাতায় সনাক্তকৃত রোগ হলো ${dNameBn}। প্রস্তাবিত বালাইনাশক চিকিৎসা: ${chemBn}। মাঠ পরিচর্যা: ${cultBn}`,
+                    text_en: `Diagnosed condition is ${dNameEn}. Recommended chemical treatment: ${chemEn}. Cultural practice: ${cultEn}`
+                };
+            }
+
+            // 2. Blast Disease (পাতা ব্লাস্ট / শীষ ব্লাস্ট)
+            if (q.includes('ব্লাস্ট') || q.includes('blast')) {
+                const html = isBn 
+                    ? `🌾 <strong>ধানের ব্লাস্ট রোগ (Pyricularia oryzae):</strong><br/><br/>• <strong>লক্ষণ:</strong> পাতায় চোখের মতো বা ডিম্বাকৃতি দাগ, যার কেন্দ্র ছাই রঙের এবং কিনারা বাদামী।<br/>• <strong>প্রতিকার:</strong> ট্রাইসাইক্লাজল (যেমন: ট্রপার ৭৫ ডব্লিউপি - ০.৭৫ গ্রাম/লিটার) অথবা ট্রাইফ্লক্সিস্ট্রবিন + টেবুকোনাজল (যেমন: নেটিভো - ০.৬ গ্রাম/লিটার) বিকেলে স্প্রে করুন।<br/>• <strong>সতর্কতা:</strong> জমিতে ইউরিয়া সার প্রয়োগ সাময়িক বন্ধ রাখুন এবং পটাশ সার ব্যবহার করুন।`
+                    : `🌾 <strong>Rice Leaf Blast (Pyricularia oryzae):</strong><br/><br/>• <strong>Symptoms:</strong> Spindle-shaped/eye-like lesions with grey centers and brown borders.<br/>• <strong>Control:</strong> Spray Tricyclazole 75 WP (0.75 g/L) or Trifloxystrobin + Tebuconazole (Nativo @ 0.6 g/L) in late afternoon.<br/>• <strong>Advisory:</strong> Suspend top-dressing Nitrogen/Urea and maintain standing water in the plot.`;
+
+                return {
+                    html: html,
+                    text_bn: `ধানের ব্লাস্ট রোগ একটি মারাত্মক ছত্রাকজনিত রোগ। পাতায় চোখের মতো ডিম্বাকৃতি দাগ দেখা যায়। প্রতিকারে ট্রাইসাইক্লাজল বা নেটিভো বিকেলে স্প্রে করুন এবং ইউরিয়া সার দেওয়া বন্ধ রাখুন।`,
+                    text_en: `Rice Leaf Blast causes eye-shaped lesions. Spray Tricyclazole or Nativo in late afternoon and stop top-dressing Urea fertilizer.`
+                };
+            }
+
+            // 3. Bacterial Leaf Blight (ব্যাকটেরিয়াল পাতা পোড়া)
+            if (q.includes('পাতা পোড়া') || q.includes('পোড়া') || q.includes('blight') || q.includes('ব্যাকটেরিয়া')) {
+                const html = isBn
+                    ? `🍂 <strong>ব্যাকটেরিয়াল পাতা পোড়া (Xanthomonas oryzae):</strong><br/><br/>• <strong>লক্ষণ:</strong> পাতার ডগা থেকে নিচের দিকে ঢেউ খেলানো হলুদ বা ধূসর হয়ে শুকিয়ে যাওয়া।<br/>• <strong>প্রতিকার:</strong> কপার অক্সিক্লোরাইড (২ গ্রাম/লিটার) অথবা থিওভিট স্প্রে করুন। প্রতি বিঘায় ৫ কেজি অতিরিক্ত পটাশ সার দিন।<br/>• <strong>পরিচর্যা:</strong> আক্রান্ত জমির পানি অন্য জমিতে প্রবাহিত হতে দেবেন না।`
+                    : `🍂 <strong>Bacterial Leaf Blight (Xanthomonas oryzae):</strong><br/><br/>• <strong>Symptoms:</strong> Water-soaked wavy lesions starting from leaf tips turning yellow-grey.<br/>• <strong>Control:</strong> Apply Copper Oxychloride (2 g/L) or Streptocycline. Apply supplemental Potash (MOP) 5 kg/bigha.<br/>• <strong>Field Care:</strong> Prevent irrigation drainage from infected plots to healthy ones.`;
+
+                return {
+                    html: html,
+                    text_bn: `ব্যাকটেরিয়াল পাতা পোড়া রোগে পাতার ডগা থেকে নিচের দিকে শুকিয়ে যায়। প্রতিকারে কপার অক্সিক্লোরাইড স্প্রে করুন এবং বিঘা প্রতি ৫ কেজি পটাশ সার দিন।`,
+                    text_en: `Bacterial Leaf Blight causes yellow drying from leaf tips. Spray Copper Oxychloride and apply supplemental Potash fertilizer.`
+                };
+            }
+
+            // 4. Brown Spot (বাদামী দাগ)
+            if (q.includes('বাদামী দাগ') || q.includes('brown spot')) {
+                const html = isBn
+                    ? `🟤 <strong>বাদামী দাগ রোগ (Bipolaris oryzae):</strong><br/><br/>• <strong>লক্ষণ:</strong> পাতায় তিলের দানার মতো অসংখ্য গোল বা ডিম্বাকৃতি বাদামী দাগ।<br/>• <strong>কারণ:</strong> মাটিতে পুষ্টিহীনতা (বিশেষ করে পটাশ ও সিলিকন ঘাটতি)।<br/>• <strong>প্রতিকার:</strong> ম্যানকোজেব (ডাইথেন এম-৪৫ @ ২ গ্রাম/লিটার) বা কার্বেনডাজিম (১ গ্রাম/লিটার) স্প্রে করুন এবং সুষম সার প্রয়োগ করুন।`
+                    : `🟤 <strong>Brown Spot (Bipolaris oryzae):</strong><br/><br/>• <strong>Symptoms:</strong> Small circular to oval sesame-seed shaped brown lesions.<br/>• <strong>Cause:</strong> Poor soil nutrition, potassium or zinc deficiency.<br/>• <strong>Control:</strong> Spray Mancozeb 75 WP (2 g/L) or Carbendazim (1 g/L) and apply balanced NPK nutrients.`;
+
+                return {
+                    html: html,
+                    text_bn: `বাদামী দাগ রোগে পাতায় তিলের মতো বাদামী দাগ পড়ে। মাটিতে পুষ্টি ও পটাশ ঘাটতি এর মূল কারণ। প্রতিকারে ডাইথেন এম-৪৫ বা কার্বেনডাজিম স্প্রে করুন।`,
+                    text_en: `Brown Spot causes sesame-seed like lesions due to nutrient deficiency. Spray Mancozeb or Carbendazim and provide balanced fertilizers.`
+                };
+            }
+
+            // 5. Sheath Blight (খোল পোড়া)
+            if (q.includes('খোল পোড়া') || q.includes('sheath')) {
+                const html = isBn
+                    ? `🌾 <strong>খোল পোড়া রোগ (Rhizoctonia solani):</strong><br/><br/>• <strong>লক্ষণ:</strong> পানির উপরিভাগে ধান গাছের খোলে সাপের চামড়ার মতো অনিয়মিত ধূসর-সবুজ দাগ।<br/>• <strong>প্রতিকার:</strong> হেক্সাকোনাজল (যেমন: কনটাফ ৫ ইসি @ ১ মিলি/লিটার) অথবা ভ্যালিডামাইসিন (২ মিলি/লিটার) গাছের গোড়ায় স্প্রে করুন।`
+                    : `🌾 <strong>Sheath Blight (Rhizoctonia solani):</strong><br/><br/>• <strong>Symptoms:</strong> Snake-skin greenish-grey lesions near the waterline on leaf sheaths.<br/>• <strong>Control:</strong> Spray Hexaconazole 5 EC (1 ml/L) or Validamycin 3L (2 ml/L) directed at the plant base.`;
+
+                return {
+                    html: html,
+                    text_bn: `খোল পোড়া রোগে ধান গাছের গোড়ায় সাপের চামড়ার মতো দাগ হয়। প্রতিকারে হেক্সাকোনাজল বা ভ্যালিডামাইসিন গাছের গোড়ায় স্প্রে করুন।`,
+                    text_en: `Sheath Blight causes snake-skin lesions on leaf sheaths. Spray Hexaconazole or Validamycin targeted at the plant base.`
+                };
+            }
+
+            // 6. Rice Hispa (পামরী পোকা)
+            if (q.includes('পামরী') || q.includes('পোকা') || q.includes('hispa') || q.includes('insect')) {
+                const html = isBn
+                    ? `🐛 <strong>ধানের পামরী পোকা (Dicladispa armigera):</strong><br/><br/>• <strong>লক্ষণ:</strong> পাতার সবুজ অংশ খেয়ে সাদা সমান্তরাল রেখা তৈরি করে।<br/>• <strong>ঘরোয়া দমন:</strong> জমিতে ডালপালা পুঁতে পাখি বসার ব্যবস্থা (পার্চিং) করুন এবং মশারি জাল দিয়ে পামরী পোকা টেনে ধ্বংস করুন।<br/>• <strong>রাসায়নিক দমন:</strong> আক্রমণ তীব্র হলে ক্লোরপাইরিফস (যেমন: ডারসবান ২০ ইসি @ ২ মিলি/লিটার) স্প্রে করুন।`
+                    : `🐛 <strong>Rice Hispa (Dicladispa armigera):</strong><br/><br/>• <strong>Symptoms:</strong> Adult beetles scrape green leaf chlorophyll leaving parallel white streaks.<br/>• <strong>Organic/Eco Control:</strong> Field perching for insectivorous birds and light-trap netting.<br/>• <strong>Chemical Control:</strong> Spray Chlorpyrifos 20 EC (2 ml/L) if threshold exceeds 1-2 beetles/hill.`;
+
+                return {
+                    html: html,
+                    text_bn: `পামরী পোকা পাতার সবুজ অংশ খেয়ে সাদা রেখা বানায়। দমনে জমিতে পার্চিং করুন এবং আক্রমণ বেশি হলে ক্লোরপাইরিফস স্প্রে করুন।`,
+                    text_en: `Rice Hispa scrapes leaf chlorophyll creating white streaks. Use field perching and spray Chlorpyrifos for severe infestations.`
+                };
+            }
+
+            // 7. Fertilizer & Urea Rules (ইউরিয়া / সার)
+            if (q.includes('ইউরিয়া') || q.includes('সার') || q.includes('fertilizer') || q.includes('urea') || q.includes('npk')) {
+                const html = isBn
+                    ? `🧪 <strong>সারের ব্যবহার ও ইউরিয়া সতর্কবার্তা:</strong><br/><br/>• <strong>কখন ইউরিয়া নিষিদ্ধ:</strong> জমিতে ব্লাস্ট বা ব্যাকটেরিয়াল পাতা পোড়া রোগ দেখা দিলে ইউরিয়া উপরিপ্রয়োগ সম্পূর্ণ বন্ধ রাখুন। ইউরিয়া দিলে রোগ দ্রুত বাড়ে।<br/>• <strong>প্রয়োজনীয় সার:</strong> রোগ প্রতিরোধ ক্ষমতা বাড়াতে শতক প্রতি ১৫০-২০০ গ্রাম পটাশ (MOP) সার প্রয়োগ করুন।<br/>• <strong>ইউরিয়া প্রয়োগের সঠিক নিয়ম:</strong> জমি থেকে পানি কিছুটা কমিয়ে ৩ কিস্তিতে সমানভাবে ইউরিয়া প্রয়োগ করুন।`
+                    : `🧪 <strong>Fertilizer & Urea Management:</strong><br/><br/>• <strong>When to Stop Urea:</strong> Immediately suspend top-dressing Urea if Blast or Bacterial Blight is present.<br/>• <strong>Potassium Boost:</strong> Apply additional MOP (Potash) @ 5 kg/acre to strengthen cell walls against fungal penetration.<br/>• <strong>Application:</strong> Apply nitrogen in 3 split doses under moist, non-flooded conditions.`;
+
+                return {
+                    html: html,
+                    text_bn: `ব্লাস্ট বা পাতা পোড়া রোগে ইউরিয়া সার দেওয়া সম্পূর্ণ বন্ধ রাখুন। রোগ প্রতিরোধ ক্ষমতা বাড়াতে পটাশ সার দিন এবং ইউরিয়া ৩ কিস্তিতে প্রয়োগ করুন।`,
+                    text_en: `Stop top-dressing Urea if Blast or Blight is active. Apply Potash to strengthen plant immunity and split Urea into three doses.`
+                };
+            }
+
+            // 8. Weather & Spraying Time (আবহাওয়া / কখন স্প্রে করব)
+            if (q.includes('আবহাওয়া') || q.includes('কখন') || q.includes('সময়') || q.includes('weather') || q.includes('when to spray') || q.includes('rain')) {
+                const html = isBn
+                    ? `🌦️ <strong>স্প্রে করার আদর্শ সময় ও আবহাওয়া নির্দেশিকা:</strong><br/><br/>• <strong>সঠিক সময়:</strong> বিকেল ৩:৩০ থেকে ৫:০০ টার মিষ্টি রোদে স্প্রে করা সবচেয়ে কার্যকর। প্রখর রোদে বা সকালে শিশির ভেজা পাতায় স্প্রে করবেন না।<br/>• <strong>বৃষ্টির সতর্কতা:</strong> স্প্রে করার ৪ ঘণ্টার মধ্যে বৃষ্টির সম্ভাবনা থাকলে স্প্রে স্থগিত রাখুন।<br/>• <strong>বাতাস:</strong> সর্বদা বাতাসের অনুকূলে স্প্রে করুন যাতে ওষুধ চোখে-মুখে না লাগে।`
+                    : `🌦️ <strong>Weather & Spraying Advisory:</strong><br/><br/>• <strong>Best Timing:</strong> Late afternoon (3:30 PM - 5:00 PM) during mild sunlight.<br/>• <strong>Rain Advisory:</strong> Avoid spraying if rain is expected within 4 hours.<br/>• <strong>Wind:</strong> Always spray in the direction of the wind with appropriate protective gear.`;
+
+                return {
+                    html: html,
+                    text_bn: `বিকেল ৩টা ৩০ থেকে ৫টার মিষ্টি রোদে স্প্রে করা সবচেয়ে ভালো। ৪ ঘণ্টার মধ্যে বৃষ্টির সম্ভাবনা থাকলে স্প্রে বন্ধ রাখুন এবং বাতাসের অনুকূলে স্প্রে করুন।`,
+                    text_en: `Late afternoon from 3:30 to 5 PM is ideal for spraying. Postpone spraying if rain is expected within 4 hours and spray along wind direction.`
+                };
+            }
+
+            // 9. Water & Irrigation (সেচ ও পানি)
+            if (q.includes('সেচ') || q.includes('পানি') || q.includes('water') || q.includes('irrigation')) {
+                const html = isBn
+                    ? `💧 <strong>সেচ ও পানি ব্যবস্থাপনা:</strong><br/><br/>• চারা রোপণের পর ২-৩ ইঞ্চি পানি রাখুন।<br/>• কুশি গজানোর সময় মাঝে মাঝে জমি শুকিয়ে বাতাস চলাচলের সুযোগ দিন (AWD পদ্ধতি)।<br/>• থোর ও ফুল ফোটার সময় জমিতে অবশ্যই পর্যাপ্ত পানি নিশ্চিত করুন।<br/>• রোগ দেখা দিলে অতিরিক্ত পানি বের করে দিন।`
+                    : `💧 <strong>Irrigation & Water Guidance:</strong><br/><br/>• Maintain 2-3 inches standing water during initial establishment.<br/>• Use Alternate Wetting and Drying (AWD) during tillering to promote root aeration.<br/>• Ensure continuous moisture during panicle initiation and flowering.`;
+
+                return {
+                    html: html,
+                    text_bn: `চারা রোপণের পর ২ থেকে ৩ ইঞ্চি পানি রাখুন। কুশি গজানোর সময় এডব্লিউডি পদ্ধতিতে মাঝে মাঝে জমি শুকান এবং ফুল ফোটার সময় পর্যাপ্ত পানি রাখুন।`,
+                    text_en: `Maintain 2 to 3 inches water after planting. Use Alternate Wetting and Drying during tillering and ensure continuous water during flowering.`
+                };
+            }
+
+            // 10. Default Fallback
+            const html = isBn
+                ? `🌾 ধন্যবাদ আপনার প্রশ্নের জন্য! ধানের নির্দিষ্ট কোনো রোগ (যেমন: ব্লাস্ট, পাতা পোড়া, বাদামী দাগ, খোল পোড়া, পামরী পোকা) অথবা সার/সেচের নিয়ম জানতে লিখুন। অথবা উপরের কুইক বাটনে চাপ দিন। জরুরি পরামর্শের জন্য কল করুন <strong>১৬১২৩</strong>।`
+                : `🌾 Thank you for your question! Ask about specific diseases (Blast, Blight, Brown Spot, Hispa), fertilizers, or spraying weather. For live emergency support, dial <strong>16123</strong>.`;
+
+            return {
+                html: html,
+                text_bn: `ধন্যবাদ আপনার প্রশ্নের জন্য। ধানের যেকোনো রোগ, সার বা সেচের নিয়ম জানতে লিখুন। জরুরি কৃষি পরামর্শের জন্য কল করুন ১৬১২৩।`,
+                text_en: `Thank you for your question. Ask about rice leaf diseases, fertilizers, or spraying advice. For emergency assistance dial 16123.`
+            };
+        }
+
+        /* ── Progressive Web App (PWA) Service Worker & Install Logic ── */
+        let deferredPrompt = null;
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js', { scope: '/' })
+                    .then((reg) => {
+                        console.log('RiceGuard PWA Service Worker Registered! Scope:', reg.scope);
+                    })
+                    .catch((err) => {
+                        console.warn('Service Worker registration failed:', err);
+                    });
+            });
+        }
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const btnPwa = document.getElementById('btn-install-pwa');
+            if (btnPwa) {
+                btnPwa.style.display = 'inline-flex';
+            }
+        });
+
+        window.addEventListener('appinstalled', () => {
+            console.log('RiceGuard App was successfully installed!');
+            const btnPwa = document.getElementById('btn-install-pwa');
+            if (btnPwa) btnPwa.style.display = 'none';
+            deferredPrompt = null;
+        });
+
+        function installPWA() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted RiceGuard installation');
+                        const btnPwa = document.getElementById('btn-install-pwa');
+                        if (btnPwa) btnPwa.style.display = 'none';
+                    }
+                    deferredPrompt = null;
+                });
+            } else {
+                alert(currentLang === 'bn' 
+                    ? '📱 অ্যাপটি আপনার ফোনে ইনস্টল করতে ব্রাউজারের থ্রি-ডট (⋮) মেনুতে চাপ দিয়ে "Add to Home screen" বা "Install app" সিলেক্ট করুন।' 
+                    : '📱 To install the app on your phone, open your browser menu (⋮) and tap "Add to Home screen" or "Install app".');
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
+            // Show install button on mobile browsers as fallback
+            if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                const btnPwa = document.getElementById('btn-install-pwa');
+                if (btnPwa && !window.matchMedia('(display-mode: standalone)').matches) {
+                    btnPwa.style.display = 'inline-flex';
+                }
+            }
+
             setLanguage(currentLang);
 
             const form             = document.getElementById('diagnostic-form');
@@ -2706,6 +5680,61 @@
             const btnZoomPreview   = document.getElementById('btn-zoom-preview');
             const modalClose       = document.getElementById('modal-close');
 
+            // Camera Elements
+            const btnOpenCamera    = document.getElementById('btn-open-camera');
+            const btnCloseCamera   = document.getElementById('btn-close-camera');
+            const btnCapturePhoto  = document.getElementById('btn-capture-photo');
+            const btnSwitchCam     = document.getElementById('btn-switch-cam');
+            const modalCamera      = document.getElementById('modal-camera');
+            const modalPrescription= document.getElementById('modal-prescription');
+
+            if (btnOpenCamera) btnOpenCamera.addEventListener('click', startCamera);
+            if (btnCloseCamera) btnCloseCamera.addEventListener('click', stopCamera);
+            if (btnCapturePhoto) btnCapturePhoto.addEventListener('click', captureFromCamera);
+            if (btnSwitchCam) btnSwitchCam.addEventListener('click', switchCamera);
+            if (modalCamera) {
+                modalCamera.addEventListener('click', (e) => {
+                    if (e.target === modalCamera) stopCamera();
+                });
+            }
+            if (modalPrescription) {
+                modalPrescription.addEventListener('click', (e) => {
+                    if (e.target === modalPrescription) closePrescriptionModal();
+                });
+            }
+            if (modalZoom) {
+                modalZoom.addEventListener('click', (e) => {
+                    if (e.target === modalZoom) {
+                        modalZoom.classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
+                });
+            }
+            if (modalClose) {
+                modalClose.addEventListener('click', () => {
+                    if (modalZoom) modalZoom.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            }
+            if (btnZoomPreview) {
+                btnZoomPreview.addEventListener('click', () => {
+                    if (modalImg && previewImg && modalZoom) {
+                        modalImg.src = previewImg.src;
+                        modalZoom.classList.add('active');
+                        document.body.style.overflow = 'hidden';
+                    }
+                });
+            }
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closePrescriptionModal();
+                    if (modalZoom) modalZoom.classList.remove('active');
+                    if (modalCamera && modalCamera.classList.contains('active')) stopCamera();
+                    document.body.style.overflow = '';
+                }
+            });
+
             function showError(msg) {
                 clientErrorText.textContent = msg;
                 clientErrorAlert.style.display = 'flex';
@@ -2736,13 +5765,19 @@
                 const reader = new FileReader();
                 reader.onload = function (e) {
                     originalImageSrc = e.target.result;
+                    rawOriginalDataUrl = e.target.result;
+                    rawOriginalFile = file;
                     gradcamImageSrc = '';
                     previewImg.src = originalImageSrc;
                     modalImg.src = originalImageSrc;
                     fileNameText.textContent = file.name;
                     fileSizeText.textContent = formatBytes(file.size);
 
+                    const rBtn = document.getElementById('btn-reset-filters');
+                    if (rBtn) rBtn.style.display = 'none';
+
                     dropzone.style.display = 'none';
+                    document.querySelector('.upload-options-bar').style.display = 'none';
                     previewBox.classList.add('active');
                     viewModePill.classList.remove('active');
                     btnSubmit.disabled = false;
@@ -2753,15 +5788,23 @@
             function resetFileInput() {
                 fileInput.value = '';
                 originalImageSrc = '';
+                rawOriginalDataUrl = '';
+                rawOriginalFile = null;
                 gradcamImageSrc = '';
                 previewImg.src = '';
                 modalImg.src = '';
+                const rBtn = document.getElementById('btn-reset-filters');
+                if (rBtn) rBtn.style.display = 'none';
                 previewBox.classList.remove('active');
                 viewModePill.classList.remove('active');
                 if (scannerOverlay) scannerOverlay.classList.remove('scanning');
                 dropzone.style.display = 'block';
+                const optBar = document.querySelector('.upload-options-bar');
+                if (optBar) optBar.style.display = 'flex';
                 btnSubmit.disabled = true;
-                if (window.speechSynthesis) window.speechSynthesis.cancel();
+                stopAudioSpeech();
+                const evalB = document.getElementById('eval-verification-banner');
+                if (evalB) evalB.style.display = 'none';
             }
 
             /* ── Drag & Drop ── */
@@ -2952,6 +5995,47 @@
                 }
 
                 const dict = I18N[currentLang] || I18N.bn;
+
+                // Ground-Truth Evaluation Verification
+                const evalBanner = document.getElementById('eval-verification-banner');
+                const evalTitle  = document.getElementById('eval-banner-title');
+                const evalDesc   = document.getElementById('eval-banner-desc');
+                const evalIcon   = document.getElementById('eval-banner-icon');
+
+                if (evalBanner) {
+                    const expected = data.expected_class || document.getElementById('expected_class')?.value;
+                    if (expected && expected.trim() !== '') {
+                        const isMatch = (data.prediction.toLowerCase().trim() === expected.toLowerCase().trim());
+                        const isBn = currentLang === 'bn';
+                        
+                        let expName = expected;
+                        let predName = isBn ? (currentDiseaseData.name_bn || data.prediction) : data.prediction;
+                        
+                        const diseaseDb = {{ DISEASE_DATABASE | tojson }};
+                        if (isBn && diseaseDb && diseaseDb[expected] && diseaseDb[expected].name_bn) {
+                            expName = diseaseDb[expected].name_bn;
+                        }
+
+                        evalBanner.style.display = 'flex';
+                        if (isMatch) {
+                            evalBanner.className = 'eval-verification-banner eval-banner-match';
+                            evalIcon.textContent = '✓';
+                            evalTitle.textContent = isBn ? '✓ গ্রাউন্ড-ট্রুথ ফলাফল: সঠিক মিল (Match)' : '✓ Ground-Truth Match Confirmed';
+                            evalDesc.innerHTML = isBn 
+                                ? `আপনার দেওয়া পরিচিতি এবং এআই মডেলের ডায়াগনোসিস উভয়েই <strong>"${predName}"</strong> হিসেবে নির্ভুলভাবে মিলে গেছে।`
+                                : `Your expected label and AI vision diagnosis both match: <strong>"${data.prediction}"</strong>.`;
+                        } else {
+                            evalBanner.className = 'eval-verification-banner eval-banner-mismatch';
+                            evalIcon.textContent = '⚠️';
+                            evalTitle.textContent = isBn ? '⚠️ গ্রাউন্ড-ট্রুথ ফলাফল: অনুমানে অমিল (Mismatch)' : '⚠️ Ground-Truth Mismatch Detected';
+                            evalDesc.innerHTML = isBn
+                                ? `আপনার নির্বাচিত অনুমান ছিল <strong>"${expName}"</strong>, কিন্তু এআই মডেলের কম্পিউটার ভিশন বিশ্লেষণ নিশ্চিত করেছে পাতাটি আসলে <strong>"${predName}"</strong> (${data.confidence}% নিশ্চিত)।`
+                                : `You expected <strong>"${expName}"</strong>, but AI vision confirmed this leaf is <strong>"${data.prediction}"</strong> (${data.confidence}% confidence).`;
+                        }
+                    } else {
+                        evalBanner.style.display = 'none';
+                    }
+                }
 
                 resultConfNum.textContent = data.confidence + '%';
                 resultProgressBar.style.width = '0%';

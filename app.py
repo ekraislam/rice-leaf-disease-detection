@@ -1,11 +1,12 @@
 import os
 import traceback
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_from_directory, Response
 import torch
 from torchvision import transforms
 from PIL import Image, UnidentifiedImageError
 from src.model import get_baseline_cnn
 from src.disease_data import DISEASE_DATABASE
+from src.gradcam import GradCAM
 
 # Optimize PyTorch CPU inference on shared cloud environments (prevents OOM / thread lockup)
 torch.set_num_threads(1)
@@ -274,6 +275,63 @@ def text_to_speech():
         return Response(combined, mimetype="audio/mpeg")
     except Exception as e:
         return jsonify({"error": f"TTS generation failed: {str(e)}"}), 500
+
+
+from src.agri_ai import query_agri_assistant
+
+
+@app.route("/api/chat", methods=["POST"])
+def chat_with_agri_ai():
+    try:
+        data = request.get_json(silent=True) or {}
+        message = str(data.get("message") or "").strip()
+        lang = str(data.get("lang") or "bn").strip()
+        current_disease = data.get("current_disease")
+        if isinstance(current_disease, str):
+            current_disease = current_disease.strip() or None
+        else:
+            current_disease = None
+        current_confidence = data.get("current_confidence", None)
+
+        if not message:
+            return jsonify({
+                "success": False,
+                "error": "No message provided"
+            }), 400
+
+        result = query_agri_assistant(
+            message=message,
+            lang=lang,
+            current_disease=current_disease,
+            current_confidence=current_confidence
+        )
+
+        return jsonify({
+            "success": True,
+            "html": result.get("html", ""),
+            "text_bn": result.get("text_bn", ""),
+            "text_en": result.get("text_en", ""),
+            "source": result.get("source", "expert_system")
+        })
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+
+@app.route("/manifest.json", methods=["GET"])
+def serve_manifest():
+    return send_from_directory(os.path.join(BASE_DIR, "static"), "manifest.json", mimetype="application/manifest+json")
+
+
+@app.route("/sw.js", methods=["GET"])
+def serve_service_worker():
+    response = send_from_directory(os.path.join(BASE_DIR, "static"), "sw.js", mimetype="application/javascript")
+    response.headers["Service-Worker-Allowed"] = "/"
+    response.headers["Cache-Control"] = "no-cache"
+    return response
 
 
 if __name__ == "__main__":
