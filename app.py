@@ -142,8 +142,10 @@ def index():
 
 
 if __name__ == "__main__":
+    import os
+    port = int(os.environ.get("PORT", 5000))
     print("Starting RiceGuard AI — Rice Leaf Disease Detection App...")
     print("Model: fair_augmented_cnn.pth (ResNet18)")
     print("Classes: 8")
-    app.run(host="127.0.0.1", port=5000, debug=False)
+    app.run(host="0.0.0.0", port=port, debug=False)
 

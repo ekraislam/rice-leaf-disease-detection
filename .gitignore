@@ -27,9 +27,18 @@ Thumbs.db
 *.pt
 *.pkl
 
+# Allow only the production model for deployment
+!models/fair_augmented_cnn.pth
+
 outputs/
 generated_images/
 augmented_data/
 checkpoints/
+
+# Training-only folders (not needed for deployment)
+augmented_dataset/
+gan_synthetic_images/
+plots/
+results/
 
 *.log

@@ -1,5 +1,7 @@
 Flask==3.1.1
-torch==2.7.1
-torchvision==0.22.1
+# CPU-only torch - smaller size, faster install on Render
+--index-url https://download.pytorch.org/whl/cpu
+torch==2.7.1+cpu
+torchvision==0.22.1+cpu
 Pillow==11.3.0
 gunicorn==23.0.0
