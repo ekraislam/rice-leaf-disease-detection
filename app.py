@@ -227,27 +227,51 @@ from flask import Response
 
 @app.route("/api/tts", methods=["GET"])
 def text_to_speech():
+    disease = request.args.get("disease", "").strip()
     text = request.args.get("text", "").strip()
     lang = request.args.get("lang", "bn").strip()
+
+    # Normalize disease slug
+    if disease:
+        slug = disease.lower().replace(" ", "_")
+        audio_filename = f"{slug}_{lang}.mp3"
+        audio_path = os.path.join(BASE_DIR, "static", "audio", audio_filename)
+        if os.path.exists(audio_path):
+            with open(audio_path, "rb") as f:
+                return Response(f.read(), mimetype="audio/mpeg")
+
     if not text:
         return jsonify({"error": "No text provided"}), 400
 
-    # Limit text length to 300 chars for rapid streaming
-    if len(text) > 300:
-        text = text[:300]
-
     try:
-        encoded_text = urllib.parse.quote(text)
-        tts_url = f"https://translate.google.com/translate_tts?ie=UTF-8&q={encoded_text}&tl={lang}&client=tw-ob"
-        req = urllib.request.Request(
-            tts_url,
-            headers={
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-            }
-        )
-        with urllib.request.urlopen(req, timeout=6) as response:
-            audio_data = response.read()
-        return Response(audio_data, mimetype="audio/mpeg")
+        # Split text into chunks <= 80 characters for Google TTS tw-ob API
+        words = text.split(" ")
+        chunks = []
+        curr = ""
+        for w in words:
+            if len(curr) + len(w) + 1 <= 80:
+                curr += (" " + w if curr else w)
+            else:
+                if curr:
+                    chunks.append(curr)
+                curr = w
+        if curr:
+            chunks.append(curr)
+
+        combined = b""
+        for c in chunks:
+            encoded = urllib.parse.quote(c.strip())
+            tts_url = f"https://translate.google.com/translate_tts?ie=UTF-8&q={encoded}&tl={lang}&client=tw-ob"
+            req = urllib.request.Request(
+                tts_url,
+                headers={
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                }
+            )
+            with urllib.request.urlopen(req, timeout=6) as response:
+                combined += response.read()
+
+        return Response(combined, mimetype="audio/mpeg")
     except Exception as e:
         return jsonify({"error": f"TTS generation failed: {str(e)}"}), 500
 

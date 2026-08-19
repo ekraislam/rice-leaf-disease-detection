@@ -2601,8 +2601,8 @@
             btn.classList.add('speaking');
             btnText.textContent = isBn ? 'থামুন ⏸' : 'Stop ⏸';
 
-            // High-fidelity natural voice stream from /api/tts
-            const audioUrl = '/api/tts?lang=' + (isBn ? 'bn' : 'en') + '&text=' + encodeURIComponent(speechText);
+            // High-fidelity natural voice stream directly from static /api/tts with disease slug
+            const audioUrl = '/api/tts?disease=' + encodeURIComponent(currentPredictionName || '') + '&lang=' + (isBn ? 'bn' : 'en') + '&text=' + encodeURIComponent(speechText);
             activeAudio = new Audio(audioUrl);
 
             activeAudio.onended = () => {
