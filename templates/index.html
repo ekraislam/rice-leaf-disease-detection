@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title id="page-title">RiceGuard AI — ধানের পাতার রোগ নির্ণয় ও বালাইনাশক প্রেসক্রিপশন</title>
-    <meta name="description" content="AI-powered rice leaf disease detection and agronomic prescription platform powered by a GAN-augmented ResNet18 deep learning vision model. Developed by Ohi." />
+    <meta name="description" content="AI-powered rice leaf disease detection, Grad-CAM explainability, and agronomic prescription platform powered by a GAN-augmented ResNet18 deep learning vision model. Developed by Ohi." />
 
     <!-- Google Fonts: Plus Jakarta Sans & Noto Sans Bengali -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -478,7 +478,7 @@
             color: var(--color-text-subtle);
         }
 
-        /* ── Preview Box ─────────────────────────────────────── */
+        /* ── Preview Box + Heatmap Switcher ──────────────────── */
         .preview-box {
             display: none;
             border: 1px solid var(--color-border);
@@ -501,6 +501,7 @@
             height: 280px;
             object-fit: cover;
             display: block;
+            transition: opacity 0.3s ease;
         }
         .preview-ready-badge {
             position: absolute;
@@ -527,6 +528,44 @@
             border-radius: 50%;
             background: var(--color-accent);
         }
+
+        /* GradCAM Heatmap Switcher Pill (Feature 1) */
+        .view-mode-pill {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: none;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: var(--radius-full);
+            padding: 3px;
+            gap: 3px;
+            z-index: 20;
+        }
+        .view-mode-pill.active { display: flex; }
+        .view-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 0.25rem 0.65rem;
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            transition: all var(--transition-fast);
+        }
+        .view-btn.active {
+            background: var(--color-accent);
+            color: #FFFFFF;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+        }
+
         .preview-overlay-btn {
             position: absolute;
             top: 10px;
@@ -777,7 +816,7 @@
             100% { opacity: 1; transform: translateY(0); }
         }
 
-        /* Disease Headline Card */
+        /* Disease Headline Card with Audio Button */
         .disease-headline-card {
             background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
             color: #FFFFFF;
@@ -805,6 +844,11 @@
             align-items: center;
             gap: 0.35rem;
         }
+        .headline-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
         .severity-badge {
             font-size: 0.72rem;
             font-weight: 700;
@@ -814,6 +858,37 @@
             color: #FFFFFF;
             border: 1px solid rgba(255, 255, 255, 0.25);
         }
+
+        /* Feature 3: Audio Voice Reader Button */
+        .btn-voice-read {
+            background: rgba(255, 255, 255, 0.18);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            color: #FFFFFF;
+            border-radius: var(--radius-full);
+            padding: 0.22rem 0.65rem;
+            font-size: 0.72rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: all var(--transition-fast);
+        }
+        .btn-voice-read:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.04);
+        }
+        .btn-voice-read.speaking {
+            background: #FEF08A;
+            color: #854D0E;
+            border-color: #FDE047;
+            animation: pulse-voice 1.2s infinite;
+        }
+        @keyframes pulse-voice {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.06); }
+        }
+
         .disease-title-main {
             font-size: 1.5rem;
             font-weight: 800;
@@ -962,10 +1037,12 @@
             display: flex;
             background: #FAFCFA;
             border-bottom: 1px solid var(--color-border);
+            overflow-x: auto;
         }
         .tab-btn {
             flex: 1;
-            padding: 0.65rem 0.4rem;
+            min-width: 80px;
+            padding: 0.65rem 0.35rem;
             font-family: inherit;
             font-size: 0.8125rem;
             font-weight: 700;
@@ -976,6 +1053,7 @@
             cursor: pointer;
             transition: all var(--transition-fast);
             text-align: center;
+            white-space: nowrap;
         }
         .tab-btn:hover { color: var(--color-primary); }
         .tab-btn.active {
@@ -1010,6 +1088,106 @@
             flex-shrink: 0;
             margin-top: 3px;
         }
+
+        /* Feature 2: Interactive Spray Dosage Calculator */
+        .calculator-box {
+            background: #F0FDF4;
+            border: 1px solid var(--color-success-border);
+            border-radius: var(--radius-md);
+            padding: 1rem 1.15rem;
+            margin-bottom: 1.25rem;
+        }
+        .calc-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 800;
+            color: var(--color-success-text);
+            margin-bottom: 0.75rem;
+        }
+        .calc-input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.65rem;
+            margin-bottom: 0.85rem;
+        }
+        .calc-input-group label {
+            display: block;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--color-text-muted);
+            margin-bottom: 0.25rem;
+        }
+        .calc-input, .calc-select {
+            width: 100%;
+            padding: 0.45rem 0.65rem;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 0.8125rem;
+            background: #FFFFFF;
+        }
+        .calc-results-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            background: #FFFFFF;
+            border: 1px solid var(--color-success-border);
+            border-radius: var(--radius-sm);
+            padding: 0.75rem;
+            text-align: center;
+        }
+        @media (max-width: 600px) {
+            .calc-results-grid { grid-template-columns: 1fr; }
+        }
+        .calc-res-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+        .calc-res-val {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--color-primary);
+        }
+        .calc-res-label {
+            font-size: 0.6875rem;
+            font-weight: 600;
+            color: var(--color-text-muted);
+        }
+
+        /* Feature 5: Weather & Field Advisory Cards */
+        .advisory-box {
+            background: #FFFBEB;
+            border: 1px solid var(--color-warning-border);
+            border-radius: var(--radius-md);
+            padding: 1rem 1.15rem;
+            margin-bottom: 1.25rem;
+        }
+        .advisory-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 800;
+            color: var(--color-warning-text);
+            margin-bottom: 0.6rem;
+        }
+        .advisory-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+            font-size: 0.8125rem;
+            color: #78350F;
+        }
+        .advisory-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.45rem;
+        }
+        .advisory-item svg { width: 15px; height: 15px; flex-shrink: 0; margin-top: 2px; color: #D97706; }
 
         .prescription-grid {
             display: flex;
@@ -1209,7 +1387,7 @@
             cursor: pointer;
         }
 
-        /* ── Premium High-Contrast Dark Emerald Footer ───────────────── */
+        /* ── Premium High-Contrast Footer (Developed by Ohi) ── */
         .footer {
             margin-top: auto;
             border-top: 1px solid rgba(16, 185, 129, 0.2);
@@ -1304,7 +1482,7 @@
 
         /* Print Media Styles */
         @media print {
-            .navbar, .hero, .samples-section, .supported-section, .footer, .report-actions, .accordion-item, .btn-primary, .dropzone-container {
+            .navbar, .hero, .samples-section, .supported-section, .footer, .report-actions, .accordion-item, .btn-primary, .dropzone-container, .view-mode-pill {
                 display: none !important;
             }
             .workspace { display: block; }
@@ -1370,7 +1548,7 @@
                 </span>
                 <span class="badge">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
-                    <span>ResNet18 Classifier</span>
+                    <span>ResNet18 + Grad-CAM</span>
                 </span>
                 <span class="badge">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.4 19 2c1 2 2 4.1 2 8 0 5.5-4.5 10-10 10Z"/></svg>
@@ -1468,12 +1646,24 @@
                             </div>
                         </div>
 
-                        <!-- Image Preview Box + Computer Vision Scanner -->
+                        <!-- Image Preview Box + Grad-CAM Heatmap Toggle (Feature 1) -->
                         <div class="preview-box" id="preview-box">
                             <div class="preview-image-wrapper">
                                 <img id="preview-img" alt="Uploaded rice leaf sample" />
                                 
-                                <div class="preview-ready-badge" data-i18n="ready_badge">বিশ্লেষণের জন্য প্রস্তুত</div>
+                                <div class="preview-ready-badge" id="preview-badge" data-i18n="ready_badge">বিশ্লেষণের জন্য প্রস্তুত</div>
+
+                                <!-- Grad-CAM XAI Heatmap Switcher (Feature 1) -->
+                                <div class="view-mode-pill" id="view-mode-pill">
+                                    <button type="button" class="view-btn active" id="btn-view-orig" onclick="toggleViewMode('orig')">
+                                        <span>🌿</span>
+                                        <span data-i18n="view_orig">আসল পাতা</span>
+                                    </button>
+                                    <button type="button" class="view-btn" id="btn-view-cam" onclick="toggleViewMode('cam')">
+                                        <span>🔥</span>
+                                        <span data-i18n="view_cam">এআই হিটম্যাপ</span>
+                                    </button>
+                                </div>
 
                                 <!-- Scanner Overlay -->
                                 <div class="scanner-overlay" id="scanner-overlay">
@@ -1567,14 +1757,21 @@
                     <!-- State 3: Active Result Content -->
                     <div class="result-content {% if prediction %}active{% endif %}" id="state-result" aria-live="polite">
 
-                        <!-- Disease Headline Card -->
+                        <!-- Disease Headline Card with Audio Voice Button (Feature 3) -->
                         <div class="disease-headline-card">
                             <div class="headline-top-row">
                                 <div class="headline-tag">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                                     <span data-i18n="result_tag">শনাক্তকৃত রোগ (AI DIAGNOSIS)</span>
                                 </div>
-                                <span class="severity-badge" id="result-severity">উচ্চ ঝুঁকি</span>
+                                <div class="headline-actions">
+                                    <!-- Voice Audio Reader Button (Feature 3) -->
+                                    <button type="button" class="btn-voice-read" id="btn-voice-read" onclick="toggleVoiceSpeech()">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+                                        <span id="voice-btn-text" data-i18n="btn_voice_read">প্রেসক্রিপশন শুনুন</span>
+                                    </button>
+                                    <span class="severity-badge" id="result-severity">উচ্চ ঝুঁকি</span>
+                                </div>
                             </div>
                             <div class="disease-title-main" id="result-prediction-main"></div>
                             <div class="pathogen-name" id="result-pathogen"></div>
@@ -1615,6 +1812,7 @@
                                 <button type="button" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-symptoms" id="btn-tab-symptoms" data-i18n="tab_symptoms">লক্ষণসমূহ</button>
                                 <button type="button" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-causes" id="btn-tab-causes" data-i18n="tab_causes">রোগের কারণ</button>
                                 <button type="button" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-mgmt" id="btn-tab-mgmt" data-i18n="tab_mgmt">প্রতিকার ও প্রেসক্রিপশন</button>
+                                <button type="button" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-calc" id="btn-tab-calc" data-i18n="tab_calc">ডোজ ক্যালকুলেটর</button>
                             </div>
                             <div class="tab-pane active" id="tab-overview" role="tabpanel">
                                 <p id="text-overview">বিবরণ লোড হচ্ছে...</p>
@@ -1626,7 +1824,73 @@
                                 <ul class="bullet-list" id="list-causes"></ul>
                             </div>
                             <div class="tab-pane" id="tab-mgmt" role="tabpanel">
+                                <!-- Feature 5: Weather & Field Advisory Box -->
+                                <div class="advisory-box">
+                                    <div class="advisory-header">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/><path d="M22 10v6"/><path d="M19 13h6"/></svg>
+                                        <span data-i18n="adv_title">মাঠ ও আবহাওয়া স্প্রে সতর্কতা গাইড (Weather & Spraying Advisory)</span>
+                                    </div>
+                                    <ul class="advisory-list">
+                                        <li class="advisory-item">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                            <span data-i18n="adv_1">স্প্রে করার ৪ ঘণ্টার মধ্যে বৃষ্টির সম্ভাবনা থাকলে স্প্রে স্থগিত রাখুন।</span>
+                                        </li>
+                                        <li class="advisory-item">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                            <span data-i18n="adv_2">মেঘলা দিনে বা শিশির ভেজা অবস্থায় বালাইনাশকের সাথে কৃষি আঠা (Sticker) মিশিয়ে নিন।</span>
+                                        </li>
+                                        <li class="advisory-item">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                            <span data-i18n="adv_3">সর্বদা বাতাসের অনুকূলে এবং বিকেল ৪টার পর মিষ্টি রোদে স্প্রে করুন।</span>
+                                        </li>
+                                    </ul>
+                                </div>
+
                                 <div class="prescription-grid" id="grid-management"></div>
+                            </div>
+
+                            <!-- Feature 2: Interactive Dosage Calculator Tab -->
+                            <div class="tab-pane" id="tab-calc" role="tabpanel">
+                                <div class="calculator-box">
+                                    <div class="calc-header">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>
+                                        <span data-i18n="calc_title">জমির পরিমাণ অনুযায়ী স্প্রে ও ওষুধ ডোজ ক্যালকুলেটর</span>
+                                    </div>
+                                    <div class="calc-input-row">
+                                        <div class="calc-input-group">
+                                            <label for="land-amount" data-i18n="calc_land_amount">জমির পরিমাণ</label>
+                                            <input type="number" id="land-amount" class="calc-input" value="10" min="0.1" step="0.5" oninput="calculateDosage()" />
+                                        </div>
+                                        <div class="calc-input-group">
+                                            <label for="land-unit" data-i18n="calc_land_unit">পরিমাপের একক</label>
+                                            <select id="land-unit" class="calc-select" onchange="calculateDosage()">
+                                                <option value="decimal" data-i18n="unit_decimal">শতক / ডেসিমল</option>
+                                                <option value="katha" data-i18n="unit_katha">কাঠা (১.৬৫ শতক)</option>
+                                                <option value="bigha" data-i18n="unit_bigha">বিঘা (৩৩ শতক)</option>
+                                                <option value="acre" data-i18n="unit_acre">একর (১০০ শতক)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="calc-results-grid">
+                                        <div class="calc-res-item">
+                                            <span class="calc-res-val" id="calc-water-val">২০ লিটার</span>
+                                            <span class="calc-res-label" data-i18n="calc_water_label">প্রয়োজনীয় পানি</span>
+                                        </div>
+                                        <div class="calc-res-item">
+                                            <span class="calc-res-val" id="calc-chem-val">২০ মিলি</span>
+                                            <span class="calc-res-label" id="calc-chem-label" data-i18n="calc_chem_label">বালাইনাশক পরিমাণ</span>
+                                        </div>
+                                        <div class="calc-res-item">
+                                            <span class="calc-res-val" id="calc-tanks-val">১.২৫ ড্রাম</span>
+                                            <span class="calc-res-label" data-i18n="calc_tanks_label">১৬ লিটার স্প্রে ড্রাম</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="font-size:0.8125rem;color:var(--color-text-muted);line-height:1.6;" id="calc-advice-text">
+                                    <!-- Dynamic advice note injected by JS -->
+                                </div>
                             </div>
                         </div>
 
@@ -1785,8 +2049,9 @@
                 <div class="footer-tech-stack">
                     <span class="tech-tag">PyTorch CPU</span>
                     <span class="tech-tag">ResNet18 Classifier</span>
+                    <span class="tech-tag">Grad-CAM (XAI)</span>
                     <span class="tech-tag">GAN-Augmented CNN</span>
-                    <span class="tech-tag">Flask Framework</span>
+                    <span class="tech-tag">Dosage Calculator</span>
                     <span class="tech-tag" data-i18n="tag_agronomy">বালাইনাশক প্রেসক্রিপশন</span>
                 </div>
             </div>
@@ -1796,7 +2061,7 @@
         </div>
     </footer>
 
-    <!-- ── Interactive JavaScript Logic with 100% Bilingual Switcher ── -->
+    <!-- ── Interactive JavaScript Logic with Grad-CAM, Voice Speech & Dosage Calculator ── -->
     <script>
         /* ── Full i18n Translation Dictionary ── */
         const I18N = {
@@ -1821,6 +2086,8 @@
                 drop_sub: 'অথবা ডিভাইস থেকে ফাইল নির্বাচন করুন',
                 drop_meta: 'JPG · PNG · BMP · TIFF (সর্বোচ্চ ১০ মেগাবাইট)',
                 ready_badge: 'বিশ্লেষণের জন্য প্রস্তুত',
+                view_orig: 'আসল পাতা',
+                view_cam: 'এআই হিটম্যাপ (Grad-CAM)',
                 btn_zoom: 'জুম দেখুন',
                 btn_remove: 'মুছুন',
                 eval_mode_title: 'মূল্যায়ন মোড (ঐচ্ছিক গ্রাউন্ড-ট্রুথ যাচাই)',
@@ -1834,12 +2101,28 @@
                 empty_sub: 'একটি ধানের পাতার ছবি আপলোড করুন অথবা উপরের যেকোনো স্যাম্পল পাতায় ক্লিক করুন।',
                 loading_sub: 'রেসনেট১৮ মডেলের মাধ্যমে বিশ্লেষণ চলছে',
                 result_tag: 'শনাক্তকৃত রোগ (AI DIAGNOSIS)',
+                btn_voice_read: 'প্রেসক্রিপশন শুনুন',
                 conf_label: 'মডেল কনফিডেন্স',
                 top3_title: 'সম্ভাব্য রোগের তালিকা (Top-3)',
                 tab_overview: 'সারসংক্ষেপ',
                 tab_symptoms: 'লক্ষণসমূহ',
                 tab_causes: 'রোগের কারণ',
                 tab_mgmt: 'প্রতিকার ও প্রেসক্রিপশন',
+                tab_calc: 'ডোজ ক্যালকুলেটর',
+                adv_title: 'মাঠ ও আবহাওয়া স্প্রে সতর্কতা গাইড',
+                adv_1: 'স্প্রে করার ৪ ঘণ্টার মধ্যে বৃষ্টির সম্ভাবনা থাকলে স্প্রে স্থগিত রাখুন।',
+                adv_2: 'মেঘলা দিনে বা শিশির ভেজা অবস্থায় বালাইনাশকের সাথে কৃষি আঠা (Sticker) মিশিয়ে নিন।',
+                adv_3: 'সর্বদা বাতাসের অনুকূলে এবং বিকেল ৪টার পর মিষ্টি রোদে স্প্রে করুন।',
+                calc_title: 'জমির পরিমাণ অনুযায়ী স্প্রে ও ওষুধ ডোজ ক্যালকুলেটর',
+                calc_land_amount: 'জমির পরিমাণ',
+                calc_land_unit: 'পরিমাপের একক',
+                unit_decimal: 'শতক / ডেসিমল',
+                unit_katha: 'কাঠা (১.৬৫ শতক)',
+                unit_bigha: 'বিঘা (৩৩ শতক)',
+                unit_acre: 'একর (১০০ শতক)',
+                calc_water_label: 'প্রয়োজনীয় পানি',
+                calc_chem_label: 'বালাইনাশক পরিমাণ',
+                calc_tanks_label: '১৬ লিটার স্প্রে ড্রাম',
                 btn_print: 'রিপোর্ট প্রিন্ট / PDF সংরক্ষণ',
                 btn_new_test: 'নতুন পাতা পরীক্ষা',
                 classes_sec_title: 'শনাক্তকরণযোগ্য ধানের ৮টি অবস্থা ও রোগ',
@@ -1893,6 +2176,8 @@
                 drop_sub: 'or browse from device (Click to browse)',
                 drop_meta: 'JPG · PNG · BMP · TIFF (Max 10 MB)',
                 ready_badge: 'READY FOR ANALYSIS',
+                view_orig: 'Original Leaf',
+                view_cam: 'AI Heatmap (Grad-CAM)',
                 btn_zoom: 'Zoom View',
                 btn_remove: 'Remove',
                 eval_mode_title: 'Evaluation Mode (Optional Ground-Truth)',
@@ -1906,12 +2191,28 @@
                 empty_sub: 'Upload a rice leaf photo or click any quick sample above to start analysis.',
                 loading_sub: 'Analyzing leaf features via ResNet18 deep neural network',
                 result_tag: 'DIAGNOSED CONDITION (AI OUTPUT)',
+                btn_voice_read: 'Listen Audio',
                 conf_label: 'Model Confidence',
                 top3_title: 'Top-3 Probability Distribution',
                 tab_overview: 'Overview',
                 tab_symptoms: 'Symptoms',
                 tab_causes: 'Causes & Pathogen',
                 tab_mgmt: 'Treatment & Prescription',
+                tab_calc: 'Dosage Calculator',
+                adv_title: 'Weather & Spraying Advisory',
+                adv_1: 'Postpone spraying if rain is expected within 4 hours.',
+                adv_2: 'Mix an agricultural sticker/surfactant during humid or overcast conditions.',
+                adv_3: 'Always spray along the wind direction in late afternoon.',
+                calc_title: 'Field Spray & Chemical Dosage Calculator',
+                calc_land_amount: 'Land Size',
+                calc_land_unit: 'Unit of Measure',
+                unit_decimal: 'Decimal / Cent',
+                unit_katha: 'Katha (1.65 Decimals)',
+                unit_bigha: 'Bigha (33 Decimals)',
+                unit_acre: 'Acre (100 Decimals)',
+                calc_water_label: 'Water Required',
+                calc_chem_label: 'Chemical Dosage',
+                calc_tanks_label: '16L Sprayer Tanks',
                 btn_print: 'Print Report / Save PDF',
                 btn_new_test: 'Analyze Another Leaf',
                 classes_sec_title: 'Supported Rice Conditions & Pathogens',
@@ -1951,6 +2252,9 @@
         let currentTopPredictions = null;
         let currentConfidence = 0;
         let currentPredictionName = '';
+        let originalImageSrc = '';
+        let gradcamImageSrc = '';
+        let currentViewMode = 'orig'; // 'orig' or 'cam'
 
         /* ── 1-Click Language Switcher Function ── */
         function setLanguage(lang) {
@@ -1958,16 +2262,12 @@
             localStorage.setItem('riceguard_lang', lang);
             document.documentElement.lang = lang;
 
-            // Toggle active state on buttons
             document.getElementById('lang-en').classList.toggle('active', lang === 'en');
             document.getElementById('lang-bn').classList.toggle('active', lang === 'bn');
 
             const dict = I18N[lang] || I18N.bn;
-
-            // Update page title
             document.title = dict.page_title;
 
-            // Update all static i18n data elements
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (dict[key]) {
@@ -1975,9 +2275,9 @@
                 }
             });
 
-            // Update active results if visible
             if (currentDiseaseData) {
                 updateResultLanguage(dict);
+                calculateDosage();
             }
         }
 
@@ -2128,6 +2428,135 @@
             }
         }
 
+        /* ── Feature 1: Grad-CAM Toggle Mode ── */
+        function toggleViewMode(mode) {
+            currentViewMode = mode;
+            const previewImg = document.getElementById('preview-img');
+            const modalImg = document.getElementById('modal-img');
+            const btnOrig = document.getElementById('btn-view-orig');
+            const btnCam  = document.getElementById('btn-view-cam');
+
+            if (mode === 'cam' && gradcamImageSrc) {
+                previewImg.src = gradcamImageSrc;
+                modalImg.src = gradcamImageSrc;
+                btnCam.classList.add('active');
+                btnOrig.classList.remove('active');
+            } else {
+                previewImg.src = originalImageSrc;
+                modalImg.src = originalImageSrc;
+                btnOrig.classList.add('active');
+                btnCam.classList.remove('active');
+            }
+        }
+
+        /* ── Feature 2: Spray Dosage Calculator ── */
+        function calculateDosage() {
+            const isBn = currentLang === 'bn';
+            const amountInput = document.getElementById('land-amount');
+            const unitSelect  = document.getElementById('land-unit');
+            const waterVal    = document.getElementById('calc-water-val');
+            const chemVal     = document.getElementById('calc-chem-val');
+            const tanksVal    = document.getElementById('calc-tanks-val');
+            const adviceText  = document.getElementById('calc-advice-text');
+
+            if (!amountInput || !unitSelect) return;
+
+            const amount = parseFloat(amountInput.value) || 0;
+            const unit   = unitSelect.value;
+
+            // Convert to decimals (1 acre = 100 decimals, 1 bigha = 33 decimals, 1 katha = 1.65 decimals)
+            let decimals = amount;
+            if (unit === 'katha') decimals = amount * 1.65;
+            else if (unit === 'bigha') decimals = amount * 33;
+            else if (unit === 'acre') decimals = amount * 100;
+
+            // Standard foliar water rate: ~2 Liters per decimal (200L per acre)
+            const totalWater = Math.max(1, Math.round(decimals * 2));
+            const tanks = (totalWater / 16).toFixed(1);
+
+            // Chemical dosage calculation
+            const ratePerL = (currentDiseaseData && currentDiseaseData.dosage_rate_per_liter) ? currentDiseaseData.dosage_rate_per_liter : 1.0;
+            const chemUnit = (currentDiseaseData && currentDiseaseData.dosage_unit) ? currentDiseaseData.dosage_unit : 'ml';
+            const totalChem = (totalWater * ratePerL).toFixed(1);
+            const chemName  = isBn 
+                ? (currentDiseaseData && currentDiseaseData.chemical_product_bn ? currentDiseaseData.chemical_product_bn : 'বালাইনাশক')
+                : (currentDiseaseData && currentDiseaseData.chemical_product_en ? currentDiseaseData.chemical_product_en : 'Fungicide');
+
+            if (ratePerL === 0) {
+                waterVal.textContent = isBn ? `${totalWater} লিটার` : `${totalWater} L`;
+                chemVal.textContent  = isBn ? 'প্রয়োজন নেই' : 'None';
+                tanksVal.textContent = isBn ? `${tanks} ড্রাম` : `${tanks} Tanks`;
+                adviceText.innerHTML = isBn 
+                    ? '💡 পাতা সম্পূর্ণ সুস্থ। কোনো রাসায়নিক বালাইনাশক স্প্রে করার প্রয়োজন নেই।' 
+                    : '💡 Leaf is completely healthy. No chemical spray is required.';
+            } else {
+                waterVal.textContent = isBn ? `${totalWater} লিটার` : `${totalWater} Liters`;
+                chemVal.textContent  = isBn ? `${totalChem} ${chemUnit}` : `${totalChem} ${chemUnit}`;
+                tanksVal.textContent = isBn ? `${tanks} ড্রাম` : `${tanks} Tanks`;
+                adviceText.innerHTML = isBn
+                    ? `💡 <strong>হিসাব:</strong> মোট <strong>${totalWater} লিটার</strong> পানিতে <strong>${totalChem} ${chemUnit}</strong> ${chemName} ভালোভাবে গুলিয়ে <strong>${tanks}টি</strong> ড্রামের সাহায্যে পুরো ক্ষেতে সমানভাবে স্প্রে করুন।`
+                    : `💡 <strong>Mixing:</strong> Dissolve <strong>${totalChem} ${chemUnit}</strong> of ${chemName} in <strong>${totalWater} Liters</strong> of water and apply evenly using <strong>${tanks}</strong> knapsack tanks.`;
+            }
+        }
+
+        /* ── Feature 3: Voice / Audio Prescription Speech ── */
+        let isSpeaking = false;
+        function toggleVoiceSpeech() {
+            const btn = document.getElementById('btn-voice-read');
+            const btnText = document.getElementById('voice-btn-text');
+
+            if (!('speechSynthesis' in window)) {
+                alert(currentLang === 'bn' ? 'আপনার ব্রাউজারে স্পিচ সিন্থেসিস সাপোর্ট করে না।' : 'Speech synthesis not supported on this browser.');
+                return;
+            }
+
+            if (isSpeaking) {
+                window.speechSynthesis.cancel();
+                isSpeaking = false;
+                btn.classList.remove('speaking');
+                btnText.textContent = currentLang === 'bn' ? 'প্রেসক্রিপশন শুনুন' : 'Listen Audio';
+                return;
+            }
+
+            if (!currentDiseaseData) return;
+
+            const isBn = currentLang === 'bn';
+            const diseaseName = isBn ? (currentDiseaseData.name_bn || currentPredictionName) : (currentDiseaseData.name_en || currentPredictionName);
+            const severity = isBn ? (currentDiseaseData.severity_bn || 'সতর্কতা') : (currentDiseaseData.severity_en || 'Caution');
+            const chemRx = (isBn ? currentDiseaseData.management_bn?.chemical : currentDiseaseData.management_en?.chemical) || '';
+
+            let speechText = '';
+            if (isBn) {
+                speechText = `ধানের পাতায় সনাক্তকৃত রোগ হলো ${diseaseName}। এটি একটি ${severity} মাত্রার রোগ। প্রস্তাবিত প্রতিকার: ${chemRx}। জমিতে অতিরিক্ত পানি থাকলে নিষ্কাশন করুন এবং বিকেল বেলা মিষ্টি রোদে স্প্রে করুন।`;
+            } else {
+                speechText = `Diagnosed condition is ${diseaseName}. Severity level is ${severity}. Recommended prescription: ${chemRx}. Maintain proper field drainage and spray during late afternoon.`;
+            }
+
+            const utterance = new SpeechSynthesisUtterance(speechText);
+            utterance.lang = isBn ? 'bn-BD' : 'en-US';
+            utterance.rate = 0.95;
+
+            utterance.onstart = () => {
+                isSpeaking = true;
+                btn.classList.add('speaking');
+                btnText.textContent = isBn ? 'থামুন ⏸' : 'Stop ⏸';
+            };
+
+            utterance.onend = () => {
+                isSpeaking = false;
+                btn.classList.remove('speaking');
+                btnText.textContent = isBn ? 'প্রেসক্রিপশন শুনুন' : 'Listen Audio';
+            };
+
+            utterance.onerror = () => {
+                isSpeaking = false;
+                btn.classList.remove('speaking');
+                btnText.textContent = isBn ? 'প্রেসক্রিপশন শুনুন' : 'Listen Audio';
+            };
+
+            window.speechSynthesis.speak(utterance);
+        }
+
         /* Helper to format bytes */
         function formatBytes(bytes) {
             if (bytes === 0) return '0 Bytes';
@@ -2149,10 +2578,8 @@
                 const fileInput = document.getElementById('image-input');
                 fileInput.files = container.files;
                 
-                // Trigger preview
                 handleFile(file);
 
-                // Auto submit form for instantaneous test
                 const form = document.getElementById('diagnostic-form');
                 form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
             })
@@ -2164,7 +2591,6 @@
         let handleFile = null;
 
         document.addEventListener('DOMContentLoaded', function () {
-            // Initialize language
             setLanguage(currentLang);
 
             const form             = document.getElementById('diagnostic-form');
@@ -2172,6 +2598,7 @@
             const dropzone         = document.getElementById('dropzone');
             const previewBox       = document.getElementById('preview-box');
             const previewImg       = document.getElementById('preview-img');
+            const viewModePill     = document.getElementById('view-mode-pill');
             const scannerOverlay   = document.getElementById('scanner-overlay');
             const fileNameText     = document.getElementById('file-name-text');
             const fileSizeText     = document.getElementById('file-size-text');
@@ -2226,13 +2653,16 @@
 
                 const reader = new FileReader();
                 reader.onload = function (e) {
-                    previewImg.src = e.target.result;
-                    modalImg.src = e.target.result;
+                    originalImageSrc = e.target.result;
+                    gradcamImageSrc = '';
+                    previewImg.src = originalImageSrc;
+                    modalImg.src = originalImageSrc;
                     fileNameText.textContent = file.name;
                     fileSizeText.textContent = formatBytes(file.size);
 
                     dropzone.style.display = 'none';
                     previewBox.classList.add('active');
+                    viewModePill.classList.remove('active');
                     btnSubmit.disabled = false;
                 };
                 reader.readAsDataURL(file);
@@ -2240,12 +2670,16 @@
 
             function resetFileInput() {
                 fileInput.value = '';
+                originalImageSrc = '';
+                gradcamImageSrc = '';
                 previewImg.src = '';
                 modalImg.src = '';
                 previewBox.classList.remove('active');
+                viewModePill.classList.remove('active');
                 if (scannerOverlay) scannerOverlay.classList.remove('scanning');
                 dropzone.style.display = 'block';
                 btnSubmit.disabled = true;
+                if (window.speechSynthesis) window.speechSynthesis.cancel();
             }
 
             /* ── Drag & Drop ── */
@@ -2349,13 +2783,13 @@
                 const steps = currentLang === 'bn' ? [
                     'ইমেজ টেন্সর প্রস্তুত করা হচ্ছে (২২৪×২২৪ RGB)...',
                     'পাতার ক্ষত ও প্যাটার্ন বিশ্লেষণ চলছে...',
-                    'রেসনেট১৮ মডেলের সাহায্যে রোগ নির্ণয় হচ্ছে...',
-                    'কৃষিবিজ্ঞান প্রেসক্রিপশন তৈরি হচ্ছে...'
+                    'Grad-CAM এআই দৃষ্টি হিটম্যাপ তৈরি হচ্ছে...',
+                    'কৃষিবিজ্ঞান প্রেসক্রিপশন ও ডোজ হিসাব হচ্ছে...'
                 ] : [
                     'Preparing image tensor (224×224 RGB)…',
                     'Extracting lesion & vascular features…',
-                    'Matching disease classification maps…',
-                    'Generating agronomic prescription…'
+                    'Generating Grad-CAM XAI activation maps…',
+                    'Computing agronomic spray dosage…'
                 ];
                 let stepIdx = 0;
                 const stepInterval = setInterval(() => {
@@ -2426,6 +2860,15 @@
                 currentConfidence = data.confidence;
                 currentPredictionName = data.prediction;
 
+                // Feature 1: GradCAM Heatmap Support
+                if (data.gradcam_url) {
+                    gradcamImageSrc = data.gradcam_url;
+                    viewModePill.classList.add('active');
+                    toggleViewMode('orig');
+                } else {
+                    viewModePill.classList.remove('active');
+                }
+
                 const dict = I18N[currentLang] || I18N.bn;
 
                 resultConfNum.textContent = data.confidence + '%';
@@ -2435,6 +2878,7 @@
                 }, 80);
 
                 updateResultLanguage(dict);
+                calculateDosage();
 
                 stateEmpty.style.display = 'none';
                 stateResult.classList.add('active');

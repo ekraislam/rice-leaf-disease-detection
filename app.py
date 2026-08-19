@@ -114,6 +114,9 @@ def handle_unexpected_error(error):
     ), 500
 
 
+from src.gradcam import GradCAM
+
+
 @app.route("/", methods=["GET", "POST"])
 def index():
     prediction = None
@@ -121,6 +124,7 @@ def index():
     top_predictions = None
     disease_info = None
     expected_class = None
+    gradcam_url = None
     error = None
 
     if request.method == "POST":
@@ -137,28 +141,40 @@ def index():
                     image = Image.open(file).convert("RGB")
                     image_tensor = transform(image).unsqueeze(0).to(device)
 
-                    with torch.no_grad():
-                        outputs = model(image_tensor)
-                        probabilities = torch.softmax(outputs, dim=1)[0]
-                        confidence_val, predicted_idx = torch.max(probabilities, dim=0)
+                    # Compute predictions
+                    outputs = model(image_tensor)
+                    probabilities = torch.softmax(outputs, dim=1)[0]
+                    confidence_val, predicted_idx = torch.max(probabilities, dim=0)
 
-                        # Compute Top-3 predictions
-                        top_probs, top_indices = torch.topk(probabilities, k=min(3, len(CLASS_NAMES)))
-                        top_predictions = []
-                        for p, idx in zip(top_probs, top_indices):
-                            c_name = CLASS_NAMES[idx.item()]
-                            c_info = DISEASE_DATABASE.get(c_name, {})
-                            top_predictions.append({
-                                "class": c_name,
-                                "class_bn": c_info.get("name_bn", c_name),
-                                "confidence": round(p.item() * 100, 2),
-                                "severity": c_info.get("severity", ""),
-                                "severity_color": c_info.get("severity_color", "#10B981")
-                            })
+                    # Compute Top-3 predictions
+                    top_probs, top_indices = torch.topk(probabilities, k=min(3, len(CLASS_NAMES)))
+                    top_predictions = []
+                    for p, idx in zip(top_probs, top_indices):
+                        c_name = CLASS_NAMES[idx.item()]
+                        c_info = DISEASE_DATABASE.get(c_name, {})
+                        top_predictions.append({
+                            "class": c_name,
+                            "class_bn": c_info.get("name_bn", c_name),
+                            "confidence": round(p.item() * 100, 2),
+                            "severity_en": c_info.get("severity_en", "Moderate"),
+                            "severity_bn": c_info.get("severity_bn", "মাঝারি"),
+                            "severity_color": c_info.get("severity_color", "#10B981")
+                        })
 
                     prediction = CLASS_NAMES[predicted_idx.item()]
                     confidence = round(confidence_val.item() * 100, 2)
                     disease_info = DISEASE_DATABASE.get(prediction, {})
+
+                    # Compute Grad-CAM Explainable AI Heatmap
+                    try:
+                        gcam = GradCAM(model)
+                        cam_input = image_tensor.clone().detach().requires_grad_(True)
+                        cam_map = gcam.generate(cam_input, class_idx=predicted_idx.item())
+                        if cam_map is not None:
+                            gradcam_url = gcam.overlay_heatmap(image, cam_map, alpha=0.5)
+                        gcam.close()
+                    except Exception as gcam_err:
+                        print("Grad-CAM generation warning:", gcam_err)
 
                 except UnidentifiedImageError:
                     error = "We couldn't read this image file. Please upload a valid image (JPG, PNG, BMP, or TIFF)."
@@ -183,6 +199,7 @@ def index():
                 "confidence": confidence,
                 "top_predictions": top_predictions,
                 "disease_info": disease_info,
+                "gradcam_url": gradcam_url,
                 "expected_class": expected_class if expected_class else None,
                 "error": None
             })
@@ -193,6 +210,7 @@ def index():
         confidence=confidence,
         top_predictions=top_predictions,
         disease_info=disease_info,
+        gradcam_url=gradcam_url,
         expected_class=expected_class,
         error=error,
         CLASS_NAMES=CLASS_NAMES,

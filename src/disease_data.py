@@ -1,6 +1,6 @@
 """
 Botanical and Agronomic Disease Knowledge Base
-Contains scientific descriptions, symptoms, causes, management plans, and translations
+Contains scientific descriptions, symptoms, causes, management plans, dosages, and translations
 for all 8 rice leaf conditions classified by the ResNet18 model.
 """
 
@@ -12,6 +12,10 @@ DISEASE_DATABASE = {
         "severity_en": "High Risk",
         "severity_bn": "উচ্চ ঝুঁকি",
         "severity_color": "#DC2626",
+        "chemical_product_en": "Copper Oxychloride / Streptocycline",
+        "chemical_product_bn": "কপার অক্সিক্লোরাইড / স্ট্রেপ্টোসাইক্লিন",
+        "dosage_rate_per_liter": 2.0,
+        "dosage_unit": "g",
         "overview_en": "A destructive bacterial disease affecting rice crops globally. It attacks leaf tissue leading to wilting, reduced tillering, and significant grain yield loss if unchecked during early growth stages.",
         "overview_bn": "একটি মারাত্মক ব্যাকটেরিয়াজনিত রোগ যা বিশ্বব্যাপী ধানের ব্যাপক ক্ষতি করে। এটি পাতার টিস্যু আক্রমণ করে পাতা শুকিয়ে ফেলে এবং ফলন মারাত্মকভাবে কমিয়ে দেয়।",
         "symptoms_en": [
@@ -57,6 +61,10 @@ DISEASE_DATABASE = {
         "severity_en": "Moderate to High Risk",
         "severity_bn": "মাঝারি থেকে উচ্চ ঝুঁকি",
         "severity_color": "#D97706",
+        "chemical_product_en": "Tilt 25 EC (Propiconazole) / Nativo 75 WG",
+        "chemical_product_bn": "টিল্ট ২৫ ইসি (প্রপিকোনাজল) / নেটিভো ৭৫ ডব্লিউজি",
+        "dosage_rate_per_liter": 1.0,
+        "dosage_unit": "ml",
         "overview_en": "A widespread fungal disease historically linked to severe food crises. It primarily indicates nutrient deficiencies in the soil and attacks seedlings, leaves, and panicles.",
         "overview_bn": "একটি অতি পরিচিত ছত্রাকজনিত রোগ যা প্রধানত মাটিতে পুষ্টি উপাদানের অভাব থাকলে দেখা দেয়। এটি চারা, পাতা এবং ধানের শীষে আক্রমণ করে।",
         "symptoms_en": [
@@ -98,6 +106,10 @@ DISEASE_DATABASE = {
         "severity_en": "Normal / Healthy",
         "severity_bn": "সুস্থ ও স্বাভাবিক",
         "severity_color": "#10B981",
+        "chemical_product_en": "No pesticide needed",
+        "chemical_product_bn": "কোনো বালাইনাশকের প্রয়োজন নেই",
+        "dosage_rate_per_liter": 0.0,
+        "dosage_unit": "ml",
         "overview_en": "The analyzed sample displays no detectable pathogenic lesions, discolorations, or pest feeding streaks. The leaf lamina exhibits vibrant chlorophyll distribution and vigorous physiological posture.",
         "overview_bn": "পরীক্ষিত পাতায় কোনো রোগজীবাণু বা পোকার আক্রমণের লক্ষণ পাওয়া যায়নি। পাতাটি স্বাস্থ্যকর ও সতেজ রয়েছে।",
         "symptoms_en": [
@@ -137,6 +149,10 @@ DISEASE_DATABASE = {
         "severity_en": "Critical Emergency",
         "severity_bn": "জরুরী মারাত্মক ঝুঁকি",
         "severity_color": "#EF4444",
+        "chemical_product_en": "Trooper 75 WP (Tricyclazole) / Amistar Top",
+        "chemical_product_bn": "ট্রুপার ৭৫ ডব্লিউপি (ট্রাইসাইক্লাজল) / অ্যামিস্টার টপ",
+        "dosage_rate_per_liter": 0.75,
+        "dosage_unit": "g",
         "overview_en": "The most catastrophic fungal disease of rice. It spreads rapidly via airborne conidia and can destroy entire fields within days under favorable weather if not intervened immediately.",
         "overview_bn": "ধানের সবচেয়ে মারাত্মক ছত্রাকজনিত রোগ। বাতাসের মাধ্যমে ছত্রাকের স্পোর ছড়িয়ে পড়ে এবং অনুকূল আবহাওয়ায় কয়েক দিনের মধ্যে পুরো ক্ষেত ছারখার করতে পারে।",
         "symptoms_en": [
@@ -178,6 +194,10 @@ DISEASE_DATABASE = {
         "severity_en": "Moderate Risk",
         "severity_bn": "মাঝারি ঝুঁকি",
         "severity_color": "#EA580C",
+        "chemical_product_en": "Carbendazim 50 WP / Propiconazole",
+        "chemical_product_bn": "কার্বেনডাজিম ৫০ ডব্লিউপি / প্রপিকোনাজল",
+        "dosage_rate_per_liter": 1.5,
+        "dosage_unit": "g",
         "overview_en": "A fungal foliar disease that causes blighting from leaf tips and margins. It impairs photosynthetic capacity and causes premature senescence.",
         "overview_bn": "একটি পাতা ঝলকানো ছত্রাকজনিত রোগ যা পাতার ডগা ও ধার থেকে শুরু হয়। এটি গাছের সালোকসংশ্লেষণ কমিয়ে দেয় এবং পাতা দ্রুত শুকিয়ে ফেলে।",
         "symptoms_en": [
@@ -217,6 +237,10 @@ DISEASE_DATABASE = {
         "severity_en": "Moderate Risk",
         "severity_bn": "মাঝারি ঝুঁকি",
         "severity_color": "#B45309",
+        "chemical_product_en": "Propiconazole 25 EC (Tilt) / Azoxystrobin",
+        "chemical_product_bn": "প্রপিকোনাজল ২৫ ইসি (টিল্ট) / অ্যাজোক্সিস্ট্রবিন",
+        "dosage_rate_per_liter": 1.0,
+        "dosage_unit": "ml",
         "overview_en": "A late-season fungal disease prevalent during ripening stages. It accelerates premature leaf death and reduces grain filling efficiency.",
         "overview_bn": "ধানের জীবনকালের শেষের দিকে (দুধ বা পাকা পর্যায়ে) দেখা যাওয়া একটি ছত্রাকজনিত রোগ। এটি অকালে পাতা মেরে ফেলে এবং ধানের দানা অপুষ্ট করে।",
         "symptoms_en": [
@@ -256,6 +280,10 @@ DISEASE_DATABASE = {
         "severity_en": "High Infestation Risk",
         "severity_bn": "উচ্চ পোকার আক্রমণ",
         "severity_color": "#C2410C",
+        "chemical_product_en": "Cartap Hydrochloride 50 SP (Suntap) / Chlorpyrifos",
+        "chemical_product_bn": "কার্টাপ হাইড্রোক্লোরাইড ৫০ এসপি (সানট্যাপ) / ক্লোরপাইরিফস",
+        "dosage_rate_per_liter": 1.5,
+        "dosage_unit": "g",
         "overview_en": "A major coleopteran insect pest of rice in South Asia. Both spiny adult beetles and tunneling larvae feed aggressively on leaf chlorophyll.",
         "overview_bn": "দক্ষিণ এশিয়ার অন্যতম ক্ষতিকর ধানের পোকা। কাঁটাযুক্ত পূর্ণাঙ্গ পোকা এবং পাতার ভেতর থাকা কীড়া উভয়েই পাতার সবুজ অংশ খেয়ে সাদা করে ফেলে।",
         "symptoms_en": [
@@ -296,6 +324,10 @@ DISEASE_DATABASE = {
         "severity_en": "High Risk",
         "severity_bn": "উচ্চ ঝুঁকি",
         "severity_color": "#B91C1C",
+        "chemical_product_en": "Hexaconazole 5 EC (Contaf) / Validamycin 3L",
+        "chemical_product_bn": "হেক্সাকোনাজল ৫ ইসি (কনটাফ) / ভ্যালিডামাইসিন ৩এল",
+        "dosage_rate_per_liter": 2.0,
+        "dosage_unit": "ml",
         "overview_en": "A soil-borne and water-borne fungal disease that attacks leaf sheaths near the water line, creating snake-skin patterns that climb up into the crop canopy.",
         "overview_bn": "মাটি ও পানির মাধ্যমে ছড়ানো মারাত্মক ছত্রাকজনিত রোগ। এটি পানির কাছাকাছি কাণ্ডের খোলে সাপের চামড়ার মতো দাগ সৃষ্টি করে উপরের দিকে ছড়িয়ে পড়ে।",
         "symptoms_en": [
