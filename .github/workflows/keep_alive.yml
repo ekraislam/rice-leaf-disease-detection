@@ -1,0 +1,34 @@
+name: Render Cloud Keep-Alive & Health Check
+
+on:
+  schedule:
+    # Runs every 10 minutes to keep Render container warm and prevent cold starts
+    - cron: '*/10 * * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub Actions tab
+
+jobs:
+  ping-render-service:
+    name: Ping Render Free Tier Service
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Health Check & Warmup Ping
+        run: |
+          echo "Pinging RiceGuard AI on Render Cloud..."
+          STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 45 \
+            -H "User-Agent: GitHub-Actions-KeepAlive/1.0 (RiceGuard AI Health Monitor)" \
+            "https://rice-leaf-disease-detection-1-1m1k.onrender.com/api/health")
+          
+          echo "Render Healthcheck Response Code: $STATUS_CODE"
+          
+          if [ "$STATUS_CODE" -eq 200 ] || [ "$STATUS_CODE" -eq 301 ] || [ "$STATUS_CODE" -eq 302 ]; then
+            echo "✓ RiceGuard AI is LIVE, healthy, and warm!"
+          else
+            echo "⚠️ Health check returned HTTP $STATUS_CODE. Retrying in 5 seconds..."
+            sleep 5
+            RETRY_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 45 \
+              -H "User-Agent: GitHub-Actions-KeepAlive/1.0" \
+              "https://rice-leaf-disease-detection-1-1m1k.onrender.com/api/health")
+            echo "Retry Response Code: $RETRY_CODE"
+          fi

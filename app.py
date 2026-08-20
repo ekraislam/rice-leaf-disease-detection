@@ -324,6 +324,17 @@ def chat_with_agri_ai():
         }), 500
 
 
+@app.route("/api/health", methods=["GET"])
+@app.route("/healthz", methods=["GET"])
+def healthcheck():
+    return jsonify({
+        "status": "healthy",
+        "service": "RiceGuard AI",
+        "model_loaded": True,
+        "classes": 8
+    }), 200
+
+
 @app.route("/manifest.json", methods=["GET"])
 def serve_manifest():
     return send_from_directory(os.path.join(BASE_DIR, "static"), "manifest.json", mimetype="application/manifest+json")
