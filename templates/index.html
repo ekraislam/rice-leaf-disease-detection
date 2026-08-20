@@ -3049,6 +3049,39 @@
             transform: scale(1.1);
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.45);
         }
+        .chat-mic-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #ECFDF5;
+            color: #047857;
+            border: 1.5px solid #10B981;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+            flex-shrink: 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .chat-mic-btn:hover {
+            background: #10B981;
+            color: #FFFFFF;
+            transform: scale(1.1);
+            box-shadow: 0 3px 10px rgba(16, 185, 129, 0.35);
+        }
+        .chat-mic-btn.listening {
+            background: #EF4444 !important;
+            color: #FFFFFF !important;
+            border-color: #DC2626 !important;
+            animation: mic-pulse 1.2s infinite;
+            box-shadow: 0 0 14px rgba(239, 68, 68, 0.6) !important;
+        }
+        @keyframes mic-pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); }
+            50% { transform: scale(1.12); box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
 
         @media (max-width: 600px) {
             .chat-window-box {
@@ -4047,6 +4080,9 @@
             <!-- Chat Input Bar -->
             <form class="chat-input-bar" id="chat-form" onsubmit="handleChatSubmit(event)">
                 <input type="text" id="chat-input" class="chat-input" placeholder="ধানের রোগ বা চাষ নিয়ে প্রশ্ন লিখুন..." autocomplete="off" />
+                <button type="button" class="chat-mic-btn" id="btn-chat-mic" onclick="toggleChatVoiceInput()" title="ভয়েসে বাংলায় বলুন" aria-label="Voice input in Bangla">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                </button>
                 <button type="submit" class="chat-send-btn" id="btn-chat-send" title="Send Message" aria-label="Send Message">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                 </button>
@@ -4184,7 +4220,9 @@
                 chat_bot_status: 'অনলাইনে সক্রিয় • ২৪/৭ সাপোর্ট',
                 chat_welcome_title: 'RiceGuard AI ফসল সহকারীতে স্বাগতম!',
                 chat_welcome_desc: 'ধানের রোগ শনাক্তকরণ, বালাইনাশক প্রেসক্রিপশন, সারের সঠিক মাত্রা ও মাঠ পরিচর্যা সংক্রান্ত যেকোনো প্রশ্ন করুন।',
-                chat_welcome_msg: 'নমস্কার/সালাম! আমি <strong>RiceGuard AI</strong>-এর ডিজিটাল ফসল বিশেষজ্ঞ।<br/>ধানের রোগ, বালাইনাশক প্রয়োগ, সারের নিয়ম বা চাষাবাদ নিয়ে যেকোনো প্রশ্ন করুন।'
+                chat_welcome_msg: 'নমস্কার/সালাম! আমি <strong>RiceGuard AI</strong>-এর ডিজিটাল ফসল বিশেষজ্ঞ।<br/>ধানের রোগ, বালাইনাশক প্রয়োগ, সারের নিয়ম বা চাষাবাদ নিয়ে যেকোনো প্রশ্ন করুন।',
+                chat_mic_title: 'ভয়েসে বাংলায় বলুন',
+                chat_mic_listening: '🎙️ শুনছি... মুখে বাংলায় বলুন...'
             },
             en: {
                 page_title: 'RiceGuard AI — Rice Leaf Disease Detection & Agronomy Prescription',
@@ -4312,7 +4350,9 @@
                 chat_bot_status: 'Online & Active • 24/7 Support',
                 chat_welcome_title: 'Welcome to RiceGuard AI Assistant!',
                 chat_welcome_desc: 'Ask any questions regarding rice leaf disease diagnosis, fungicide prescriptions, fertilizer dosages, or crop field care.',
-                chat_welcome_msg: 'Hello! I am the <strong>RiceGuard AI</strong> Agronomy Assistant.<br/>Ask me any question about rice diseases, fungicides, fertilizers, or crop care.'
+                chat_welcome_msg: 'Hello! I am the <strong>RiceGuard AI</strong> Agronomy Assistant.<br/>Ask me any question about rice diseases, fungicides, fertilizers, or crop care.',
+                chat_mic_title: 'Voice input in English',
+                chat_mic_listening: '🎙️ Listening... Speak now...'
             }
         };
 
@@ -4469,6 +4509,15 @@
 
             if (isSpeaking) {
                 stopAudioSpeech();
+            }
+
+            const micBtn = document.getElementById('btn-chat-mic');
+            if (micBtn && !isChatListening) {
+                micBtn.title = dict.chat_mic_title || (lang === 'bn' ? 'ভয়েসে বাংলায় বলুন' : 'Voice input in English');
+            }
+            const chatInput = document.getElementById('chat-input');
+            if (chatInput && !isChatListening) {
+                chatInput.placeholder = lang === 'bn' ? 'ধানের রোগ বা চাষ নিয়ে প্রশ্ন লিখুন...' : 'Ask about rice diseases, fertilizers, or care...';
             }
 
             if (currentDiseaseData) {
@@ -5448,10 +5497,15 @@
                     const input = document.getElementById('chat-input');
                     if (input) input.focus();
                 }, 150);
+            } else {
+                stopChatAudio();
+                stopChatVoiceInput();
             }
         }
 
         function clearChatHistory() {
+            stopChatAudio();
+            stopChatVoiceInput();
             const chatMsgs = document.getElementById('chat-messages');
             if (!chatMsgs) return;
             const dict = I18N[currentLang] || I18N.bn;
@@ -5589,6 +5643,91 @@
                     stopChatAudio();
                 }
             });
+        }
+
+        /* ── Bangla & English Voice Input (Web Speech Recognition API) ── */
+        let chatRecognition = null;
+        let isChatListening = false;
+
+        function toggleChatVoiceInput() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert(currentLang === 'bn'
+                    ? '🎙️ আপনার ব্রাউজারে সরাসরি ভয়েস রিকগনিশন সুবিধা পাওয়া যায়নি। অনুগ্রহ করে Google Chrome বা আধুনিক ব্রাউজারে চেষ্টা করুন।'
+                    : '🎙️ Speech recognition is not supported in this browser. Please use Google Chrome or a modern browser.');
+                return;
+            }
+
+            const micBtn = document.getElementById('btn-chat-mic');
+            const chatInput = document.getElementById('chat-input');
+
+            if (isChatListening) {
+                stopChatVoiceInput();
+                return;
+            }
+
+            try {
+                chatRecognition = new SpeechRecognition();
+                chatRecognition.lang = (currentLang === 'bn') ? 'bn-BD' : 'en-US';
+                chatRecognition.continuous = false;
+                chatRecognition.interimResults = true;
+                chatRecognition.maxAlternatives = 1;
+
+                chatRecognition.onstart = function() {
+                    isChatListening = true;
+                    if (micBtn) {
+                        micBtn.classList.add('listening');
+                        micBtn.title = currentLang === 'bn' ? 'শুনছি... মুখে বলুন (থামতে চাপুন)' : 'Listening... Speak now (Click to stop)';
+                    }
+                    if (chatInput) {
+                        chatInput.placeholder = currentLang === 'bn' ? '🎙️ শুনছি... মুখে বাংলায় বলুন...' : '🎙️ Listening... Speak now...';
+                    }
+                };
+
+                chatRecognition.onresult = function(event) {
+                    let transcript = '';
+                    for (let i = event.resultIndex; i < event.results.length; ++i) {
+                        transcript += event.results[i][0].transcript;
+                    }
+                    if (chatInput && transcript) {
+                        chatInput.value = transcript;
+                    }
+                };
+
+                chatRecognition.onerror = function(event) {
+                    console.warn('Speech recognition error:', event.error);
+                    stopChatVoiceInput();
+                };
+
+                chatRecognition.onend = function() {
+                    const textCaptured = chatInput ? chatInput.value.trim() : '';
+                    stopChatVoiceInput();
+                    if (textCaptured) {
+                        handleChatSubmit({ preventDefault: () => {} });
+                    }
+                };
+
+                chatRecognition.start();
+            } catch (err) {
+                console.error('Failed to start speech recognition:', err);
+                stopChatVoiceInput();
+            }
+        }
+
+        function stopChatVoiceInput() {
+            if (chatRecognition && isChatListening) {
+                try { chatRecognition.stop(); } catch(e) {}
+            }
+            isChatListening = false;
+            const micBtn = document.getElementById('btn-chat-mic');
+            const chatInput = document.getElementById('chat-input');
+            if (micBtn) {
+                micBtn.classList.remove('listening');
+                micBtn.title = currentLang === 'bn' ? 'ভয়েসে বাংলায় বলুন' : 'Voice input in English';
+            }
+            if (chatInput) {
+                chatInput.placeholder = currentLang === 'bn' ? 'ধানের রোগ বা চাষ নিয়ে প্রশ্ন লিখুন...' : 'Ask about rice diseases, fertilizers, or care...';
+            }
         }
 
         async function handleChatSubmit(e) {
