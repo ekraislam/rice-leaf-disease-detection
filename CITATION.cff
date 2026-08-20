@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "If you use this software or model in your research, please cite it as below."
+authors:
+  - family-names: "Islam"
+    given-names: "Ekra"
+    alias: "Ekra Islam Ohi"
+title: "Rice Leaf Disease Detection Using GAN-Augmented CNN (RiceGuard AI)"
+version: 1.0.0
+date-released: 2026-08-20
+url: "https://github.com/ekraislam/rice-leaf-disease-detection"
+repository-code: "https://github.com/ekraislam/rice-leaf-disease-detection"
+keywords:
+  - "deep-learning"
+  - "computer-vision"
+  - "generative-adversarial-networks"
+  - "gan-augmentation"
+  - "resnet18"
+  - "rice-disease-detection"
+  - "grad-cam"
+  - "crop-protection"
+license: "MIT"
