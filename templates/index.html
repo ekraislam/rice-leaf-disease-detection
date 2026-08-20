@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title id="page-title">RiceGuard AI — ধানের পাতার রোগ নির্ণয় ও বালাইনাশক প্রেসক্রিপশন</title>
+    <title id="page-title">RiceGuard AI — Smart Rice Diagnostics & Crop Protection</title>
     <meta name="description" content="AI-powered rice leaf disease detection, Grad-CAM explainability, and agronomic prescription platform powered by a GAN-augmented ResNet18 deep learning vision model. Developed by Ohi." />
     <meta name="google" content="notranslate" />
 
@@ -292,9 +292,9 @@
             color: #FEF08A;
         }
 
-        /* ── Hero Section ────────────────────────────────────── */
+        /* ── Hero Section (Refined Compact Above-the-Fold Spacing) ── */
         .hero {
-            padding: 3.25rem 0 2rem;
+            padding: 1.85rem 0 1.25rem;
             text-align: center;
         }
         .hero-eyebrow {
@@ -306,34 +306,34 @@
             border: 1px solid rgba(16, 185, 129, 0.3);
             padding: 0.35rem 0.95rem;
             border-radius: var(--radius-full);
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.65rem;
             display: inline-flex;
             align-items: center;
             gap: 0.45rem;
             box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1);
         }
         .hero-title {
-            font-size: clamp(2rem, 4.5vw, 2.9rem);
+            font-size: clamp(1.85rem, 4vw, 2.7rem);
             font-weight: 800;
             color: #064E3B;
             letter-spacing: -0.025em;
-            margin-bottom: 0.85rem;
-            line-height: 1.32;
+            margin-bottom: 0.55rem;
+            line-height: 1.28;
             text-shadow: 0 2px 14px rgba(6, 78, 59, 0.08);
         }
         .hero-subtitle {
-            font-size: 1.05rem;
+            font-size: 0.98rem;
             color: var(--color-text-muted);
-            max-width: 760px;
-            margin: 0 auto 1.5rem;
+            max-width: 740px;
+            margin: 0 auto 1.15rem;
             font-weight: 500;
-            line-height: 1.65;
+            line-height: 1.6;
         }
         .hero-badges {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.75rem;
+            gap: 0.65rem;
             flex-wrap: wrap;
         }
         .badge {
@@ -343,7 +343,7 @@
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(8px);
             border: 1px solid rgba(16, 185, 129, 0.2);
-            padding: 0.38rem 0.95rem;
+            padding: 0.35rem 0.9rem;
             border-radius: var(--radius-full);
             font-size: 0.78125rem;
             font-weight: 700;
@@ -360,19 +360,19 @@
 
         /* ── Quick Test Sample Selector ──────────────────────── */
         .samples-section {
-            margin-bottom: 2.25rem;
+            margin-bottom: 1.65rem;
             background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(12px);
             border: 1px solid rgba(16, 185, 129, 0.2);
             border-radius: var(--radius-md);
-            padding: 1.15rem 1.35rem;
+            padding: 1rem 1.25rem;
             box-shadow: 0 4px 20px -2px rgba(6, 78, 59, 0.05);
         }
         .samples-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 0.85rem;
+            margin-bottom: 0.75rem;
             flex-wrap: wrap;
             gap: 0.4rem;
         }
@@ -567,25 +567,29 @@
             margin-bottom: 1.25rem;
         }
         .btn-camera-trigger {
-            background: #FAFCFA;
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-sm);
-            padding: 0.55rem 1.2rem;
+            background: linear-gradient(135deg, #F0FDF4 0%, #FFFFFF 100%);
+            border: 1.5px solid #10B981;
+            border-radius: var(--radius-full);
+            padding: 0.6rem 1.35rem;
             font-family: inherit;
-            font-size: 0.8125rem;
-            font-weight: 700;
-            color: var(--color-primary);
+            font-size: 0.84rem;
+            font-weight: 800;
+            color: #064E3B;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.55rem;
             transition: all var(--transition-fast);
-            box-shadow: var(--shadow-sm);
+            box-shadow: 0 2px 10px rgba(16, 185, 129, 0.18);
         }
         .btn-camera-trigger:hover {
-            border-color: var(--color-accent);
-            background: var(--color-accent-subtle);
-            transform: translateY(-1px);
+            border-color: #059669;
+            background: linear-gradient(135deg, #ECFDF5 0%, #F0FDF4 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(16, 185, 129, 0.32);
+        }
+        .btn-camera-trigger svg {
+            color: #059669;
         }
 
         /* ── Preview Box + Heatmap Switcher ──────────────────── */
@@ -830,6 +834,10 @@
             box-shadow: 0 6px 18px rgba(15, 81, 50, 0.32);
         }
         .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-primary.analysis-done {
+            background: linear-gradient(135deg, #059669, #047857) !important;
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35) !important;
+        }
         .btn-primary svg { width: 18px; height: 18px; }
 
         .spinner {
@@ -975,13 +983,13 @@
             border: 1px solid rgba(255, 255, 255, 0.35);
             color: #FFFFFF;
             border-radius: var(--radius-full);
-            padding: 0.22rem 0.65rem;
-            font-size: 0.72rem;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.73rem;
             font-weight: 700;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 0.35rem;
+            gap: 0.38rem;
             transition: all var(--transition-fast);
         }
         .btn-voice-read:hover {
@@ -989,14 +997,15 @@
             transform: scale(1.04);
         }
         .btn-voice-read.speaking {
-            background: #FEF08A;
-            color: #854D0E;
-            border-color: #FDE047;
-            animation: pulse-voice 1.2s infinite;
+            background: linear-gradient(135deg, #DC2626, #991B1B) !important;
+            color: #FFFFFF !important;
+            border-color: #EF4444 !important;
+            box-shadow: 0 0 14px rgba(220, 38, 38, 0.6) !important;
+            animation: pulse-voice 1.2s infinite alternate !important;
         }
         @keyframes pulse-voice {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.06); }
+            0% { transform: scale(1); box-shadow: 0 0 6px rgba(220, 38, 38, 0.5); }
+            100% { transform: scale(1.05); box-shadow: 0 0 18px rgba(220, 38, 38, 0.85); }
         }
 
         .disease-title-main {
@@ -1746,6 +1755,7 @@
             transition: all var(--transition-bounce);
             position: relative;
             overflow: hidden;
+            cursor: pointer;
         }
         .class-card::before {
             content: '';
@@ -1809,6 +1819,7 @@
         .class-card-text {
             display: flex;
             flex-direction: column;
+            flex: 1;
         }
         .class-card-name {
             font-size: 0.9rem;
@@ -1820,6 +1831,76 @@
             font-size: 0.75rem;
             font-weight: 500;
             color: var(--color-text-muted);
+        }
+        .class-card-click-hint {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: #047857;
+            margin-top: 0.2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.2rem;
+            opacity: 0.85;
+            transition: opacity var(--transition-fast);
+        }
+        .class-card:hover .class-card-click-hint {
+            opacity: 1;
+            color: #064E3B;
+            text-decoration: underline;
+        }
+
+        /* ── Condition Encyclopedia Modal ── */
+        .encyclopedia-modal-wrap {
+            position: relative;
+            max-width: 660px;
+            width: 100%;
+            max-height: 90vh;
+            background: #FFFFFF;
+            border-radius: 18px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1.5px solid #10B981;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+            animation: modalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .encyclopedia-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, #064E3B, #022C22);
+            color: #FFFFFF;
+            padding: 1rem 1.35rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .encyclopedia-modal-body {
+            padding: 1.35rem 1.5rem;
+            overflow-y: auto;
+            max-height: calc(90vh - 75px);
+        }
+        .encyclopedia-badge-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .encyclopedia-box-section {
+            background: #FAFCFA;
+            border: 1px solid #E2E8F0;
+            border-radius: var(--radius-sm);
+            padding: 0.9rem 1.1rem;
+            margin-bottom: 0.9rem;
+        }
+        .encyclopedia-box-title {
+            font-size: 0.82rem;
+            font-weight: 800;
+            color: #064E3B;
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
         }
 
         /* ── Image Zoom Lightbox Modal ── */
@@ -3444,9 +3525,9 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
                                 <span data-i18n="btn_print">প্রিন্ট</span>
                             </button>
-                            <button type="button" class="btn-reset" id="btn-reset">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-                                <span data-i18n="btn_new_test">নতুন</span>
+                            <button type="button" class="btn-reset" id="btn-reset" title="Scan Another Leaf">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                                <span data-i18n="btn_new_scan">🌿 নতুন স্ক্যান</span>
                             </button>
                         </div>
 
@@ -3462,12 +3543,12 @@
         <section class="supported-section" aria-labelledby="classes-title">
             <div class="section-header">
                 <h3 id="classes-title" class="section-title" data-i18n="classes_sec_title">শনাক্তকরণযোগ্য ধানের ৮টি অবস্থা ও রোগ</h3>
-                <p class="section-subtitle" data-i18n="classes_sec_sub">আমাদের কম্পিউটার ভিশন মডেল ধানের পাতার নিচের ৮টি অবস্থা নির্ভুলভাবে শনাক্ত করতে পারে।</p>
+                <p class="section-subtitle" data-i18n="classes_sec_sub">আমাদের কম্পিউটার ভিশন মডেল ধানের পাতার নিচের ৮টি অবস্থা নির্ভুলভাবে শনাক্ত করতে পারে। বিস্তারিত জানতে যেকোনো কার্ডে ক্লিক করুন।</p>
             </div>
 
             <div class="classes-grid">
                 <!-- 01 Bacterial Leaf Blight -->
-                <div class="class-card">
+                <div class="class-card" onclick="openEncyclopedia('Bacterial Leaf Blight')" title="Click to view Bacterial Leaf Blight details">
                     <div class="class-card-idx">01</div>
                     <div class="class-card-icon" title="Bacterial Leaf Blight">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v12a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4Z"/><path d="M6 8a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2"/><path d="M18 8a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2"/><line x1="12" x2="12" y1="8" y2="8.01"/><line x1="12" x2="12" y1="12" y2="12.01"/><line x1="12" x2="12" y1="16" y2="16.01"/></svg>
@@ -3475,11 +3556,12 @@
                     <div class="class-card-text">
                         <div class="class-card-name" data-i18n="class_1_name">ব্যাকটেরিয়াল পাতা পোড়া</div>
                         <div class="class-card-sub" data-i18n="class_1_sub">Xanthomonas oryzae</div>
+                        <span class="class-card-click-hint" data-i18n="card_click_hint">বিস্তারিত জানুন ↗</span>
                     </div>
                 </div>
 
                 <!-- 02 Brown Spot -->
-                <div class="class-card">
+                <div class="class-card" onclick="openEncyclopedia('Brown Spot')" title="Click to view Brown Spot details">
                     <div class="class-card-idx">02</div>
                     <div class="class-card-icon" title="Brown Spot">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.4 19 2c1 2 2 4.1 2 8 0 5.5-4.5 10-10 10Z"/><circle cx="12" cy="11" r="1.5" fill="currentColor"/><circle cx="15" cy="8" r="1" fill="currentColor"/><circle cx="9" cy="14" r="1.2" fill="currentColor"/></svg>
@@ -3487,11 +3569,12 @@
                     <div class="class-card-text">
                         <div class="class-card-name" data-i18n="class_2_name">বাদামী দাগ রোগ</div>
                         <div class="class-card-sub" data-i18n="class_2_sub">Bipolaris oryzae</div>
+                        <span class="class-card-click-hint" data-i18n="card_click_hint">বিস্তারিত জানুন ↗</span>
                     </div>
                 </div>
 
                 <!-- 03 Healthy Rice Leaf -->
-                <div class="class-card healthy">
+                <div class="class-card healthy" onclick="openEncyclopedia('Healthy Rice Leaf')" title="Click to view Healthy Leaf details">
                     <div class="class-card-idx">03</div>
                     <div class="class-card-icon" title="Healthy Rice Leaf">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
@@ -3499,11 +3582,12 @@
                     <div class="class-card-text">
                         <div class="class-card-name" data-i18n="class_3_name">সুস্থ ধানের পাতা</div>
                         <div class="class-card-sub" data-i18n="class_3_sub">Optimum Health</div>
+                        <span class="class-card-click-hint" data-i18n="card_click_hint">বিস্তারিত জানুন ↗</span>
                     </div>
                 </div>
 
                 <!-- 04 Leaf Blast -->
-                <div class="class-card">
+                <div class="class-card" onclick="openEncyclopedia('Leaf Blast')" title="Click to view Leaf Blast details">
                     <div class="class-card-idx">04</div>
                     <div class="class-card-icon" title="Leaf Blast">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
@@ -3511,11 +3595,12 @@
                     <div class="class-card-text">
                         <div class="class-card-name" data-i18n="class_4_name">পাতা ব্লাস্ট রোগ</div>
                         <div class="class-card-sub" data-i18n="class_4_sub">Pyricularia oryzae</div>
+                        <span class="class-card-click-hint" data-i18n="card_click_hint">বিস্তারিত জানুন ↗</span>
                     </div>
                 </div>
 
                 <!-- 05 Leaf Scald -->
-                <div class="class-card">
+                <div class="class-card" onclick="openEncyclopedia('Leaf scald')" title="Click to view Leaf Scald details">
                     <div class="class-card-idx">05</div>
                     <div class="class-card-icon" title="Leaf Scald">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20"/><path d="m7 7 5 5-5 5"/><path d="m13 7 5 5-5 5"/></svg>
@@ -3523,11 +3608,12 @@
                     <div class="class-card-text">
                         <div class="class-card-name" data-i18n="class_5_name">লিফ স্ক্যাল্ড (ঝলকানো)</div>
                         <div class="class-card-sub" data-i18n="class_5_sub">Microdochium oryzae</div>
+                        <span class="class-card-click-hint" data-i18n="card_click_hint">বিস্তারিত জানুন ↗</span>
                     </div>
                 </div>
 
                 <!-- 06 Narrow Brown Leaf Spot -->
-                <div class="class-card">
+                <div class="class-card" onclick="openEncyclopedia('Narrow Brown Leaf Spot')" title="Click to view Narrow Brown Leaf Spot details">
                     <div class="class-card-idx">06</div>
                     <div class="class-card-icon" title="Narrow Brown Leaf Spot">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="8" y1="4" y2="20"/><line x1="12" x2="12" y1="7" y2="17"/><line x1="16" x2="16" y1="5" y2="19"/></svg>
@@ -3535,11 +3621,12 @@
                     <div class="class-card-text">
                         <div class="class-card-name" data-i18n="class_6_name">সরু বাদামী দাগ রোগ</div>
                         <div class="class-card-sub" data-i18n="class_6_sub">Cercospora janseana</div>
+                        <span class="class-card-click-hint" data-i18n="card_click_hint">বিস্তারিত জানুন ↗</span>
                     </div>
                 </div>
 
                 <!-- 07 Rice Hispa -->
-                <div class="class-card">
+                <div class="class-card" onclick="openEncyclopedia('Rice Hispa')" title="Click to view Rice Hispa details">
                     <div class="class-card-idx">07</div>
                     <div class="class-card-icon" title="Rice Hispa">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="14" x="8" y="6" rx="4"/><path d="m19 7-3 2"/><path d="m5 7 3 2"/><path d="m19 19-3-2"/><path d="m5 19 3-2"/><path d="M20 13h-4"/><path d="M4 13h4"/><path d="m10 4 1 2"/><path d="m14 4-1 2"/></svg>
@@ -3547,11 +3634,12 @@
                     <div class="class-card-text">
                         <div class="class-card-name" data-i18n="class_7_name">ধানের পামরী পোকা</div>
                         <div class="class-card-sub" data-i18n="class_7_sub">Dicladispa armigera</div>
+                        <span class="class-card-click-hint" data-i18n="card_click_hint">বিস্তারিত জানুন ↗</span>
                     </div>
                 </div>
 
                 <!-- 08 Sheath Blight -->
-                <div class="class-card">
+                <div class="class-card" onclick="openEncyclopedia('Sheath Blight')" title="Click to view Sheath Blight details">
                     <div class="class-card-idx">08</div>
                     <div class="class-card-icon" title="Sheath Blight">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 0 0-9 9c0 4.97 4.03 9 9 9s9-4.03 9-9c0-4.97-4.03-9-9-9Z"/><path d="M12 7a5 5 0 0 0-5 5c0 2.76 2.24 5 5 5s5-2.24 5-5c0-2.76-2.24-5-5-5Z"/></svg>
@@ -3559,6 +3647,7 @@
                     <div class="class-card-text">
                         <div class="class-card-name" data-i18n="class_8_name">খোল পোড়া রোগ</div>
                         <div class="class-card-sub" data-i18n="class_8_sub">Rhizoctonia solani</div>
+                        <span class="class-card-click-hint" data-i18n="card_click_hint">বিস্তারিত জানুন ↗</span>
                     </div>
                 </div>
             </div>
@@ -3796,6 +3885,60 @@
         </div>
     </div>
 
+    <!-- ── Interactive Condition Encyclopedia Modal ── -->
+    <div class="modal-backdrop" id="modal-encyclopedia" role="dialog" aria-modal="true" aria-labelledby="encyclopedia-title">
+        <div class="encyclopedia-modal-wrap">
+            <div class="encyclopedia-modal-header">
+                <div style="display:flex; align-items:center; gap:0.6rem;">
+                    <span style="font-size:1.25rem;">🌿</span>
+                    <div>
+                        <h4 id="encyclopedia-title" style="font-size:1rem; font-weight:800; margin:0; line-height:1.2;">ধানের রোগকোষ ও নির্দেশিকা</h4>
+                        <div id="encyclopedia-sub" style="font-size:0.75rem; color:#A7F3D0; font-style:italic;">Rice Condition Encyclopedia</div>
+                    </div>
+                </div>
+                <button type="button" class="modal-close" onclick="closeEncyclopedia()" aria-label="Close encyclopedia" style="color:#FFF; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.25); border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:background 0.2s;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="encyclopedia-modal-body">
+                <div class="encyclopedia-badge-row">
+                    <span class="severity-badge" id="encyclopedia-severity" style="background:#064E3B; color:#A7F3D0; border:1px solid #10B981; font-weight:800;"></span>
+                    <button type="button" id="btn-encyclopedia-test-sample" class="btn-sm" style="display:inline-flex; align-items:center; gap:0.4rem; background:#ECFDF5; border:1px solid #10B981; color:#064E3B; font-weight:800; font-size:0.75rem; padding:0.35rem 0.8rem; border-radius:9999px; cursor:pointer; transition:all 0.2s;">
+                        <span>🔬 এই নমুনায় টেস্ট করুন</span>
+                    </button>
+                </div>
+
+                <div class="encyclopedia-box-section">
+                    <div class="encyclopedia-box-title">
+                        <span>🌿</span> <span data-i18n="tab_overview">সারসংক্ষেপ</span>
+                    </div>
+                    <p id="encyclopedia-overview" style="font-size:0.83rem; color:#334155; line-height:1.55; margin:0;"></p>
+                </div>
+
+                <div class="encyclopedia-box-section">
+                    <div class="encyclopedia-box-title" style="color:#0F5132;">
+                        <span>🔍</span> <span data-i18n="tab_symptoms">প্রধান লক্ষণসমূহ</span>
+                    </div>
+                    <ul id="encyclopedia-symptoms" class="bullet-list" style="font-size:0.82rem; margin:0; padding-left:1.1rem; color:#334155;"></ul>
+                </div>
+
+                <div class="encyclopedia-box-section">
+                    <div class="encyclopedia-box-title" style="color:#9A3412;">
+                        <span>⚠️</span> <span data-i18n="tab_causes">আক্রমণের কারণ ও অনুকূল আবহাওয়া</span>
+                    </div>
+                    <ul id="encyclopedia-causes" class="bullet-list" style="font-size:0.82rem; margin:0; padding-left:1.1rem; color:#334155;"></ul>
+                </div>
+
+                <div class="encyclopedia-box-section" style="background:#FEF2F2; border-color:#FECACA;">
+                    <div class="encyclopedia-box-title" style="color:#DC2626;">
+                        <span>💊</span> <span data-i18n="tab_mgmt">প্রতিকার ও বালাইনাশক প্রেসক্রিপশন</span>
+                    </div>
+                    <div id="encyclopedia-treatment" style="font-size:0.82rem; color:#1F2937; line-height:1.55;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- ── Premium High-Contrast Footer (Developed by Ohi) ── -->
     <footer class="footer">
         <div class="container">
@@ -3981,6 +4124,10 @@
                 btn_pdf_rx: '📄 প্রেসক্রিপশন ও PDF',
                 btn_print: 'প্রিন্ট',
                 btn_new_test: 'নতুন',
+                btn_new_scan: '🌿 নতুন স্ক্যান',
+                btn_analysis_done: '✓ বিশ্লেষণ সম্পন্ন',
+                voice_stop: 'অডিও থামান',
+                card_click_hint: 'বিস্তারিত জানুন ↗',
                 rx_modal_title: 'ডিজিটাল প্রেসক্রিপশন প্রিভিউ (Live Report)',
                 rx_modal_sub: 'ডাউনলোড বা প্রিন্ট করার আগে পুরো রিপোর্টটি যাচাই করুন',
                 btn_modal_dl: '📥 PDF ডাউনলোড',
@@ -4105,6 +4252,10 @@
                 btn_pdf_rx: '📄 Prescription & PDF',
                 btn_print: 'Print',
                 btn_new_test: 'New',
+                btn_new_scan: '🌿 New Scan',
+                btn_analysis_done: '✓ Analysis Complete',
+                voice_stop: 'Stop Audio',
+                card_click_hint: 'View Details ↗',
                 rx_modal_title: 'Digital Prescription Preview (Live Report)',
                 rx_modal_sub: 'Review full diagnosis & dosage before downloading or printing',
                 btn_modal_dl: '📥 Download PDF',
@@ -4165,6 +4316,7 @@
             }
         };
 
+        const DISEASE_DB = {{ DISEASE_DATABASE | tojson | safe }};
         let currentLang = localStorage.getItem('riceguard_lang') || 'bn';
         let currentDiseaseData = null;
         let currentTopPredictions = null;
@@ -4175,6 +4327,102 @@
         let currentViewMode = 'orig'; // 'orig' or 'cam'
         let rawOriginalDataUrl = '';
         let rawOriginalFile = null;
+
+        /* ── Interactive Condition Encyclopedia Modal Functions ── */
+        function openEncyclopedia(className) {
+            if (!DISEASE_DB) return;
+            
+            let data = DISEASE_DB[className];
+            if (!data) {
+                const lower = className.toLowerCase();
+                for (const k in DISEASE_DB) {
+                    if (k.toLowerCase() === lower) {
+                        data = DISEASE_DB[k];
+                        className = k;
+                        break;
+                    }
+                }
+            }
+            if (!data) return;
+
+            const isBn = currentLang === 'bn';
+            const title = isBn ? (data.name_bn || className) : (data.name_en || className);
+            const pathogen = data.pathogen || 'N/A';
+            const severity = isBn ? (data.severity_bn || 'সতর্কতা') : (data.severity_en || 'Caution');
+            const overview = isBn ? (data.description_bn || '') : (data.description_en || '');
+            
+            const titleEl = document.getElementById('encyclopedia-title');
+            const subEl = document.getElementById('encyclopedia-sub');
+            if (titleEl) titleEl.textContent = title;
+            if (subEl) subEl.textContent = pathogen;
+            
+            const sevBadge = document.getElementById('encyclopedia-severity');
+            if (sevBadge) {
+                sevBadge.textContent = (isBn ? 'ঝুঁকির মাত্রা: ' : 'Severity: ') + severity;
+                sevBadge.style.background = data.severity_color || '#064E3B';
+                sevBadge.style.color = '#FFFFFF';
+            }
+
+            const testBtn = document.getElementById('btn-encyclopedia-test-sample');
+            if (testBtn) {
+                testBtn.onclick = function() {
+                    closeEncyclopedia();
+                    const sampleMap = {
+                        'brown spot': 'brown_spot',
+                        'healthy rice leaf': 'healthy',
+                        'leaf blast': 'blast',
+                        'bacterial leaf blight': 'blight'
+                    };
+                    const sampleKey = sampleMap[className.toLowerCase()];
+                    if (sampleKey && typeof loadSample === 'function') {
+                        loadSample(sampleKey);
+                    }
+                    const formElem = document.getElementById('diagnostic-form');
+                    if (formElem) {
+                        formElem.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                };
+            }
+
+            const overviewEl = document.getElementById('encyclopedia-overview');
+            if (overviewEl) overviewEl.textContent = overview;
+
+            const symptomsEl = document.getElementById('encyclopedia-symptoms');
+            if (symptomsEl) {
+                const symptoms = (isBn ? data.symptoms_bn : data.symptoms_en) || [];
+                symptomsEl.innerHTML = symptoms.map(s => `<li>${s}</li>`).join('');
+            }
+
+            const causesEl = document.getElementById('encyclopedia-causes');
+            if (causesEl) {
+                const causes = (isBn ? data.causes_bn : data.causes_en) || [];
+                causesEl.innerHTML = causes.map(c => `<li>${c}</li>`).join('');
+            }
+
+            const treatmentEl = document.getElementById('encyclopedia-treatment');
+            if (treatmentEl) {
+                const mgmt = isBn ? data.management_bn : data.management_en;
+                if (mgmt) {
+                    treatmentEl.innerHTML = `
+                        <div style="margin-bottom:0.4rem;"><strong>${isBn ? '• রাসায়নিক প্রতিকার:' : '• Chemical:'}</strong> ${mgmt.chemical || 'N/A'}</div>
+                        <div style="margin-bottom:0.4rem;"><strong>${isBn ? '• মাঠ পরিচর্যা:' : '• Cultural:'}</strong> ${mgmt.cultural || 'N/A'}</div>
+                        <div><strong>${isBn ? '• জৈব দমন:' : '• Biological:'}</strong> ${mgmt.biological || 'N/A'}</div>
+                    `;
+                } else {
+                    treatmentEl.innerHTML = isBn ? 'কোনো রাসায়নিক প্রয়োজন নেই।' : 'No chemical required.';
+                }
+            }
+
+            const modal = document.getElementById('modal-encyclopedia');
+            if (modal) modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeEncyclopedia() {
+            const modal = document.getElementById('modal-encyclopedia');
+            if (modal) modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
 
         /* ── 1-Click Language Switcher Function ── */
         function setLanguage(lang) {
@@ -4910,7 +5158,7 @@
             // Start Audio playback
             isSpeaking = true;
             btn.classList.add('speaking');
-            btnText.textContent = isBn ? 'থামুন ⏸' : 'Stop ⏸';
+            btnText.textContent = isBn ? '⏸️ অডিও থামান' : '⏸️ Stop Audio';
 
             // High-fidelity natural voice stream directly from static /api/tts with disease slug
             const audioUrl = '/api/tts?disease=' + encodeURIComponent(currentPredictionName || '') + '&lang=' + (isBn ? 'bn' : 'en') + '&text=' + encodeURIComponent(speechText);
@@ -5802,6 +6050,9 @@
                 const optBar = document.querySelector('.upload-options-bar');
                 if (optBar) optBar.style.display = 'flex';
                 btnSubmit.disabled = true;
+                btnSubmit.classList.remove('analysis-done');
+                btnIcon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/><line x1="11" x2="11" y1="8" y2="14"/><line x1="8" x2="14" y1="11" y2="11"/></svg>';
+                btnText.textContent = (I18N[currentLang] || I18N.bn).btn_analyze;
                 stopAudioSpeech();
                 const evalB = document.getElementById('eval-verification-banner');
                 if (evalB) evalB.style.display = 'none';
@@ -5898,6 +6149,7 @@
 
                 if (scannerOverlay) scannerOverlay.classList.add('scanning');
                 btnSubmit.disabled = true;
+                btnSubmit.classList.remove('analysis-done');
                 btnIcon.innerHTML = '<div class="spinner"></div>';
                 btnText.textContent = dict.btn_analyzing;
 
@@ -5969,6 +6221,7 @@
                     if (scannerOverlay) scannerOverlay.classList.remove('scanning');
                     stateLoading.classList.remove('active');
                     btnSubmit.disabled = false;
+                    btnSubmit.classList.remove('analysis-done');
                     btnIcon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/><line x1="11" x2="11" y1="8" y2="14"/><line x1="8" x2="14" y1="11" y2="11"/></svg>';
                     btnText.textContent = dict.btn_analyze;
                     
@@ -5996,6 +6249,13 @@
 
                 const dict = I18N[currentLang] || I18N.bn;
 
+                // Update Submit Button to Analysis Done state
+                if (btnSubmit) {
+                    btnSubmit.classList.add('analysis-done');
+                    btnIcon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+                    btnText.textContent = dict.btn_analysis_done || (currentLang === 'bn' ? '✓ বিশ্লেষণ সম্পন্ন' : '✓ Analysis Complete');
+                }
+
                 // Ground-Truth Evaluation Verification
                 const evalBanner = document.getElementById('eval-verification-banner');
                 const evalTitle  = document.getElementById('eval-banner-title');
@@ -6011,7 +6271,7 @@
                         let expName = expected;
                         let predName = isBn ? (currentDiseaseData.name_bn || data.prediction) : data.prediction;
                         
-                        const diseaseDb = {{ DISEASE_DATABASE | tojson }};
+                        const diseaseDb = DISEASE_DB || {};
                         if (isBn && diseaseDb && diseaseDb[expected] && diseaseDb[expected].name_bn) {
                             expName = diseaseDb[expected].name_bn;
                         }
@@ -6050,7 +6310,7 @@
                 stateResult.classList.add('active');
             }
 
-            /* ── Reset Handler ── */
+            /* ── New Scan / Reset Handler with Smooth Scroll ── */
             if (btnReset) {
                 btnReset.addEventListener('click', function () {
                     stateResult.classList.remove('active');
@@ -6059,6 +6319,13 @@
                     stateEmpty.style.display = 'flex';
                     currentDiseaseData = null;
                     currentTopPredictions = null;
+                    stopAudioSpeech();
+
+                    // Smooth scroll up to diagnostic upload card
+                    const formElem = document.getElementById('diagnostic-form');
+                    if (formElem) {
+                        formElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
                 });
             }
         });
