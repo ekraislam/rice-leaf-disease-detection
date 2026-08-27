@@ -46,3 +46,6 @@ scratch/
 
 # Academic paper — private, never push to GitHub
 paper/
+
+# Dynamic TTS Audio Cache
+static/audio/cache/
