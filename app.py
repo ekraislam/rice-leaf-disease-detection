@@ -300,7 +300,7 @@ def text_to_speech():
 
         return Response(combined, mimetype="audio/mpeg")
     except Exception as e:
-        return jsonify({"error": f"TTS generation failed: {str(e)}\"}"}), 500
+        return jsonify({"error": f"TTS generation failed: {str(e)}"}), 500
 
 
 from src.agri_ai import query_agri_assistant
