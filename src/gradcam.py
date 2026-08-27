@@ -1,6 +1,9 @@
 """
 Grad-CAM (Gradient-weighted Class Activation Mapping) for ResNet18.
 Provides Explainable AI (XAI) visual heatmaps for disease lesion localization.
+
+Optimized: Single-pass mode reuses activations captured during the main
+inference forward pass, eliminating the need for a second model forward pass.
 """
 
 import io
@@ -22,19 +25,50 @@ class GradCAM:
 
     def _register_hooks(self):
         def forward_hook(module, input, output):
-            self.activations = output
+            self.activations = output.detach()
 
         def backward_hook(module, grad_input, grad_output):
-            self.gradients = grad_output[0]
+            self.gradients = grad_output[0].detach()
 
         h1 = self.target_layer.register_forward_hook(forward_hook)
         h2 = self.target_layer.register_full_backward_hook(backward_hook)
         self.handles = [h1, h2]
 
+    def generate_from_logits(self, logits, class_idx):
+        """
+        Computes Grad-CAM using already-captured activations from a previous
+        forward pass. This avoids a second model forward pass entirely.
+
+        Call this AFTER running the model with requires_grad=True on the input.
+        The hooks must have captured activations during that forward pass.
+
+        Args:
+            logits:    Raw model output tensor (shape: [1, num_classes])
+            class_idx: The predicted class index to explain
+        """
+        if self.activations is None:
+            return None
+
+        # Zero any previous gradients
+        if logits.grad_fn is None:
+            return None
+
+        score = logits[0, class_idx]
+        score.backward(retain_graph=False)
+
+        if self.gradients is None:
+            return None
+
+        return self._build_cam()
+
     def generate(self, input_tensor, class_idx=None):
         """
-        Computes the Grad-CAM activation map for the given input tensor.
-        input_tensor: shape (1, 3, 224, 224)
+        Legacy method: runs its own forward+backward pass.
+        Use generate_from_logits() when possible to avoid double pass.
+
+        Args:
+            input_tensor: shape (1, 3, 224, 224), requires_grad=True
+            class_idx:    class to explain (None = argmax)
         """
         output = self.model(input_tensor)
 
@@ -47,12 +81,16 @@ class GradCAM:
         if self.gradients is None or self.activations is None:
             return None
 
+        return self._build_cam()
+
+    def _build_cam(self):
+        """Shared CAM construction from captured activations & gradients."""
         # Global average pooling on gradients
         weights = torch.mean(self.gradients, dim=(2, 3), keepdim=True)
         cam = torch.sum(weights * self.activations, dim=1, keepdim=True)
         cam = F.relu(cam)
         cam = F.interpolate(cam, size=(224, 224), mode="bilinear", align_corners=False)
-        cam = cam.squeeze().detach().cpu().numpy()
+        cam = cam.squeeze().cpu().numpy()
 
         self.activations = None
         self.gradients = None
@@ -94,3 +132,6 @@ class GradCAM:
     def close(self):
         for h in self.handles:
             h.remove()
+        self.handles = []
+        self.activations = None
+        self.gradients = None

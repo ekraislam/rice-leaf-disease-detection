@@ -8,8 +8,13 @@ from src.model import get_baseline_cnn
 from src.disease_data import DISEASE_DATABASE
 from src.gradcam import GradCAM
 
-# Optimize PyTorch CPU inference on shared cloud environments (prevents OOM / thread lockup)
-torch.set_num_threads(1)
+# ── PyTorch Thread Optimization ──────────────────────────────────────────────
+# Use env var TORCH_THREADS to override. Default: min(2, cpu_count).
+# On Render free tier (0.1 vCPU shared), 2 is a safe practical ceiling.
+_cpu_count = os.cpu_count() or 1
+_torch_threads = int(os.environ.get("TORCH_THREADS", str(min(2, _cpu_count))))
+torch.set_num_threads(_torch_threads)
+torch.set_grad_enabled(False)          # global no-grad by default (re-enabled only for Grad-CAM)
 
 app = Flask(__name__)
 
@@ -46,7 +51,7 @@ device = torch.device("cpu")
 
 model = get_baseline_cnn(num_classes=8, pretrained=False)
 if os.path.exists(MODEL_PATH):
-    state_dict = torch.load(MODEL_PATH, map_location=device)
+    state_dict = torch.load(MODEL_PATH, map_location=device, weights_only=True)
     model.load_state_dict(state_dict)
 for p in model.parameters():
     p.requires_grad = False
@@ -61,6 +66,22 @@ transform = transforms.Compose([
         std=[0.229, 0.224, 0.225]
     ),
 ])
+
+# ── Model Warm-up ─────────────────────────────────────────────────────────────
+# Run a dummy inference at startup so the first real request is not cold.
+try:
+    _dummy = torch.zeros(1, 3, 224, 224, device=device)
+    with torch.no_grad():
+        model(_dummy)
+    del _dummy
+    print("[RiceGuard] Model warm-up complete.")
+except Exception as _warm_err:
+    print(f"[RiceGuard] Warm-up warning: {_warm_err}")
+
+# ── Persistent GradCAM instance (reuse hooks across requests) ─────────────────
+_gcam = GradCAM(model)
+
+print(f"[RiceGuard] Starting — threads={_torch_threads}, device={device}")
 
 
 @app.errorhandler(413)
@@ -117,9 +138,6 @@ def handle_unexpected_error(error):
     ), 500
 
 
-from src.gradcam import GradCAM
-
-
 @app.route("/", methods=["GET", "POST"])
 def index():
     prediction = None
@@ -144,13 +162,17 @@ def index():
                     image = Image.open(file).convert("RGB")
                     image_tensor = transform(image).unsqueeze(0).to(device)
 
-                    # Compute predictions
-                    with torch.no_grad():
-                        outputs = model(image_tensor)
-                        probabilities = torch.softmax(outputs, dim=1)[0]
+                    # ── Single-Pass Inference + Grad-CAM ────────────────────
+                    # Enable grad only for this block so Grad-CAM can run
+                    # without a second forward pass.
+                    cam_input = image_tensor.requires_grad_(True)
+
+                    with torch.enable_grad():
+                        outputs = model(cam_input)          # single forward pass
+                        probabilities = torch.softmax(outputs.detach(), dim=1)[0]
                         confidence_val, predicted_idx = torch.max(probabilities, dim=0)
 
-                        # Compute Top-3 predictions
+                        # Top-3 predictions
                         top_probs, top_indices = torch.topk(probabilities, k=min(3, len(CLASS_NAMES)))
                         top_predictions = []
                         for p, idx in zip(top_probs, top_indices):
@@ -169,21 +191,22 @@ def index():
                         confidence = round(confidence_val.item() * 100, 2)
                         disease_info = DISEASE_DATABASE.get(prediction, {})
 
-                    # Compute Grad-CAM Explainable AI Heatmap
-                    try:
-                        gcam = GradCAM(model)
-                        cam_input = image_tensor.clone().detach().requires_grad_(True)
-                        cam_map = gcam.generate(cam_input, class_idx=predicted_idx.item())
-                        if cam_map is not None:
-                            gradcam_url = gcam.overlay_heatmap(image, cam_map, alpha=0.5)
-                        gcam.close()
-                    except Exception as gcam_err:
-                        print("Grad-CAM generation warning:", gcam_err)
+                        # Grad-CAM using the same forward pass (no second pass!)
+                        try:
+                            cam_map = _gcam.generate_from_logits(outputs, class_idx=predicted_idx.item())
+                            if cam_map is not None:
+                                gradcam_url = _gcam.overlay_heatmap(image, cam_map, alpha=0.5)
+                        except Exception as gcam_err:
+                            print("Grad-CAM generation warning:", gcam_err)
+                            # Reset gcam state so next request is clean
+                            _gcam.activations = None
+                            _gcam.gradients = None
 
                 except UnidentifiedImageError:
                     error = "We couldn't read this image file. Please upload a valid image (JPG, PNG, BMP, or TIFF)."
                 except Exception as e:
                     error = f"Analysis failed: {str(e)}"
+                    traceback.print_exc()
 
         # Check if the request is an AJAX call from the frontend
         is_ajax = (
@@ -277,7 +300,7 @@ def text_to_speech():
 
         return Response(combined, mimetype="audio/mpeg")
     except Exception as e:
-        return jsonify({"error": f"TTS generation failed: {str(e)}"}), 500
+        return jsonify({"error": f"TTS generation failed: {str(e)}\"}"}), 500
 
 
 from src.agri_ai import query_agri_assistant
@@ -331,7 +354,8 @@ def healthcheck():
         "status": "healthy",
         "service": "RiceGuard AI",
         "model_loaded": True,
-        "classes": 8
+        "classes": 8,
+        "threads": _torch_threads
     }), 200
 
 
@@ -355,4 +379,3 @@ if __name__ == "__main__":
     print("Model: fair_augmented_cnn.pth (ResNet18)")
     print("Classes: 8")
     app.run(host="0.0.0.0", port=port, debug=False)
-

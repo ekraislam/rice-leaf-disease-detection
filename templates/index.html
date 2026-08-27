@@ -26,6 +26,28 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
+    <!-- KeepAlive: Ping /healthz every 4 minutes to prevent Render cold starts.
+         Render free tier sleeps after 15 minutes of inactivity. Pinging every
+         4 minutes keeps the server warm for active users. -->
+    <script>
+        (function() {
+            'use strict';
+            var PING_INTERVAL_MS = 4 * 60 * 1000; // 4 minutes
+            var PING_URL = '/healthz';
+
+            function ping() {
+                fetch(PING_URL, { method: 'GET', cache: 'no-store' })
+                    .catch(function() { /* silent — network errors are ok */ });
+            }
+
+            // Initial ping on page load to warm up server immediately
+            ping();
+
+            // Keep pinging every 4 minutes while page is open
+            setInterval(ping, PING_INTERVAL_MS);
+        })();
+    </script>
+
     <style>
         /* ── Botanical Precision Design System ────────────────── */
         :root {
@@ -6311,9 +6333,7 @@
                 const stepInterval = setInterval(() => {
                     stepIdx = (stepIdx + 1) % steps.length;
                     loadingStepText.textContent = steps[stepIdx];
-                }, 400);
-
-                const minDelay = new Promise(resolve => setTimeout(resolve, 800));
+                }, 600);
 
                 const controller = new AbortController();
                 const fetchTimeout = setTimeout(() => controller.abort(), 90000);
@@ -6338,8 +6358,8 @@
                     return data;
                 });
 
-                Promise.all([fetchPromise, minDelay])
-                .then(([data]) => {
+                fetchPromise
+                .then((data) => {
                     clearInterval(stepInterval);
                     if (scannerOverlay) scannerOverlay.classList.remove('scanning');
                     stateLoading.classList.remove('active');
