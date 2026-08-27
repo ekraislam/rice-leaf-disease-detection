@@ -43,3 +43,6 @@ results/
 
 *.log
 scratch/
+
+# Academic paper — private, never push to GitHub
+paper/
