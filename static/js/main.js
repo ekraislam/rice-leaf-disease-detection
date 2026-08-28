@@ -3113,6 +3113,17 @@
             }
         }
 
+                window._chatSpeechStore = window._chatSpeechStore || {};
+
+        function speakStoredChatAudio(btn, msgId, lang) {
+            const store = window._chatSpeechStore || {};
+            const item = store[msgId] || {};
+            const text = (lang === 'bn') ? item.bn : item.en;
+            if (typeof speakChatAudio === 'function') {
+                speakChatAudio(btn, lang, text || '');
+            }
+        }
+
         async function handleChatSubmit(e) {
             if (e && e.preventDefault) e.preventDefault();
             const input = document.getElementById('chat-input');
@@ -3189,21 +3200,25 @@
             const tempTyping = chatMsgs.querySelector('.typing-temp');
             if (tempTyping) tempTyping.remove();
 
+            const botMsgId = 'msg_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
+            window._chatSpeechStore = window._chatSpeechStore || {};
+            window._chatSpeechStore[botMsgId] = {
+                bn: (botRes && botRes.text_bn) ? botRes.text_bn : '',
+                en: (botRes && botRes.text_en) ? botRes.text_en : ''
+            };
+
             const botTime = getChatTimeString();
             const botDiv = document.createElement('div');
             botDiv.className = 'chat-msg bot';
-            
-            const listenBnBtn = `<button type="button" class="msg-listen-btn bn-btn" onclick="speakChatAudio(this, 'bn', \`${escapeJsString(botRes.text_bn)}\`)">🔊 বাংলায় শুনুন</button>`;
-            const listenEnBtn = `<button type="button" class="msg-listen-btn en-btn" onclick="speakChatAudio(this, 'en', \`${escapeJsString(botRes.text_en)}\`)">🌐 Listen English</button>`;
 
             botDiv.innerHTML = `
                 <div class="msg-avatar">🌾</div>
                 <div class="msg-bubble-wrap">
                     <div class="msg-bubble">
-                        ${botRes.html}
+                        ${(botRes && botRes.html) ? botRes.html : '<p>উত্তর পাওয়া যায়নি।</p>'}
                         <div class="chat-voice-actions">
-                            ${listenBnBtn}
-                            ${listenEnBtn}
+                            <button type="button" class="msg-listen-btn bn-btn" onclick="speakStoredChatAudio(this, '${botMsgId}', 'bn')">🔊 বাংলায় শুনুন</button>
+                            <button type="button" class="msg-listen-btn en-btn" onclick="speakStoredChatAudio(this, '${botMsgId}', 'en')">🌐 Listen English</button>
                         </div>
                     </div>
                     <div class="msg-time">${botTime}</div>
