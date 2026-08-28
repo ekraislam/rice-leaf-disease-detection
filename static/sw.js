@@ -1,5 +1,5 @@
 // RiceGuard AI - Progressive Web App Service Worker
-const CACHE_NAME = 'riceguard-pwa-v1';
+const CACHE_NAME = 'riceguard-pwa-v2';
 const STATIC_ASSETS = [
     '/',
     '/static/manifest.json',

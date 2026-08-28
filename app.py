@@ -25,6 +25,14 @@ app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
+@app.after_request
+def add_header(response):
+    if "text/html" in response.headers.get("Content-Type", "") or "application/json" in response.headers.get("Content-Type", ""):
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+    return response
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, "models", "fair_augmented_cnn.pth")
 
