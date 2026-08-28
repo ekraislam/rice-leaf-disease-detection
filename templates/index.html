@@ -3989,17 +3989,13 @@
 
         /* Quick Suggestion Chips Bar */
         .chat-quick-prompts {
-            padding: 0.6rem 0.85rem;
+            padding: 0.55rem 0.85rem;
             display: flex;
-            gap: 0.45rem;
-            overflow-x: auto;
-            white-space: nowrap;
-            background: #FFFFFF;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            background: #FAFAFA;
             border-top: 1px solid #E2E8F0;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
         }
-        .chat-quick-prompts::-webkit-scrollbar { display: none; }
         .prompt-chip {
             background: #F0FDF4;
             border: 1px solid #A7F3D0;
@@ -9379,7 +9375,7 @@
 
                 chatRecognition = new SpeechRecognition();
                 chatRecognition.lang = (currentLang === 'bn') ? 'bn-BD' : 'en-US';
-                chatRecognition.continuous = true;
+                chatRecognition.continuous = false; // Single-phrase mode to prevent word repetition on mobile
                 chatRecognition.interimResults = true;
                 chatRecognition.maxAlternatives = 1;
 
@@ -9397,30 +9393,22 @@
                 };
 
                 chatRecognition.onresult = function(event) {
-                    let interimTranscript = '';
-                    let finalTranscript = '';
-
+                    let transcript = '';
                     for (let i = 0; i < event.results.length; ++i) {
-                        const transcript = event.results[i][0].transcript;
-                        if (event.results[i].isFinal) {
-                            finalTranscript += transcript + ' ';
-                        } else {
-                            interimTranscript += transcript;
-                        }
+                        transcript += event.results[i][0].transcript;
+                    }
+                    transcript = transcript.trim();
+                    if (chatInput && transcript) {
+                        chatInput.value = transcript;
                     }
 
-                    const displayText = (finalTranscript + interimTranscript).trim();
-                    if (chatInput && displayText) {
-                        chatInput.value = displayText;
-                    }
-
-                    // Reset silence auto-submit timer (1.8s silence auto-submits)
+                    // Reset silence auto-submit timer (1.2s silence auto-submits)
                     if (speechSilenceTimer) clearTimeout(speechSilenceTimer);
                     speechSilenceTimer = setTimeout(() => {
                         if (isChatListening && chatInput && chatInput.value.trim().length >= 2) {
                             stopChatVoiceInput(true);
                         }
-                    }, 1800);
+                    }, 1200);
                 };
 
                 chatRecognition.onerror = function(event) {

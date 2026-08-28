@@ -3028,7 +3028,7 @@
 
                 chatRecognition = new SpeechRecognition();
                 chatRecognition.lang = (currentLang === 'bn') ? 'bn-BD' : 'en-US';
-                chatRecognition.continuous = true;
+                chatRecognition.continuous = false; // Single-phrase mode to prevent word repetition on mobile
                 chatRecognition.interimResults = true;
                 chatRecognition.maxAlternatives = 1;
 
@@ -3046,30 +3046,22 @@
                 };
 
                 chatRecognition.onresult = function(event) {
-                    let interimTranscript = '';
-                    let finalTranscript = '';
-
+                    let transcript = '';
                     for (let i = 0; i < event.results.length; ++i) {
-                        const transcript = event.results[i][0].transcript;
-                        if (event.results[i].isFinal) {
-                            finalTranscript += transcript + ' ';
-                        } else {
-                            interimTranscript += transcript;
-                        }
+                        transcript += event.results[i][0].transcript;
+                    }
+                    transcript = transcript.trim();
+                    if (chatInput && transcript) {
+                        chatInput.value = transcript;
                     }
 
-                    const displayText = (finalTranscript + interimTranscript).trim();
-                    if (chatInput && displayText) {
-                        chatInput.value = displayText;
-                    }
-
-                    // Reset silence auto-submit timer (1.8s silence auto-submits)
+                    // Reset silence auto-submit timer (1.2s silence auto-submits)
                     if (speechSilenceTimer) clearTimeout(speechSilenceTimer);
                     speechSilenceTimer = setTimeout(() => {
                         if (isChatListening && chatInput && chatInput.value.trim().length >= 2) {
                             stopChatVoiceInput(true);
                         }
-                    }, 1800);
+                    }, 1200);
                 };
 
                 chatRecognition.onerror = function(event) {
