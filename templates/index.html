@@ -10503,6 +10503,12 @@
                 e.preventDefault();
                 clearErrors();
 
+                // Abort any existing in-flight request to prevent parallel request spam & 429 rate-limits
+                if (window.activeSingleAbortController) {
+                    try { window.activeSingleAbortController.abort(); } catch(e) {}
+                }
+                window.activeSingleAbortController = new AbortController();
+
                 const dict = I18N[currentLang] || I18N.bn;
                 const formData = new FormData(form);
 
@@ -10553,7 +10559,7 @@
                 const fetchPromise = fetch('/', {
                     method: 'POST',
                     body: formData,
-                    signal: controller.signal,
+                    signal: window.activeSingleAbortController.signal,
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
                         'Accept': 'application/json'
@@ -10565,15 +10571,22 @@
                         data = await res.json();
                     } catch (parseErr) {
                         if (!res.ok) {
+                            if (res.status === 429) {
+                                throw new Error(currentLang === 'bn'
+                                    ? 'একসাথে দ্রুত একাধিক রিকোয়েস্ট আসায় সার্ভার সাময়িক বিরতি নিয়েছে (HTTP 429)। অনুগ্রহ করে ৫-১০ সেকেন্ড অপেক্ষা করে আবার চেষ্টা করুন।'
+                                    : 'Too many requests sent in quick succession (HTTP 429). Please wait 5-10 seconds before trying again.');
+                            }
                             const is502 = res.status === 502 || res.status === 504;
                             if (is502) {
                                 throw new Error(currentLang === 'bn'
                                     ? 'সার্ভার স্লিপ মোড থেকে চালু হচ্ছে বা মেমোরি রিফ্রেশ হচ্ছে (HTTP ' + res.status + ')। অনুগ্রহ করে ২০-৩০ সেকেন্ড অপেক্ষা করে আবার চেষ্টা করুন।'
                                     : 'Server is waking up from sleep or refreshing memory (HTTP ' + res.status + '). Please wait 20-30s and try again.');
                             }
-                            throw new Error(`Server returned error: ${res.status}`);
+                            throw new Error(currentLang === 'bn'
+                                ? `সার্ভার ত্রুটি রিটার্ন করেছে: ${res.status}`
+                                : `Server returned error: ${res.status}`);
                         }
-                        throw new Error('Server returned an invalid response format.');
+                        throw new Error(currentLang === 'bn' ? 'সার্ভার থেকে সঠিক ফরম্যাটে তথ্য পাওয়া যায়নি।' : 'Server returned an invalid response format.');
                     }
                     return data;
                 });
