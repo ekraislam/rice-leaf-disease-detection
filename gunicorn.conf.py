@@ -13,9 +13,9 @@ threads = 4
 worker_class = "gthread"
 
 # ── Timeouts ──────────────────────────────────────────────────────────────────
-timeout = 90           # kill worker if request takes > 90s (was 120)
+timeout = 120          # kill worker if request takes > 120s
 graceful_timeout = 30  # time for worker to finish current requests on reload
-keepalive = 30         # keep idle HTTP connections open 30s (was 5)
+keepalive = 30         # keep idle HTTP connections open 30s
                        # reduces TCP handshake overhead on repeated requests
 
 # ── Critical: preload_app ─────────────────────────────────────────────────────

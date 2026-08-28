@@ -104,11 +104,23 @@ class GradCAM:
 
         return cam
 
-    def overlay_heatmap(self, original_pil_image, cam_numpy, alpha=0.45):
+    def overlay_heatmap(self, original_pil_image, cam_numpy, alpha=0.45, max_dim=640):
         """
         Blends the jet colormap heatmap with the original PIL image.
+        Constrains output resolution to max_dim (default 640px) to prevent
+        uncompressed bitmap memory spikes on low-memory cloud instances.
         Returns a base64 Data URI string.
         """
+        # Ensure working image is bounded in size and in RGB mode
+        img_rgb = original_pil_image.convert("RGB")
+        w, h = img_rgb.size
+        if max(w, h) > max_dim:
+            scale = max_dim / float(max(w, h))
+            new_w, new_h = max(1, int(w * scale)), max(1, int(h * scale))
+            img_rgb = img_rgb.resize((new_w, new_h), Image.Resampling.BILINEAR)
+
+        target_size = img_rgb.size
+
         h_uint8 = (cam_numpy * 255).astype(np.uint8)
         lut = np.zeros((256, 3), dtype=np.uint8)
         for i in range(256):
@@ -120,14 +132,19 @@ class GradCAM:
 
         colored_heatmap = lut[h_uint8]
         heatmap_img = Image.fromarray(colored_heatmap).resize(
-            original_pil_image.size, Image.Resampling.BILINEAR
+            target_size, Image.Resampling.BILINEAR
         )
 
-        blended = Image.blend(original_pil_image.convert("RGB"), heatmap_img, alpha=alpha)
+        blended = Image.blend(img_rgb, heatmap_img, alpha=alpha)
 
         buffered = io.BytesIO()
-        blended.save(buffered, format="JPEG", quality=85)
-        return "data:image/jpeg;base64," + base64.b64encode(buffered.getvalue()).decode("utf-8")
+        blended.save(buffered, format="JPEG", quality=80, optimize=True)
+        encoded_data = "data:image/jpeg;base64," + base64.b64encode(buffered.getvalue()).decode("utf-8")
+
+        # Explicitly close buffers
+        buffered.close()
+        del heatmap_img, blended, img_rgb, colored_heatmap, lut
+        return encoded_data
 
     def close(self):
         for h in self.handles:

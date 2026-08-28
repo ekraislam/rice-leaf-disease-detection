@@ -7799,6 +7799,68 @@
             }
         }
 
+                /**
+         * Fast client-side image compressor using HTML5 Canvas.
+         * Downscales high-resolution mobile photos (12MP+, 4000x3000) to max 1024px, ~150-250KB JPEG.
+         * Eliminates network timeouts and prevents 512MB RAM server crashes on cloud free tiers.
+         */
+        async function compressImageFile(file, maxWidth = 1024, maxHeight = 1024, quality = 0.82) {
+            if (!file || !file.type || !file.type.startsWith('image/')) {
+                return file;
+            }
+            if (file.size <= 250 * 1024 && file.type === 'image/jpeg') {
+                return file;
+            }
+
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        let w = img.naturalWidth || img.width;
+                        let h = img.naturalHeight || img.height;
+
+                        if (w > maxWidth || h > maxHeight) {
+                            if (w > h) {
+                                h = Math.round((h * maxWidth) / w);
+                                w = maxWidth;
+                            } else {
+                                w = Math.round((w * maxHeight) / h);
+                                h = maxHeight;
+                            }
+                        }
+
+                        const canvas = document.createElement('canvas');
+                        canvas.width = Math.max(1, w);
+                        canvas.height = Math.max(1, h);
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, w, h);
+
+                        canvas.toBlob(
+                            (blob) => {
+                                if (blob && blob.size < file.size) {
+                                    const safeName = (file.name || 'sample.jpg').replace(/\.[^.]+$/, '.jpg');
+                                    const newFile = new File([blob], safeName, {
+                                        type: 'image/jpeg',
+                                        lastModified: Date.now()
+                                    });
+                                    resolve(newFile);
+                                } else {
+                                    resolve(file);
+                                }
+                            },
+                            'image/jpeg',
+                            quality
+                        );
+                    };
+                    img.onerror = () => resolve(file);
+                    img.src = e.target.result;
+                };
+                reader.onerror = () => resolve(file);
+                reader.readAsDataURL(file);
+            });
+        }
+
         function handleBatchFileInput(files) {
             if (!files || files.length === 0) return;
             const validTypes = ['image/jpeg', 'image/png', 'image/bmp', 'image/webp', 'image/tiff'];
@@ -7918,13 +7980,22 @@
             if (loadingState) {
                 loadingState.style.display = 'flex';
                 const stepText = document.getElementById('loading-step-text');
-                if (stepText) stepText.textContent = currentLang === 'bn' ? `মাঠের ${window.batchSelectedFiles.length}টি নমুনা প্যারালাল প্রসেসিং হচ্ছে…` : `Processing ${window.batchSelectedFiles.length} field samples in parallel…`;
+                if (stepText) stepText.textContent = currentLang === 'bn' 
+                    ? `মাঠের ${window.batchSelectedFiles.length}টি নমুনা অপ্টিমাইজ ও বিশ্লেষণ হচ্ছে…` 
+                    : `Optimizing and analyzing ${window.batchSelectedFiles.length} field samples…`;
             }
 
             const formData = new FormData();
-            window.batchSelectedFiles.forEach(f => {
-                formData.append('files', f);
-            });
+            try {
+                for (let i = 0; i < window.batchSelectedFiles.length; i++) {
+                    const originalF = window.batchSelectedFiles[i];
+                    const compF = await compressImageFile(originalF);
+                    formData.append('files', compF);
+                }
+            } catch (compErr) {
+                console.warn('Compression fallback:', compErr);
+                window.batchSelectedFiles.forEach(f => formData.append('files', f));
+            }
 
             try {
                 const response = await fetch('/api/batch-predict', {
@@ -7937,9 +8008,15 @@
                     data = await response.json();
                 } catch (parseErr) {
                     if (!response.ok) {
-                        throw new Error(currentLang === 'bn' 
-                            ? `সার্ভার আপডেট হয়নি (HTTP ${response.status})। অনুগ্রহ করে আপনার টার্মিনালে 'python app.py' বন্ধ করে পুনরায় চালু (Restart) করুন।` 
-                            : `Server returned HTTP ${response.status}. Please restart 'python app.py' in your terminal.`);
+                        const is502 = response.status === 502 || response.status === 504;
+                        const errMsg = is502
+                            ? (currentLang === 'bn'
+                                ? 'সার্ভার স্লিপ মোড থেকে চালু হচ্ছে বা মেমোরি রিফ্রেশ হচ্ছে (HTTP ' + response.status + ')। অনুগ্রহ করে ২০-৩০ সেকেন্ড অপেক্ষা করে আবার চেষ্টা করুন।'
+                                : 'Server is waking up from sleep or refreshing memory (HTTP ' + response.status + '). Please wait 20-30 seconds and try again.')
+                            : (currentLang === 'bn'
+                                ? 'সার্ভার যোগাযোগে ত্রুটি (HTTP ' + response.status + ')। অনুগ্রহ করে পুনরায় চেষ্টা করুন।'
+                                : 'Server communication error (HTTP ' + response.status + '). Please try again.');
+                        throw new Error(errMsg);
                     }
                     throw parseErr;
                 }
@@ -7959,7 +8036,7 @@
             } catch (err) {
                 if (loadingState) loadingState.style.display = 'none';
                 if (emptyState) emptyState.style.display = 'flex';
-                alert((currentLang === 'bn' ? 'মাঠ নিরীক্ষা ব্যর্থ হয়েছে: ' : 'Field audit failed: ') + err.message);
+                alert((currentLang === 'bn' ? 'মাঠ নিরীক্ষা বিজ্ঞপ্তি: ' : 'Field audit notice: ') + err.message);
             } finally {
                 if (btn) btn.disabled = false;
                 if (btnText) btnText.textContent = (I18N[currentLang] || I18N.bn).btn_batch_analyze || 'মাঠের সকল নমুনা বিশ্লেষণ করুন';
@@ -10422,7 +10499,7 @@
             }
 
             /* ── AJAX Form Submission ── */
-            form.addEventListener('submit', function (e) {
+            form.addEventListener('submit', async function (e) {
                 e.preventDefault();
                 clearErrors();
 
@@ -10438,6 +10515,9 @@
                 }
 
                 // Explicitly set 'image' file field in FormData
+                try {
+                    activeFile = await compressImageFile(activeFile);
+                } catch(compErr) {}
                 formData.set('image', activeFile);
 
                 if (scannerOverlay) scannerOverlay.classList.add('scanning');
@@ -10484,7 +10564,15 @@
                     try {
                         data = await res.json();
                     } catch (parseErr) {
-                        if (!res.ok) throw new Error(`Server returned error: ${res.status}`);
+                        if (!res.ok) {
+                            const is502 = res.status === 502 || res.status === 504;
+                            if (is502) {
+                                throw new Error(currentLang === 'bn'
+                                    ? 'সার্ভার স্লিপ মোড থেকে চালু হচ্ছে বা মেমোরি রিফ্রেশ হচ্ছে (HTTP ' + res.status + ')। অনুগ্রহ করে ২০-৩০ সেকেন্ড অপেক্ষা করে আবার চেষ্টা করুন।'
+                                    : 'Server is waking up from sleep or refreshing memory (HTTP ' + res.status + '). Please wait 20-30s and try again.');
+                            }
+                            throw new Error(`Server returned error: ${res.status}`);
+                        }
                         throw new Error('Server returned an invalid response format.');
                     }
                     return data;
