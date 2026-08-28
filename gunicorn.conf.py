@@ -18,12 +18,11 @@ graceful_timeout = 30  # time for worker to finish current requests on reload
 keepalive = 30         # keep idle HTTP connections open 30s
                        # reduces TCP handshake overhead on repeated requests
 
-# ── Critical: preload_app ─────────────────────────────────────────────────────
-# Loads the Flask app + PyTorch model ONCE before forking workers.
-# Without this, each gunicorn worker re-loads the model separately.
-# With preload_app=True: model is loaded once, shared via copy-on-write.
-# This saves startup RAM and makes the first real request faster.
-preload_app = True
+# ── PyTorch OpenMP Safety: preload_app = False ──────────────────────────────
+# In PyTorch on Linux, loading the model in the master process before forking
+# can cause OpenMP threadpool deadlocks/crashes. Setting preload_app = False
+# ensures clean, safe model initialization per worker.
+preload_app = False
 
 # ── Memory Management ─────────────────────────────────────────────────────────
 # Restart worker after N requests to prevent slow memory creep.

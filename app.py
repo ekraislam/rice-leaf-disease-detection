@@ -166,11 +166,11 @@ def run_inference_on_pil_image(image, expected_class=None, generate_cam=True):
         image = image.resize((max(1, int(w * scale)), max(1, int(h * scale))), Image.Resampling.BILINEAR)
 
     image_tensor = transform(image).unsqueeze(0).to(device)
-    cam_input = image_tensor.requires_grad_(True)
 
-    with torch.enable_grad():
-        outputs = model(cam_input)
-        probabilities = torch.softmax(outputs.detach(), dim=1)[0]
+    # 1. Fast, pure torch.no_grad forward pass for predictions
+    with torch.no_grad():
+        outputs = model(image_tensor)
+        probabilities = torch.softmax(outputs, dim=1)[0]
         confidence_val, predicted_idx = torch.max(probabilities, dim=0)
 
         # Top-3 predictions
@@ -188,22 +188,21 @@ def run_inference_on_pil_image(image, expected_class=None, generate_cam=True):
                 "severity_color": c_info.get("severity_color", "#10B981")
             })
 
-        prediction = CLASS_NAMES[predicted_idx.item()]
-        confidence = round(confidence_val.item() * 100, 2)
-        disease_info = DISEASE_DATABASE.get(prediction, {})
-        gradcam_url = None
+    prediction = CLASS_NAMES[predicted_idx.item()]
+    confidence = round(confidence_val.item() * 100, 2)
+    disease_info = DISEASE_DATABASE.get(prediction, {})
+    gradcam_url = None
 
-        if generate_cam and _gcam is not None:
-            try:
-                cam_map = _gcam.generate_from_logits(outputs, class_idx=predicted_idx.item())
-                if cam_map is not None:
-                    gradcam_url = _gcam.overlay_heatmap(image, cam_map, alpha=0.5, max_dim=640)
-            except Exception as gcam_err:
-                print("Grad-CAM generation warning:", gcam_err)
-                _gcam.activations = None
-                _gcam.gradients = None
+    # 2. Thread-safe isolated Grad-CAM pass
+    if generate_cam and _gcam is not None:
+        try:
+            cam_map = _gcam.generate(image_tensor, class_idx=predicted_idx.item())
+            if cam_map is not None:
+                gradcam_url = _gcam.overlay_heatmap(image, cam_map, alpha=0.5, max_dim=640)
+        except Exception as gcam_err:
+            print("Grad-CAM generation warning:", gcam_err)
 
-    del cam_input, image_tensor, outputs, probabilities
+    del image_tensor, outputs, probabilities
 
     return {
         "prediction": prediction,
