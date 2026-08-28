@@ -8,6 +8,10 @@ import time
 import json
 import urllib.request
 import urllib.parse
+from datetime import datetime, timezone, timedelta
+
+# Bangladesh Standard Time (BST = UTC+6)
+BST_TZ = timezone(timedelta(hours=6))
 
 # Complete 64 District Coordinates of Bangladesh
 BANGLADESH_DISTRICTS = {
@@ -268,7 +272,7 @@ def get_live_weather(district_name: str = None, lat: float = None, lon: float = 
                 "weather_desc_bn": w_info["desc_bn"],
                 "icon": w_info["icon"],
                 "advisory": advisory,
-                "updated_at": time.strftime("%I:%M %p, %d %b", time.localtime(now))
+                "updated_at": datetime.now(BST_TZ).strftime("%I:%M %p, %d %b")
             }
 
             _WEATHER_CACHE[cache_key] = {"timestamp": now, "data": result}
@@ -294,5 +298,5 @@ def get_live_weather(district_name: str = None, lat: float = None, lon: float = 
             "weather_desc_bn": w_info["desc_bn"],
             "icon": w_info["icon"],
             "advisory": advisory,
-            "updated_at": time.strftime("%I:%M %p, %d %b", time.localtime(now))
+            "updated_at": datetime.now(BST_TZ).strftime("%I:%M %p, %d %b")
         }
