@@ -5,12 +5,11 @@ port = os.environ.get("PORT", "10000")
 bind = f"0.0.0.0:{port}"
 
 # ── Worker Configuration ───────────────────────────────────────────────────────
-# 1 worker + 4 threads is optimal for Render free tier (0.1–0.5 vCPU shared).
-# gthread lets multiple requests be handled concurrently without spawning
-# extra OS processes (which would clone the model into memory again).
+# 1 worker in sync mode with 1 PyTorch thread is the optimal, crash-proof
+# configuration for low-memory, single-core cloud containers (Render free tier).
 workers = 1
-threads = 4
-worker_class = "gthread"
+threads = 1
+worker_class = "sync"
 
 # ── Timeouts ──────────────────────────────────────────────────────────────────
 timeout = 120          # kill worker if request takes > 120s

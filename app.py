@@ -12,12 +12,10 @@ from src.disease_data import DISEASE_DATABASE
 from src.gradcam import GradCAM
 
 # ── PyTorch Thread Optimization ──────────────────────────────────────────────
-# Use env var TORCH_THREADS to override. Default: min(2, cpu_count).
-# On Render free tier (0.1 vCPU shared), 2 is a safe practical ceiling.
-_cpu_count = os.cpu_count() or 1
-_torch_threads = int(os.environ.get("TORCH_THREADS", str(min(2, _cpu_count))))
+# Force single-threaded PyTorch CPU execution on low-resource cloud tiers to prevent OpenMP deadlocks
+_torch_threads = int(os.environ.get("TORCH_THREADS", "1"))
 torch.set_num_threads(_torch_threads)
-torch.set_grad_enabled(False)          # global no-grad by default (re-enabled only for Grad-CAM)
+torch.set_grad_enabled(False)          # global no-grad by default
 
 app = Flask(__name__)
 
@@ -235,7 +233,8 @@ def index():
                 error = "Please select a rice leaf image to analyze."
             else:
                 try:
-                    image = Image.open(file)
+                    file_bytes = file.read()
+                    image = Image.open(io.BytesIO(file_bytes))
                     image = ImageOps.exif_transpose(image)
                     image = image.convert("RGB")
                     result = run_inference_on_pil_image(image, expected_class=expected_class, generate_cam=True)
