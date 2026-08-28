@@ -2,6 +2,7 @@ import os
 import io
 import gc
 import base64
+import threading
 import traceback
 from flask import Flask, render_template, request, jsonify, send_from_directory, Response
 import torch
@@ -10,6 +11,7 @@ from PIL import Image, ImageOps, UnidentifiedImageError
 from src.model import get_baseline_cnn
 from src.disease_data import DISEASE_DATABASE
 from src.gradcam import GradCAM
+from src.tts_engine import generate_speech_audio, start_background_cache_prewarm
 
 # ── PyTorch Thread Optimization ──────────────────────────────────────────────
 # Force single-threaded PyTorch CPU execution on low-resource cloud tiers to prevent OpenMP deadlocks
@@ -22,6 +24,9 @@ app = Flask(__name__)
 # Enforce 50 MB maximum upload file size limit (allows up to 25 batch photos)
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
 app.config['TEMPLATES_AUTO_RELOAD'] = True
+
+# Pre-warm common disease audio in background
+start_background_cache_prewarm()
 
 @app.after_request
 def add_header(response):
@@ -527,10 +532,6 @@ def batch_predict():
         }), 500
 
 
-
-from flask import Response
-from src.tts_engine import generate_speech_audio, start_background_cache_prewarm
-start_background_cache_prewarm()
 
 
 @app.route("/api/tts", methods=["GET", "HEAD"])
