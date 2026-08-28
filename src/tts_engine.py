@@ -11,6 +11,7 @@ import hashlib
 import asyncio
 import urllib.request
 import urllib.parse
+import uuid
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 AUDIO_DIR = os.path.join(BASE_DIR, "static", "audio")
@@ -133,15 +134,20 @@ def clean_text_for_speech(text: str, is_bn: bool = True) -> str:
         cleaned = re.sub(r'\(হপার বার্ন\)', ', যাকে হপার বার্ন বলে', cleaned)
         cleaned = re.sub(r'\(ক্রিসেক\)', ', যাকে ক্রিসেক বলে', cleaned)
         cleaned = re.sub(r'\(AWD পদ্ধতি\)', ', অর্থাৎ পর্যায়ক্রমে জমি ভেজানো ও শুকানো পদ্ধতি', cleaned)
-        cleaned = re.sub(r'\(যেমন\s*:\s*([^\)]+)\)', r'যেমন ', cleaned)
+        cleaned = re.sub(r'\(যেমন\s*:\s*([^\)]+)\)', r'যেমন \1 ', cleaned)
 
-        cleaned = re.sub(r'([\d\.]+)\s*গ্রাম\s*/\s*লিটার', r'প্রতি লিটার পানিতে  গ্রাম', cleaned)
-        cleaned = re.sub(r'([\d\.]+)\s*মিলি\s*/\s*লিটার', r'প্রতি লিটার পানিতে  মিলি', cleaned)
-        cleaned = re.sub(r'([\d\.]+)\s*গ্রাম\s*/\s*কেজি', r'প্রতি কেজি বীজে  গ্রাম', cleaned)
-        cleaned = re.sub(r'([\d\.]+)\s*কেজি\s*/\s*বিঘা', r'বিঘা প্রতি  কেজি', cleaned)
-        cleaned = re.sub(r'@\s*([\d\.]+)\s*গ্রাম', r'প্রতি লিটারে  গ্রাম', cleaned)
-        cleaned = re.sub(r'@\s*([\d\.]+)\s*মিলি', r'প্রতি লিটারে  মিলি', cleaned)
+        # Fix dosages with proper backreference \1
+        cleaned = re.sub(r'([\d\.]+)\s*গ্রাম\s*/\s*লিটার', r'প্রতি লিটার পানিতে \1 গ্রাম', cleaned)
+        cleaned = re.sub(r'([\d\.]+)\s*মিলি\s*/\s*লিটার', r'প্রতি লিটার পানিতে \1 মিলি', cleaned)
+        cleaned = re.sub(r'([\d\.]+)\s*গ্রাম\s*/\s*কেজি', r'প্রতি কেজি বীজে \1 গ্রাম', cleaned)
+        cleaned = re.sub(r'([\d\.]+)\s*কেজি\s*/\s*বিঘা', r'বিঘা প্রতি \1 কেজি', cleaned)
+        cleaned = re.sub(r'@\s*([\d\.]+)\s*গ্রাম', r'প্রতি লিটারে \1 গ্রাম', cleaned)
+        cleaned = re.sub(r'@\s*([\d\.]+)\s*মিলি', r'প্রতি লিটারে \1 মিলি', cleaned)
         cleaned = re.sub(r'\s*\+\s*', ' এবং ', cleaned)
+
+        # Natural percentage pronunciation for Bengali
+        cleaned = re.sub(r'(\d+(?:\.\d+)?)\s*%', r'শতকরা \1 ভাগ', cleaned)
+        cleaned = re.sub(r'([০-৯]+(?:\.[০-৯]+)?)\s*%', r'শতকরা \1 ভাগ', cleaned)
 
         cleaned = re.sub(r'•\s*লক্ষণ\s*:\s*', 'রোগের লক্ষণ হলো, ', cleaned)
         cleaned = re.sub(r'•\s*রাসায়নিক দমন\s*:\s*', 'রাসায়নিক চিকিৎসায়, ', cleaned)
@@ -213,11 +219,14 @@ def _google_tts_fallback(text: str, lang: str = "bn") -> bytes:
         req = urllib.request.Request(
             tts_url,
             headers={
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
             }
         )
-        with urllib.request.urlopen(req, timeout=6) as response:
-            combined += response.read()
+        try:
+            with urllib.request.urlopen(req, timeout=8) as response:
+                combined += response.read()
+        except Exception as e:
+            print(f"[RiceGuard TTS] Google fallback chunk error: {e}")
     return combined
 
 
@@ -257,7 +266,9 @@ def generate_speech_audio(text: str, lang: str = "bn", voice: str = None, gender
         except Exception:
             pass
 
-    temp_file = os.path.join(CACHE_DIR, f"temp_{cache_hash}.mp3")
+    # Use unique temp file to prevent race conditions across parallel threads
+    unique_suffix = uuid.uuid4().hex[:8]
+    temp_file = os.path.join(CACHE_DIR, f"temp_{cache_hash}_{unique_suffix}.mp3")
     try:
         try:
             loop = asyncio.get_event_loop()
@@ -277,7 +288,10 @@ def generate_speech_audio(text: str, lang: str = "bn", voice: str = None, gender
 
         if os.path.exists(temp_file) and os.path.getsize(temp_file) > 500:
             if os.path.exists(cache_file):
-                os.remove(cache_file)
+                try:
+                    os.remove(cache_file)
+                except Exception:
+                    pass
             os.replace(temp_file, cache_file)
             with open(cache_file, "rb") as f:
                 return f.read()

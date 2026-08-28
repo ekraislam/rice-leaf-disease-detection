@@ -1777,8 +1777,54 @@
             }
         }
 
+        /* ── Check if browser has an authentic native Bengali TTS engine ── */
+        function hasNativeBengaliSpeechSynthesisVoice() {
+            if (!('speechSynthesis' in window)) return false;
+            try {
+                const voices = window.speechSynthesis.getVoices() || [];
+                return voices.some(v => v.lang && (v.lang.toLowerCase().includes('bn') || v.lang.toLowerCase().includes('bengali')));
+            } catch (e) {
+                return false;
+            }
+        }
+
+        /* ── Pre-cache Batch Summary Voice in Background for 0ms Instant Play ── */
+        function preloadBatchAudio(data) {
+            if (!data) return;
+            window.batchPreloadedAudios = window.batchPreloadedAudios || {};
+            const textBn = data.speech_text_bn;
+            const textEn = data.speech_text_en;
+
+            if (textBn) {
+                try {
+                    const mBn = new Audio(`/api/tts?lang=bn&gender=male&voice=pradeep&text=${encodeURIComponent(textBn)}`);
+                    mBn.preload = 'auto';
+                    const fBn = new Audio(`/api/tts?lang=bn&gender=female&voice=nabanita&text=${encodeURIComponent(textBn)}`);
+                    fBn.preload = 'auto';
+                    window.batchPreloadedAudios['bn_male'] = mBn;
+                    window.batchPreloadedAudios['bn_female'] = fBn;
+                } catch (e) {
+                    console.warn('Batch audio preload bn notice:', e);
+                }
+            }
+
+            if (textEn) {
+                try {
+                    const mEn = new Audio(`/api/tts?lang=en&gender=male&voice=guy&text=${encodeURIComponent(textEn)}`);
+                    mEn.preload = 'auto';
+                    const fEn = new Audio(`/api/tts?lang=en&gender=female&voice=aria&text=${encodeURIComponent(textEn)}`);
+                    fEn.preload = 'auto';
+                    window.batchPreloadedAudios['en_male'] = mEn;
+                    window.batchPreloadedAudios['en_female'] = fEn;
+                } catch (e) {
+                    console.warn('Batch audio preload en notice:', e);
+                }
+            }
+        }
+
         function renderBatchResults(data) {
             if (!data) return;
+            preloadBatchAudio(data); // 🚀 Immediately pre-cache audio in background for 0ms play
             const isBn = currentLang === 'bn';
             const batchWrap = document.getElementById('batch-results-wrap');
             if (!batchWrap) return;
@@ -1951,6 +1997,8 @@
         }
 
         /* ── Batch Dual-Voice Audio Player (Male 👨‍🌾 / Female 👩‍⚕️) with 0ms Latency ── */
+        let isBatchAudioLoading = false;
+
         function setBatchVoiceGender(gender) {
             window.currentBatchVoiceGender = gender;
             const maleBtn = document.getElementById('batch-voice-male');
@@ -1975,6 +2023,7 @@
         }
 
         function stopBatchAudioSpeech() {
+            isBatchAudioLoading = false;
             if (window.activeBatchAudio) {
                 window.activeBatchAudio.pause();
                 window.activeBatchAudio.currentTime = 0;
@@ -1986,7 +2035,10 @@
             window.isBatchSpeaking = false;
             const btn = document.getElementById('btn-batch-voice');
             const btnText = document.getElementById('batch-voice-text');
-            if (btn) btn.classList.remove('speaking');
+            if (btn) {
+                btn.classList.remove('speaking');
+                btn.classList.remove('loading');
+            }
             if (btnText) btnText.textContent = currentLang === 'bn' ? 'মাঠ রিপোর্ট শুনুন' : 'Listen Field Summary';
         }
 
@@ -1999,6 +2051,8 @@
                 return;
             }
 
+            if (isBatchAudioLoading) return; // Prevent rapid click race conditions
+
             if (!window.currentBatchData) return;
 
             stopAudioSpeech(); // Stop single leaf audio if running
@@ -2006,6 +2060,8 @@
 
             const isBn = currentLang === 'bn';
             const speechText = isBn ? window.currentBatchData.speech_text_bn : window.currentBatchData.speech_text_en;
+            if (!speechText) return;
+
             const gender = window.currentBatchVoiceGender || 'male';
             const langCode = isBn ? 'bn' : 'en';
 
@@ -2016,44 +2072,84 @@
                 voiceName = gender === 'female' ? 'aria' : 'guy';
             }
 
-            window.isBatchSpeaking = true;
-            if (btn) btn.classList.add('speaking');
-            if (btnText) btnText.textContent = isBn ? '⏸️ অডিও থামান' : '⏸️ Stop Audio';
+            isBatchAudioLoading = true;
+            if (btn) btn.classList.add('loading');
+            if (btnText) btnText.innerHTML = `<span style="display:inline-block;animation:spin 1s linear infinite;">⏳</span> ${isBn ? 'লোড হচ্ছে...' : 'Loading...'}`;
 
-            const audioUrl = `/api/tts?lang=${langCode}&gender=${gender}&voice=${encodeURIComponent(voiceName)}&text=${encodeURIComponent(speechText)}`;
-            window.activeBatchAudio = new Audio(audioUrl);
+            const audioKey = `${langCode}_${gender}`;
+            let audioToPlay = null;
 
-            window.activeBatchAudio.onplay = () => {
+            if (window.batchPreloadedAudios && window.batchPreloadedAudios[audioKey]) {
+                audioToPlay = window.batchPreloadedAudios[audioKey];
+                audioToPlay.currentTime = 0;
+            } else {
+                const audioUrl = `/api/tts?lang=${langCode}&gender=${gender}&voice=${encodeURIComponent(voiceName)}&text=${encodeURIComponent(speechText)}`;
+                audioToPlay = new Audio(audioUrl);
+            }
+
+            window.activeBatchAudio = audioToPlay;
+
+            const markPlaying = () => {
+                isBatchAudioLoading = false;
+                window.isBatchSpeaking = true;
+                if (btn) {
+                    btn.classList.remove('loading');
+                    btn.classList.add('speaking');
+                }
                 if (btnText) btnText.textContent = isBn ? '⏸️ অডিও থামান' : '⏸️ Stop Audio';
             };
 
-            window.activeBatchAudio.onended = () => {
+            audioToPlay.onplay = markPlaying;
+
+            audioToPlay.onended = () => {
                 stopBatchAudioSpeech();
             };
 
-            window.activeBatchAudio.onerror = () => {
-                console.warn('Batch TTS backend error, falling back to Web Speech API');
-                if ('speechSynthesis' in window) {
+            audioToPlay.onerror = (e) => {
+                console.warn('Batch TTS stream error:', e);
+                isBatchAudioLoading = false;
+                if (!isBn && 'speechSynthesis' in window) {
                     const utterance = new SpeechSynthesisUtterance(speechText);
-                    utterance.lang = isBn ? 'bn-BD' : 'en-US';
-                    utterance.rate = isBn ? 0.9 : 0.95;
+                    utterance.lang = 'en-US';
+                    utterance.rate = 0.95;
                     utterance.onend = stopBatchAudioSpeech;
                     utterance.onerror = stopBatchAudioSpeech;
                     window.speechSynthesis.speak(utterance);
+                    markPlaying();
+                } else if (isBn && hasNativeBengaliSpeechSynthesisVoice()) {
+                    const utterance = new SpeechSynthesisUtterance(speechText);
+                    utterance.lang = 'bn-BD';
+                    utterance.rate = 0.9;
+                    utterance.onend = stopBatchAudioSpeech;
+                    utterance.onerror = stopBatchAudioSpeech;
+                    window.speechSynthesis.speak(utterance);
+                    markPlaying();
                 } else {
                     stopBatchAudioSpeech();
                 }
             };
 
-            window.activeBatchAudio.play().catch(err => {
-                console.warn('Batch audio play error, falling back to speech synthesis:', err);
-                if ('speechSynthesis' in window) {
+            audioToPlay.play().then(() => {
+                markPlaying();
+            }).catch(err => {
+                console.warn('Batch audio play error:', err);
+                isBatchAudioLoading = false;
+                if (!isBn && 'speechSynthesis' in window) {
                     const utterance = new SpeechSynthesisUtterance(speechText);
-                    utterance.lang = isBn ? 'bn-BD' : 'en-US';
-                    utterance.rate = isBn ? 0.9 : 0.95;
+                    utterance.lang = 'en-US';
+                    utterance.rate = 0.95;
                     utterance.onend = stopBatchAudioSpeech;
                     utterance.onerror = stopBatchAudioSpeech;
                     window.speechSynthesis.speak(utterance);
+                    markPlaying();
+                } else if (isBn && hasNativeBengaliSpeechSynthesisVoice()) {
+                    const utterance = new SpeechSynthesisUtterance(speechText);
+                    utterance.lang = 'bn-BD';
+                    utterance.rate = 0.9;
+                    utterance.onend = stopBatchAudioSpeech;
+                    utterance.onerror = stopBatchAudioSpeech;
+                    window.speechSynthesis.speak(utterance);
+                    markPlaying();
                 } else {
                     stopBatchAudioSpeech();
                 }
@@ -2450,6 +2546,7 @@
 
         let activeAudio = null;
         let isSpeaking = false;
+        let isSingleAudioLoading = false;
 
         function cleanSpeechText(text, isBn) {
             if (!text) return '';
@@ -2465,6 +2562,7 @@
         }
 
         function stopAudioSpeech() {
+            isSingleAudioLoading = false;
             if (activeAudio) {
                 activeAudio.pause();
                 activeAudio.currentTime = 0;
@@ -2476,7 +2574,10 @@
             isSpeaking = false;
             const btn = document.getElementById('btn-voice-read');
             const btnText = document.getElementById('voice-btn-text');
-            if (btn) btn.classList.remove('speaking');
+            if (btn) {
+                btn.classList.remove('speaking');
+                btn.classList.remove('loading');
+            }
             if (btnText) btnText.textContent = currentLang === 'bn' ? 'প্রেসক্রিপশন শুনুন' : 'Listen Audio';
         }
 
@@ -2488,6 +2589,8 @@
                 stopAudioSpeech();
                 return;
             }
+
+            if (isSingleAudioLoading) return; // Prevent race conditions
 
             if (!currentDiseaseData) return;
 
@@ -2518,10 +2621,9 @@
                 }
             }
 
-            // Start Audio playback
-            isSpeaking = true;
-            if (btn) btn.classList.add('speaking');
-            if (btnText) btnText.textContent = isBn ? '⏸️ অডিও থামান' : '⏸️ Stop Audio';
+            isSingleAudioLoading = true;
+            if (btn) btn.classList.add('loading');
+            if (btnText) btnText.innerHTML = `<span style="display:inline-block;animation:spin 1s linear infinite;">⏳</span> ${isBn ? 'লোড হচ্ছে...' : 'Loading...'}`;
 
             const gender = window.currentVoiceGender || 'male';
             const langCode = isBn ? 'bn' : 'en';
@@ -2536,39 +2638,67 @@
                 activeAudio = new Audio(audioUrl);
             }
 
-            activeAudio.onplay = () => {
+            const markSinglePlaying = () => {
+                isSingleAudioLoading = false;
+                isSpeaking = true;
+                if (btn) {
+                    btn.classList.remove('loading');
+                    btn.classList.add('speaking');
+                }
                 if (btnText) btnText.textContent = isBn ? '⏸️ অডিও থামান' : '⏸️ Stop Audio';
             };
+
+            activeAudio.onplay = markSinglePlaying;
 
             activeAudio.onended = () => {
                 stopAudioSpeech();
             };
 
-            activeAudio.onerror = () => {
-                // Fallback to Web Speech API if backend stream fails
-                console.warn('Backend audio failed, falling back to Web Speech API');
-                if ('speechSynthesis' in window) {
-                    window.speechSynthesis.cancel();
+            activeAudio.onerror = (e) => {
+                console.warn('Backend audio failed:', e);
+                isSingleAudioLoading = false;
+                if (!isBn && 'speechSynthesis' in window) {
                     const utterance = new SpeechSynthesisUtterance(speechText);
-                    utterance.lang = isBn ? 'bn-BD' : 'en-US';
-                    utterance.rate = isBn ? 0.9 : 0.95;
+                    utterance.lang = 'en-US';
+                    utterance.rate = 0.95;
                     utterance.onend = stopAudioSpeech;
                     utterance.onerror = stopAudioSpeech;
                     window.speechSynthesis.speak(utterance);
+                    markSinglePlaying();
+                } else if (isBn && typeof hasNativeBengaliSpeechSynthesisVoice === 'function' && hasNativeBengaliSpeechSynthesisVoice()) {
+                    const utterance = new SpeechSynthesisUtterance(speechText);
+                    utterance.lang = 'bn-BD';
+                    utterance.rate = 0.9;
+                    utterance.onend = stopAudioSpeech;
+                    utterance.onerror = stopAudioSpeech;
+                    window.speechSynthesis.speak(utterance);
+                    markSinglePlaying();
                 } else {
                     stopAudioSpeech();
                 }
             };
 
-            activeAudio.play().catch(err => {
-                console.warn('Audio play error, falling back to SpeechSynthesis:', err);
-                if ('speechSynthesis' in window) {
+            activeAudio.play().then(() => {
+                markSinglePlaying();
+            }).catch(err => {
+                console.warn('Audio play error:', err);
+                isSingleAudioLoading = false;
+                if (!isBn && 'speechSynthesis' in window) {
                     const utterance = new SpeechSynthesisUtterance(speechText);
-                    utterance.lang = isBn ? 'bn-BD' : 'en-US';
-                    utterance.rate = isBn ? 0.9 : 0.95;
+                    utterance.lang = 'en-US';
+                    utterance.rate = 0.95;
                     utterance.onend = stopAudioSpeech;
                     utterance.onerror = stopAudioSpeech;
                     window.speechSynthesis.speak(utterance);
+                    markSinglePlaying();
+                } else if (isBn && typeof hasNativeBengaliSpeechSynthesisVoice === 'function' && hasNativeBengaliSpeechSynthesisVoice()) {
+                    const utterance = new SpeechSynthesisUtterance(speechText);
+                    utterance.lang = 'bn-BD';
+                    utterance.rate = 0.9;
+                    utterance.onend = stopAudioSpeech;
+                    utterance.onerror = stopAudioSpeech;
+                    window.speechSynthesis.speak(utterance);
+                    markSinglePlaying();
                 } else {
                     stopAudioSpeech();
                 }
@@ -2932,13 +3062,14 @@
             }
 
             stopChatAudio();
-            stopAudioSpeech(); // Stop main report voice if running
+            if (typeof stopAudioSpeech === 'function') stopAudioSpeech();
+            if (typeof stopBatchAudioSpeech === 'function') stopBatchAudioSpeech();
 
             activeChatBtn = btn;
             const origHtml = btn.innerHTML;
             btn.setAttribute('data-orig-text', origHtml);
             btn.classList.add('playing');
-            btn.innerHTML = `<span style="display:inline-block;animation:pulse 1s infinite;">⏳</span> ${lang === 'bn' ? 'লোড হচ্ছে...' : 'Loading...'}`;
+            btn.innerHTML = `<span style="display:inline-block;animation:spin 1s linear infinite;">⏳</span> ${lang === 'bn' ? 'লোড হচ্ছে...' : 'Loading...'}`;
 
             // Clean text for speech
             const cleanText = text.replace(/<[^>]+>/g, ' ').replace(/[\*\_#\`\~>\|\[\]\(\)]/g, ' ').replace(/\s+/g, ' ').trim();
@@ -2947,37 +3078,61 @@
             const audioUrl = '/api/tts?lang=' + encodeURIComponent(lang) + '&text=' + encodeURIComponent(cleanText) + '&voice=' + encodeURIComponent(currentVoice);
             activeChatAudio = new Audio(audioUrl);
 
-            activeChatAudio.onplay = () => {
-                btn.innerHTML = `⏸️ ${lang === 'bn' ? 'থামুন' : 'Stop'}`;
+            const markChatPlaying = () => {
+                if (btn) btn.innerHTML = `⏸️ ${lang === 'bn' ? 'থামুন' : 'Stop'}`;
             };
+
+            activeChatAudio.onplay = markChatPlaying;
 
             activeChatAudio.onended = () => {
                 stopChatAudio();
             };
 
-            activeChatAudio.onerror = () => {
-                console.warn('Backend TTS audio error, falling back to Web Speech API');
-                if ('speechSynthesis' in window) {
+            activeChatAudio.onerror = (e) => {
+                console.warn('Chat TTS audio stream error:', e);
+                const isBn = lang === 'bn';
+                if (!isBn && 'speechSynthesis' in window) {
                     const utterance = new SpeechSynthesisUtterance(cleanText);
-                    utterance.lang = lang === 'bn' ? 'bn-BD' : 'en-US';
-                    utterance.rate = lang === 'bn' ? 0.9 : 0.95;
+                    utterance.lang = 'en-US';
+                    utterance.rate = 0.95;
                     utterance.onend = stopChatAudio;
                     utterance.onerror = stopChatAudio;
                     window.speechSynthesis.speak(utterance);
+                    markChatPlaying();
+                } else if (isBn && typeof hasNativeBengaliSpeechSynthesisVoice === 'function' && hasNativeBengaliSpeechSynthesisVoice()) {
+                    const utterance = new SpeechSynthesisUtterance(cleanText);
+                    utterance.lang = 'bn-BD';
+                    utterance.rate = 0.9;
+                    utterance.onend = stopChatAudio;
+                    utterance.onerror = stopChatAudio;
+                    window.speechSynthesis.speak(utterance);
+                    markChatPlaying();
                 } else {
                     stopChatAudio();
                 }
             };
 
-            activeChatAudio.play().catch(err => {
-                console.warn('Audio play failed, falling back to SpeechSynthesis:', err);
-                if ('speechSynthesis' in window) {
+            activeChatAudio.play().then(() => {
+                markChatPlaying();
+            }).catch(err => {
+                console.warn('Chat audio play error:', err);
+                const isBn = lang === 'bn';
+                if (!isBn && 'speechSynthesis' in window) {
                     const utterance = new SpeechSynthesisUtterance(cleanText);
-                    utterance.lang = lang === 'bn' ? 'bn-BD' : 'en-US';
-                    utterance.rate = lang === 'bn' ? 0.9 : 0.95;
+                    utterance.lang = 'en-US';
+                    utterance.rate = 0.95;
                     utterance.onend = stopChatAudio;
                     utterance.onerror = stopChatAudio;
                     window.speechSynthesis.speak(utterance);
+                    markChatPlaying();
+                } else if (isBn && typeof hasNativeBengaliSpeechSynthesisVoice === 'function' && hasNativeBengaliSpeechSynthesisVoice()) {
+                    const utterance = new SpeechSynthesisUtterance(cleanText);
+                    utterance.lang = 'bn-BD';
+                    utterance.rate = 0.9;
+                    utterance.onend = stopChatAudio;
+                    utterance.onerror = stopChatAudio;
+                    window.speechSynthesis.speak(utterance);
+                    markChatPlaying();
                 } else {
                     stopChatAudio();
                 }

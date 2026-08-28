@@ -488,6 +488,18 @@ def batch_predict():
             speech_text_bn = f"মাঠ নিরীক্ষা রিপোর্ট: মোট {total_valid}টি নমুনার মধ্যে {healthy_pct}% পাতা সুস্থ। তবে জমিতে একাধিক রোগের সংক্রমণ দেখা গেছে: {disease_summary_bn}। সার্বিক মাঠ ঝুঁকি: {field_risk['level_bn']}। বিস্তারিত সমন্বিত বালাইনাশক প্রেসক্রিপশন স্ক্রিনে লক্ষ্য করুন।"
             speech_text_en = f"Field audit report: Across {total_valid} leaf samples, {healthy_pct}% are healthy. Multiple co-infections detected: {disease_summary_en}. Overall field risk is {field_risk['level_en']}. Please review the master prescription on screen."
 
+        # Pre-warm batch TTS in background thread so user gets 0ms instant playback on click
+        def _precache_batch_tts():
+            try:
+                generate_speech_audio(speech_text_bn, lang="bn", voice="pradeep")
+                generate_speech_audio(speech_text_bn, lang="bn", voice="nabanita")
+                generate_speech_audio(speech_text_en, lang="en", voice="guy")
+                generate_speech_audio(speech_text_en, lang="en", voice="aria")
+            except Exception:
+                pass
+
+        threading.Thread(target=_precache_batch_tts, daemon=True).start()
+
         return jsonify({
             "success": True,
             "total_samples": total_valid,
@@ -521,7 +533,7 @@ from src.tts_engine import generate_speech_audio, start_background_cache_prewarm
 start_background_cache_prewarm()
 
 
-@app.route("/api/tts", methods=["GET"])
+@app.route("/api/tts", methods=["GET", "HEAD"])
 def text_to_speech():
     disease = request.args.get("disease", "").strip()
     text = request.args.get("text", "").strip()
